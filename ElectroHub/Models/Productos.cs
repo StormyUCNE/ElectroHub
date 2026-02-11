@@ -13,9 +13,11 @@ public class Productos
     public int CodigoProducto { get; set; }
 
     [Required(ErrorMessage = "Debe de llenar este campo.")]
+    [StringLength(50, MinimumLength = 5, ErrorMessage = "El Nombre debe tener entre 5 y 50 caracteres")]
     public string Nombre { get; set; } = string.Empty;
 
     [Required(ErrorMessage = "Debe de llenar este campo.")]
+    [StringLength(75, MinimumLength = 5, ErrorMessage = "La Descripción debe tener entre 5 y 50 caracteres")]
     public string Descripcion { get; set; } = string.Empty;
 
     [ForeignKey(nameof(CategoriaId))]
@@ -23,19 +25,19 @@ public class Productos
 
     [Required(ErrorMessage = "Debe de llenar este campo.")]
     [Range(1, Double.MaxValue, ErrorMessage = "Precio Compra del Producto debe de ser mayor a Cero.")]
-    public decimal PrecioCompra { get; set; }
+    public decimal? PrecioCompra { get; set; }
 
     [Required(ErrorMessage = "Debe de llenar este campo.")]
     [Range(1, Double.MaxValue, ErrorMessage = "Precio Venta del Producto debe de ser mayor a Cero.")]
-    public decimal PrecioVenta { get; set; }
+    public decimal? PrecioVenta { get; set; }
 
     [Required(ErrorMessage = "Debe de llenar este campo.")]
     [Range(1, int.MaxValue, ErrorMessage = "Cantidad de Inventario del Producto debe de ser mayor a Cero.")]
-    public int CantidadInventario { get; set; }
+    public int? CantidadInventario { get; set; }
 
     [Required(ErrorMessage = "Debe de llenar este campo.")]
     [Range(1, int.MaxValue, ErrorMessage = "Stock Minimo del Producto debe de ser mayor a Cero.")]
-    public int StockMinimo { get; set; }
+    public int? StockMinimo { get; set; }
 
     [ForeignKey(nameof(ProveedorId))]
     public int ProveedorId { get; set; }
@@ -48,4 +50,5 @@ public class Productos
 
     Categorias? Categorias { get; set; }
     Proveedores? Proveedores { get; set; }
+    EstadosProductos? EstadosProductos { get; set; }
 }

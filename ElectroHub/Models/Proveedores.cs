@@ -7,11 +7,10 @@ public class Proveedores
 {
     [Key]
     public int ProveedorId { get; set; }
-
     public bool Eliminado { get; set; } = false;
 
     [Required(ErrorMessage = "Debe de llenar este campo.")]
-    [MinLength(4, ErrorMessage = "Nombre de Proveedor muy corto, debe de contener más de 3 Carácteres")]
+    [StringLength(50, MinimumLength = 5, ErrorMessage = "El Nombre debe tener entre 5 y 50 caracteres")]
     public string Nombre { get; set; } = string.Empty;
 
     [Required(ErrorMessage = "Debe de llenar este campo.")]
@@ -24,10 +23,13 @@ public class Proveedores
     [ForeignKey(nameof(TipoProveedorId))]
     public int TipoProveedorId { get; set; }
 
-    [Required(ErrorMessage = "Debe de llenar este campo.")]
-    [MinLength(10, ErrorMessage = "Dirección de Proveedor muy corta, debe de contener más de 9 Carácteres")]
+    [Required(ErrorMessage = "Campo es obligatorio.")]
+    [StringLength(100, MinimumLength = 10, ErrorMessage = "La Dirección debe tener entre 10 y 100 caracteres")]
     public string Direccion { get; set; } = string.Empty;
 
     [ForeignKey(nameof(EstadoProveedorId))]
     public int EstadoProveedorId { get; set; }
+
+    EstadosProveedores? EstadosProveedores { get; set; }
+    TiposProveedores? TiposProveedores { get; set; }
 }
