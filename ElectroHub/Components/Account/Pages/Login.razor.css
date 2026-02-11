@@ -1,0 +1,18 @@
+﻿
+.login-container {
+    max-width: 100%;
+    height: 100vh;
+    display: flex;
+    justify-content:center;
+    align-items:center;
+}
+.login-card
+{
+    margin: auto;
+    width:400px;
+    padding:50px 30px 50px 30px;
+    background-color:rgb(255, 255, 255,0.2);
+    backdrop-filter:blur(30%);
+    border: 3px white solid;
+    border-radius:10px;
+}
