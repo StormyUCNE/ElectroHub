@@ -1,8 +1,9 @@
-.navbar-menu{
-    display:flex;
-    align-items:center;
+.navbar-menu {
+    display: flex;
+    align-items: center;
     padding: 10px 0px 10px 0px 10px;
-    background-color:black;
+    background: #6956D7;
+    background: linear-gradient(90deg,rgba(105, 86, 215, 1) 0%, rgba(55, 45, 114, 1) 35%, rgba(55, 45, 114, 1) 70%, rgba(105, 86, 215, 1) 100%);
     padding: 20px 0px 20px 0px;
 }
 .user-container-nav{
@@ -152,6 +153,8 @@
 
 .nav-scrollable {
     display: none;
+    background: #6956D7;
+    background: linear-gradient(90deg,rgba(105, 86, 215, 1) 0%, rgba(55, 45, 114, 1) 91%);
 }
     .nav-scrollable.show {
         display: block;
