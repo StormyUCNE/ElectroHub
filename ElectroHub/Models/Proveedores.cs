@@ -21,6 +21,8 @@ public class Proveedores
 
     [ForeignKey(nameof(TipoProveedorId))]
     public TiposProveedores? TiposProveedores { get; set; }
+
+    [Required(ErrorMessage = "Debe de llenar este campo.")]
     public int TipoProveedorId { get; set; }
 
     [Required(ErrorMessage = "Campo es obligatorio.")]
@@ -29,5 +31,7 @@ public class Proveedores
 
     [ForeignKey(nameof(EstadoProveedorId))]
     public EstadosProveedores? EstadosProveedores { get; set; }
+
+    [Required(ErrorMessage = "Debe de llenar este campo.")]
     public int EstadoProveedorId { get; set; }
 }

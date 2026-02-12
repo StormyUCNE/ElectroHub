@@ -167,9 +167,6 @@ namespace ElectroHub.Migrations
                     b.Property<int>("CategoriaId")
                         .HasColumnType("int");
 
-                    b.Property<int?>("CategoriasCategoriaId")
-                        .HasColumnType("int");
-
                     b.Property<int>("CodigoProducto")
                         .HasColumnType("int");
 
@@ -182,9 +179,6 @@ namespace ElectroHub.Migrations
                         .HasColumnType("bit");
 
                     b.Property<int>("EstadoProductoId")
-                        .HasColumnType("int");
-
-                    b.Property<int?>("EstadosProductosEstadoProductoId")
                         .HasColumnType("int");
 
                     b.Property<DateTime>("FechaRegistro")
@@ -204,19 +198,16 @@ namespace ElectroHub.Migrations
                     b.Property<int>("ProveedorId")
                         .HasColumnType("int");
 
-                    b.Property<int?>("ProveedoresProveedorId")
-                        .HasColumnType("int");
-
                     b.Property<int>("StockMinimo")
                         .HasColumnType("int");
 
                     b.HasKey("ProductoId");
 
-                    b.HasIndex("CategoriasCategoriaId");
+                    b.HasIndex("CategoriaId");
 
-                    b.HasIndex("EstadosProductosEstadoProductoId");
+                    b.HasIndex("EstadoProductoId");
 
-                    b.HasIndex("ProveedoresProveedorId");
+                    b.HasIndex("ProveedorId");
 
                     b.ToTable("Productos");
                 });
@@ -441,15 +432,21 @@ namespace ElectroHub.Migrations
                 {
                     b.HasOne("ElectroHub.Models.Categorias", "Categorias")
                         .WithMany()
-                        .HasForeignKey("CategoriasCategoriaId");
+                        .HasForeignKey("CategoriaId")
+                        .OnDelete(DeleteBehavior.Cascade)
+                        .IsRequired();
 
                     b.HasOne("ElectroHub.Models.EstadosProductos", "EstadosProductos")
                         .WithMany()
-                        .HasForeignKey("EstadosProductosEstadoProductoId");
+                        .HasForeignKey("EstadoProductoId")
+                        .OnDelete(DeleteBehavior.Cascade)
+                        .IsRequired();
 
                     b.HasOne("ElectroHub.Models.Proveedores", "Proveedores")
                         .WithMany()
-                        .HasForeignKey("ProveedoresProveedorId");
+                        .HasForeignKey("ProveedorId")
+                        .OnDelete(DeleteBehavior.Cascade)
+                        .IsRequired();
 
                     b.Navigation("Categorias");
 

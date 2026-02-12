@@ -1,0 +1,120 @@
+﻿@page "/Productos/Index"
+@rendermode InteractiveServer
+<PageTitle>Productos</PageTitle>
+
+<div class="container" @onclick="() => showModal = false">
+    <nav>
+        <span>Productos</span>
+        <div class="modal-add-mobile" @onclick:stopPropagation="true">
+            <svg @onclick="alternateModal" xmlns="http://www.w3.org/2000/svg" height="48px" viewBox="0 -960 960 960" width="48px" fill="#FFFFFF"><path d="M450-120v-330H120v-60h330v-330h60v330h330v60H510v330h-60Z" /></svg>
+            <div class="modal-add-options @(showModal ? "show" : "")" @onclick:stopPropagation="true">
+                <ul>
+                    <li>Registra Productos</li>
+                    <li>Administrar Categorías</li>
+                </ul>
+            </div>
+        </div>
+    </nav>
+    <hr />
+
+    <section class="inputs-container">
+        <div class="input-container">
+            <input type="text" placeholder="Buscar Producto..." />
+        </div>
+        <div class="select-container">
+            <select>
+                <option value="">Seleccione Filtrar Por</option>
+                <option value="Categoría">Nombre</option>
+                <option value="Categoría">Categoría</option>
+                <option value="Proveedor">Proveedor</option>
+                <option value="Precio">Precio</option>
+            </select>
+        </div>
+        <div class="modal-add" @onclick:stopPropagation="true">
+            <svg @onclick="alternateModal" xmlns="http://www.w3.org/2000/svg" height="48px" viewBox="0 -960 960 960" width="48px" fill="#FFFFFF"><path d="M450-120v-330H120v-60h330v-330h60v330h330v60H510v330h-60Z" /></svg>
+                <div class="modal-add-options @(showModal ? "show":"")" @onclick:stopPropagation="true">
+                    <ul>
+                        <li>Registra Productos</li>
+                        <li>Administrar Categorías</li>
+                    </ul>
+                </div>
+        </div>
+        
+    </section>
+
+    <div class="table-responsive">
+        <table>
+            <thead>
+                <tr>
+                    <th>Nombre</th>
+                    <th>Stock Mímino</th>
+                    <th>Proveedor</th>
+                    <th>Categoría</th>
+                    <th>Opción</th>
+                </tr>
+            </thead>
+            <tbody>
+                <tr>
+                    <td>TV</td>
+                    <td>10</td>
+                    <td>Samsung</td>
+                    <td>Sala</td>
+                    <td>
+                        <button>Ver Detalles</button>
+                    </td>
+                </tr>
+                <tr>
+                    <td>TV</td>
+                    <td>10</td>
+                    <td>Samsung</td>
+                    <td>Sala</td>
+                    <td>
+                        <button>Ver Detalles</button>
+                    </td>
+                </tr>
+                <tr>
+                    <td>TV</td>
+                    <td>10</td>
+                    <td>Samsung</td>
+                    <td>Sala</td>
+                    <td>
+                        <button>Ver Detalles</button>
+                    </td>
+                </tr>
+                <tr>
+                    <td>TV</td>
+                    <td>10</td>
+                    <td>Samsung</td>
+                    <td>Sala</td>
+                    <td>
+                        <button>Ver Detalles</button>
+                    </td>
+                </tr>
+                <tr>
+                    <td>TV</td>
+                    <td>10</td>
+                    <td>Samsung</td>
+                    <td>Sala</td>
+                    <td>
+                        <button>Ver Detalles</button>
+                    </td>
+                </tr>
+                <tr>
+                    <td>TV</td>
+                    <td>10</td>
+                    <td>Samsung</td>
+                    <td>Sala</td>
+                    <td>
+                        <button>Ver Detalles</button>
+                    </td>
+                </tr>
+            </tbody>
+        </table>
+    </div>
+</div>
+@code {
+    private bool showModal = false;
+
+    private void alternateModal(){ showModal = !showModal; }
+
+}

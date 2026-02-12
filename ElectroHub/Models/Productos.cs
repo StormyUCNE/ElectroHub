@@ -20,7 +20,9 @@ public class Productos
     [StringLength(75, MinimumLength = 5, ErrorMessage = "La Descripción debe tener entre 5 y 50 caracteres")]
     public string Descripcion { get; set; } = string.Empty;
 
+    [Required(ErrorMessage = "Debe de llenar este campo.")]
     [ForeignKey(nameof(CategoriaId))]
+    public Categorias? Categorias { get; set; }
     public int CategoriaId { get; set; }
 
     [Required(ErrorMessage = "Debe de llenar este campo.")]
@@ -40,15 +42,16 @@ public class Productos
     public int? StockMinimo { get; set; }
 
     [ForeignKey(nameof(ProveedorId))]
+    public Proveedores? Proveedores { get; set; }
+
+    [Required(ErrorMessage = "Debe de llenar este campo.")]
     public int ProveedorId { get; set; }
 
     [ForeignKey(nameof(EstadoProductoId))]
+    public EstadosProductos? EstadosProductos { get; set; }
+    [Required(ErrorMessage = "Debe de llenar este campo.")]
     public int EstadoProductoId { get; set; }
 
     [Required(ErrorMessage = "Debe de llenar este campo.")]
     public DateTime FechaRegistro { get; set; } = DateTime.Now;
-
-    public Categorias? Categorias { get; set; }
-    public Proveedores? Proveedores { get; set; }
-    public EstadosProductos? EstadosProductos { get; set; }
 }

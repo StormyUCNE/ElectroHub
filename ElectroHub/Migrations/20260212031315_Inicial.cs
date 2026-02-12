@@ -278,29 +278,29 @@ namespace ElectroHub.Migrations
                     StockMinimo = table.Column<int>(type: "int", nullable: false),
                     ProveedorId = table.Column<int>(type: "int", nullable: false),
                     EstadoProductoId = table.Column<int>(type: "int", nullable: false),
-                    FechaRegistro = table.Column<DateTime>(type: "datetime2", nullable: false),
-                    CategoriasCategoriaId = table.Column<int>(type: "int", nullable: true),
-                    ProveedoresProveedorId = table.Column<int>(type: "int", nullable: true),
-                    EstadosProductosEstadoProductoId = table.Column<int>(type: "int", nullable: true)
+                    FechaRegistro = table.Column<DateTime>(type: "datetime2", nullable: false)
                 },
                 constraints: table =>
                 {
                     table.PrimaryKey("PK_Productos", x => x.ProductoId);
                     table.ForeignKey(
-                        name: "FK_Productos_Categorias_CategoriasCategoriaId",
-                        column: x => x.CategoriasCategoriaId,
+                        name: "FK_Productos_Categorias_CategoriaId",
+                        column: x => x.CategoriaId,
                         principalTable: "Categorias",
-                        principalColumn: "CategoriaId");
+                        principalColumn: "CategoriaId",
+                        onDelete: ReferentialAction.Cascade);
                     table.ForeignKey(
-                        name: "FK_Productos_EstadosProductos_EstadosProductosEstadoProductoId",
-                        column: x => x.EstadosProductosEstadoProductoId,
+                        name: "FK_Productos_EstadosProductos_EstadoProductoId",
+                        column: x => x.EstadoProductoId,
                         principalTable: "EstadosProductos",
-                        principalColumn: "EstadoProductoId");
+                        principalColumn: "EstadoProductoId",
+                        onDelete: ReferentialAction.Cascade);
                     table.ForeignKey(
-                        name: "FK_Productos_Proveedores_ProveedoresProveedorId",
-                        column: x => x.ProveedoresProveedorId,
+                        name: "FK_Productos_Proveedores_ProveedorId",
+                        column: x => x.ProveedorId,
                         principalTable: "Proveedores",
-                        principalColumn: "ProveedorId");
+                        principalColumn: "ProveedorId",
+                        onDelete: ReferentialAction.Cascade);
                 });
 
             migrationBuilder.CreateIndex(
@@ -348,19 +348,19 @@ namespace ElectroHub.Migrations
                 filter: "[NormalizedUserName] IS NOT NULL");
 
             migrationBuilder.CreateIndex(
-                name: "IX_Productos_CategoriasCategoriaId",
+                name: "IX_Productos_CategoriaId",
                 table: "Productos",
-                column: "CategoriasCategoriaId");
+                column: "CategoriaId");
 
             migrationBuilder.CreateIndex(
-                name: "IX_Productos_EstadosProductosEstadoProductoId",
+                name: "IX_Productos_EstadoProductoId",
                 table: "Productos",
-                column: "EstadosProductosEstadoProductoId");
+                column: "EstadoProductoId");
 
             migrationBuilder.CreateIndex(
-                name: "IX_Productos_ProveedoresProveedorId",
+                name: "IX_Productos_ProveedorId",
                 table: "Productos",
-                column: "ProveedoresProveedorId");
+                column: "ProveedorId");
 
             migrationBuilder.CreateIndex(
                 name: "IX_Proveedores_EstadoProveedorId",
