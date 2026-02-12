@@ -30,7 +30,8 @@ main {
 }
 
 .sidebar {
-    background-color:gray;
+    background: #6956D7;
+    background: linear-gradient(90deg,rgba(105, 86, 215, 1) 0%, rgba(55, 45, 114, 1) 91%);
 }
 
 .top-auth{
