@@ -12,7 +12,7 @@ using Microsoft.EntityFrameworkCore.Storage.ValueConversion;
 namespace ElectroHub.Migrations
 {
     [DbContext(typeof(ApplicationDbContext))]
-    [Migration("20260211034610_Inicial")]
+    [Migration("20260212003426_Inicial")]
     partial class Inicial
     {
         /// <inheritdoc />
@@ -170,6 +170,9 @@ namespace ElectroHub.Migrations
                     b.Property<int>("CategoriaId")
                         .HasColumnType("int");
 
+                    b.Property<int?>("CategoriasCategoriaId")
+                        .HasColumnType("int");
+
                     b.Property<int>("CodigoProducto")
                         .HasColumnType("int");
 
@@ -182,6 +185,9 @@ namespace ElectroHub.Migrations
                         .HasColumnType("bit");
 
                     b.Property<int>("EstadoProductoId")
+                        .HasColumnType("int");
+
+                    b.Property<int?>("EstadosProductosEstadoProductoId")
                         .HasColumnType("int");
 
                     b.Property<DateTime>("FechaRegistro")
@@ -201,10 +207,19 @@ namespace ElectroHub.Migrations
                     b.Property<int>("ProveedorId")
                         .HasColumnType("int");
 
+                    b.Property<int?>("ProveedoresProveedorId")
+                        .HasColumnType("int");
+
                     b.Property<int>("StockMinimo")
                         .HasColumnType("int");
 
                     b.HasKey("ProductoId");
+
+                    b.HasIndex("CategoriasCategoriaId");
+
+                    b.HasIndex("EstadosProductosEstadoProductoId");
+
+                    b.HasIndex("ProveedoresProveedorId");
 
                     b.ToTable("Productos");
                 });
@@ -245,6 +260,10 @@ namespace ElectroHub.Migrations
                         .HasColumnType("int");
 
                     b.HasKey("ProveedorId");
+
+                    b.HasIndex("EstadoProveedorId");
+
+                    b.HasIndex("TipoProveedorId");
 
                     b.ToTable("Proveedores");
                 });
@@ -419,6 +438,46 @@ namespace ElectroHub.Migrations
                     b.HasKey("UserId", "LoginProvider", "Name");
 
                     b.ToTable("AspNetUserTokens", (string)null);
+                });
+
+            modelBuilder.Entity("ElectroHub.Models.Productos", b =>
+                {
+                    b.HasOne("ElectroHub.Models.Categorias", "Categorias")
+                        .WithMany()
+                        .HasForeignKey("CategoriasCategoriaId");
+
+                    b.HasOne("ElectroHub.Models.EstadosProductos", "EstadosProductos")
+                        .WithMany()
+                        .HasForeignKey("EstadosProductosEstadoProductoId");
+
+                    b.HasOne("ElectroHub.Models.Proveedores", "Proveedores")
+                        .WithMany()
+                        .HasForeignKey("ProveedoresProveedorId");
+
+                    b.Navigation("Categorias");
+
+                    b.Navigation("EstadosProductos");
+
+                    b.Navigation("Proveedores");
+                });
+
+            modelBuilder.Entity("ElectroHub.Models.Proveedores", b =>
+                {
+                    b.HasOne("ElectroHub.Models.EstadosProveedores", "EstadosProveedores")
+                        .WithMany()
+                        .HasForeignKey("EstadoProveedorId")
+                        .OnDelete(DeleteBehavior.Cascade)
+                        .IsRequired();
+
+                    b.HasOne("ElectroHub.Models.TiposProveedores", "TiposProveedores")
+                        .WithMany()
+                        .HasForeignKey("TipoProveedorId")
+                        .OnDelete(DeleteBehavior.Cascade)
+                        .IsRequired();
+
+                    b.Navigation("EstadosProveedores");
+
+                    b.Navigation("TiposProveedores");
                 });
 
             modelBuilder.Entity("Microsoft.AspNetCore.Identity.IdentityRoleClaim<string>", b =>

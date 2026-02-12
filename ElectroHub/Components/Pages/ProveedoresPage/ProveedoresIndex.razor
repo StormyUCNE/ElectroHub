@@ -1,0 +1,97 @@
+﻿@page "/Proveedores/Index"
+@rendermode InteractiveServer
+@inject NavigationManager NavigationManager
+@inject ProveedoresService ProveedoresService;
+
+<div class="container">
+    <div class="card shadow-lg">
+        <div class="card-header d-flex justify-content-between">
+            <h4 class="card-title">Registro de Proveedores</h4>
+            <div class="d-flex gap-3">
+                <a href="Proveedores/Create" class="btn btn-outline-primary">Crear</a>
+                <a href="Proveedores/TiposProveedores/Create" class="btn btn-outline-primary">Crear Tipo Proveedor</a>
+                <a href="Proveedores/EstadosProveedores/Create" class="btn btn-outline-primary">Crear Estados Proveedores</a>
+            </div> 
+        </div>
+        <div class="card-body">
+            <table class="table mt-3">
+                <thead>
+                    <tr>
+                        <th>Id</th>
+                        <th>Nombre</th>
+                        <th>Tipo</th>
+                        <th>Direccion</th>
+                        <th>Estado</th>
+                    </tr>
+                </thead>
+                <tbody>
+                    @foreach(var p in ListaProveedores)
+                    {
+                        <tr>
+                            <td>@p.ProveedorId</td>
+                            <td>@p.Nombre</td>
+                            <td>@p.TiposProveedores?.Nombre</td>
+                            <td>@p.Direccion</td>
+                            <td>@p.EstadosProveedores?.Nombre</td>
+                        </tr>
+                    }
+                </tbody>
+            </table>
+        </div>
+    </div>
+</div>
+
+@code {
+    public List<Proveedores> ListaProveedores {get; set;} = new List<Proveedores>();
+
+    public string Filtro { get; set; } 
+    public string ValorFiltro {get; set;}
+
+    protected override async Task OnInitializedAsync(){
+        Filtro = string.Empty;
+        ListaProveedores = await ProveedoresService.Listar(p => p.ProveedorId > 0);
+    }
+
+    public async Task Buscar(){
+        if(ValorFiltro != null){
+
+            if(Filtro == "Nombre"){
+                ListaProveedores = await ProveedoresService.Listar(p => p.Nombre.ToLower().Contains(ValorFiltro.ToLower()));
+            }
+
+            if(Filtro == "Contacto"){
+                ListaProveedores = await ProveedoresService.Listar(p => p.Contacto.ToLower().Contains(ValorFiltro.ToLower()));
+            }
+
+            if(Filtro == "CorreoElectronico"){
+                ListaProveedores = await ProveedoresService.Listar(p => p.CorreoElectronico.ToLower().Contains(ValorFiltro.ToLower()));
+            }
+
+            if(Filtro == "TipoProveedorId"){
+
+                if(int.TryParse(ValorFiltro, out int TipoProveedorId)){
+                    ListaProveedores = await ProveedoresService.Listar(p => p.TipoProveedorId == TipoProveedorId);
+                }
+            }
+
+            if(Filtro == "Direccion"){
+                ListaProveedores = await ProveedoresService.Listar(p => p.Direccion.ToLower().Contains(ValorFiltro.ToLower()));
+            }
+
+            if(Filtro == "EstadoProveedorId"){
+                
+                if(int.TryParse(ValorFiltro, out int EstadoProveedorId)){
+                    ListaProveedores = await ProveedoresService.Listar(p => p.EstadoProveedorId == EstadoProveedorId);
+                }
+            }
+
+            if(Filtro == "Direccion"){
+                ListaProveedores = await ProveedoresService.Listar(p => p.Direccion.ToLower().Contains(ValorFiltro.ToLower()));
+            }
+
+        }
+    }
+
+    private void IrACrear() => NavigationManager.NavigateTo("");
+    private void IrAEditar() => NavigationManager.NavigateTo("");
+}

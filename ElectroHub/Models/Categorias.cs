@@ -1,5 +1,6 @@
 ﻿using System.ComponentModel.DataAnnotations;
 namespace ElectroHub.Models;
+
 public class Categorias
 {
     [Key]

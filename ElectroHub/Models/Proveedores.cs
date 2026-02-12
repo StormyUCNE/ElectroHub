@@ -1,6 +1,5 @@
 ﻿using System.ComponentModel.DataAnnotations;
 using System.ComponentModel.DataAnnotations.Schema;
-
 namespace ElectroHub.Models;
 
 public class Proveedores
@@ -21,6 +20,7 @@ public class Proveedores
     public string CorreoElectronico { get; set; } = string.Empty;
 
     [ForeignKey(nameof(TipoProveedorId))]
+    public TiposProveedores? TiposProveedores { get; set; }
     public int TipoProveedorId { get; set; }
 
     [Required(ErrorMessage = "Campo es obligatorio.")]
@@ -28,8 +28,6 @@ public class Proveedores
     public string Direccion { get; set; } = string.Empty;
 
     [ForeignKey(nameof(EstadoProveedorId))]
+    public EstadosProveedores? EstadosProveedores { get; set; }
     public int EstadoProveedorId { get; set; }
-
-    EstadosProveedores? EstadosProveedores { get; set; }
-    TiposProveedores? TiposProveedores { get; set; }
 }

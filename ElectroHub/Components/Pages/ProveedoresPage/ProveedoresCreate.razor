@@ -1,0 +1,110 @@
+﻿@page "/Proveedores/Create"
+@rendermode InteractiveServer
+@inject NavigationManager navigationManager
+@inject ProveedoresService proveedoresService
+@inject EstadosProveedoresService estadosProveedoresService
+@inject TiposProveedoresService tiposProveedoresService
+
+<PageTitle>Crear Proveedor</PageTitle>
+<EditForm Model="Proveedores" OnValidSubmit="Guardar">
+    <DataAnnotationsValidator />
+
+    <div class="container">
+
+        @if (!string.IsNullOrEmpty(Mensajes))
+        {
+            <div class="alert alert-danger alert-dismissible fade show">
+                <i class="bi bi-exclamation-triangle-fill"></i> @Mensajes
+                <button type="button" class="btn-close" @onclick="() => Mensajes = string.Empty"></button>
+            </div>
+        }
+
+        <div class="card shadow-lg">
+            <div class="card-header">
+                <h3 class="card-title">Crear Proveedor</h3>
+            </div>
+
+            <div class="card-body">
+                <div class="mb-2">
+                    <label>Nombre de Proveedor</label>
+                    <InputText @bind-Value="Proveedores.Nombre" class="form-control"></InputText>
+                    <ValidationMessage For="() => Proveedores.Nombre" />
+                </div>
+
+                <div class="mb-2">
+                    <label>Contacto de Proveedor</label>
+                    <InputText @bind-Value="Proveedores.Contacto" class="form-control"></InputText>
+                    <ValidationMessage For="() => Proveedores.Contacto" />
+                </div>
+
+                <div class="mb-2">
+                    <label>Correo de Proveedor</label>
+                    <InputText @bind-Value="Proveedores.CorreoElectronico" class="form-control"></InputText>
+                    <ValidationMessage For="() => Proveedores.CorreoElectronico" />
+                </div>
+
+                <div class="mb-2">
+                    <label>Tipo Proveedor</label>
+                    <InputSelect class="form-select" @bind-Value="Proveedores.TipoProveedorId">
+                        <option value="">-- Seleccione un tipo --</option>
+                        @foreach(var t in ListaTiposProveedores)
+                        {
+                            <option value="@t.TipoProveedorId" >@t.Nombre</option>
+                        }
+                    </InputSelect>
+                    <ValidationMessage For="() => Proveedores.TipoProveedorId" />
+                </div>
+
+                <div class="mb-2">
+                    <label>Dirección Proveedor</label>
+                    <InputText @bind-Value="Proveedores.Direccion" class="form-control"></InputText>
+                    <ValidationMessage For="() => Proveedores.Direccion" />
+                </div>
+
+                <div class="mb-2">
+                    <label>Estado Proveedor</label>
+                    <InputSelect class="form-select" @bind-Value="Proveedores.EstadoProveedorId">
+                        <option value="">-- Seleccione un tipo --</option>
+                        @foreach (var e in ListaEstadosProveedores)
+                        {
+                            <option value="@e.EstadoProveedorId">@e.Nombre</option>
+                        }
+                    </InputSelect>
+                    <ValidationMessage For="() => Proveedores.EstadoProveedorId" />
+                </div>
+            </div>
+
+
+            <div class="card-footer">
+                <a href="Proveedores/Index" class="btn btnbtn-outline-primary">Volver</a>
+                <button type="submit" class="btn btnbtn-outline-primary">Guardar</button>
+            </div>
+        </div>
+    </div>
+</EditForm>
+
+@code {
+    public Proveedores Proveedores { get; set; } = new Proveedores();
+    public string Mensajes { get; set; } = string.Empty;
+    public List<TiposProveedores> ListaTiposProveedores = new List<TiposProveedores>();
+    public List<EstadosProveedores> ListaEstadosProveedores = new List<EstadosProveedores>();
+
+    protected override async Task OnInitializedAsync()
+    {
+        ListaEstadosProveedores = await estadosProveedoresService.Listar(e => e.EstadoProveedorId > 0);
+        ListaTiposProveedores = await tiposProveedoresService.Listar(e => e.TipoProveedorId > 0);
+    }
+
+    private async Task Guardar()
+    {
+        Mensajes = string.Empty;
+
+        var creado = await proveedoresService.Guardar(Proveedores);
+        if (creado)
+            Volver();
+    }
+
+
+    private void Volver() => navigationManager.NavigateTo("/Proveedores/Index");
+
+}

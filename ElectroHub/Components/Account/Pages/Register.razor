@@ -78,7 +78,8 @@
         }
 
         Logger.LogInformation("User created a new account with password.");
-
+        await UserManager.AddToRoleAsync(user, "User");
+        NavigationManager.NavigateTo("/Account/Login");
         var userId = await UserManager.GetUserIdAsync(user);
         var code = await UserManager.GenerateEmailConfirmationTokenAsync(user);
         code = WebEncoders.Base64UrlEncode(Encoding.UTF8.GetBytes(code));

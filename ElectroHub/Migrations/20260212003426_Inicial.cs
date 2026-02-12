@@ -93,49 +93,6 @@ namespace ElectroHub.Migrations
                 });
 
             migrationBuilder.CreateTable(
-                name: "Productos",
-                columns: table => new
-                {
-                    ProductoId = table.Column<int>(type: "int", nullable: false)
-                        .Annotation("SqlServer:Identity", "1, 1"),
-                    Eliminado = table.Column<bool>(type: "bit", nullable: false),
-                    CodigoProducto = table.Column<int>(type: "int", nullable: false),
-                    Nombre = table.Column<string>(type: "nvarchar(50)", maxLength: 50, nullable: false),
-                    Descripcion = table.Column<string>(type: "nvarchar(75)", maxLength: 75, nullable: false),
-                    CategoriaId = table.Column<int>(type: "int", nullable: false),
-                    PrecioCompra = table.Column<decimal>(type: "decimal(18,2)", nullable: false),
-                    PrecioVenta = table.Column<decimal>(type: "decimal(18,2)", nullable: false),
-                    CantidadInventario = table.Column<int>(type: "int", nullable: false),
-                    StockMinimo = table.Column<int>(type: "int", nullable: false),
-                    ProveedorId = table.Column<int>(type: "int", nullable: false),
-                    EstadoProductoId = table.Column<int>(type: "int", nullable: false),
-                    FechaRegistro = table.Column<DateTime>(type: "datetime2", nullable: false)
-                },
-                constraints: table =>
-                {
-                    table.PrimaryKey("PK_Productos", x => x.ProductoId);
-                });
-
-            migrationBuilder.CreateTable(
-                name: "Proveedores",
-                columns: table => new
-                {
-                    ProveedorId = table.Column<int>(type: "int", nullable: false)
-                        .Annotation("SqlServer:Identity", "1, 1"),
-                    Eliminado = table.Column<bool>(type: "bit", nullable: false),
-                    Nombre = table.Column<string>(type: "nvarchar(50)", maxLength: 50, nullable: false),
-                    Contacto = table.Column<string>(type: "nvarchar(max)", nullable: false),
-                    CorreoElectronico = table.Column<string>(type: "nvarchar(max)", nullable: false),
-                    TipoProveedorId = table.Column<int>(type: "int", nullable: false),
-                    Direccion = table.Column<string>(type: "nvarchar(100)", maxLength: 100, nullable: false),
-                    EstadoProveedorId = table.Column<int>(type: "int", nullable: false)
-                },
-                constraints: table =>
-                {
-                    table.PrimaryKey("PK_Proveedores", x => x.ProveedorId);
-                });
-
-            migrationBuilder.CreateTable(
                 name: "TiposProveedores",
                 columns: table => new
                 {
@@ -273,6 +230,79 @@ namespace ElectroHub.Migrations
                         onDelete: ReferentialAction.Cascade);
                 });
 
+            migrationBuilder.CreateTable(
+                name: "Proveedores",
+                columns: table => new
+                {
+                    ProveedorId = table.Column<int>(type: "int", nullable: false)
+                        .Annotation("SqlServer:Identity", "1, 1"),
+                    Eliminado = table.Column<bool>(type: "bit", nullable: false),
+                    Nombre = table.Column<string>(type: "nvarchar(50)", maxLength: 50, nullable: false),
+                    Contacto = table.Column<string>(type: "nvarchar(max)", nullable: false),
+                    CorreoElectronico = table.Column<string>(type: "nvarchar(max)", nullable: false),
+                    TipoProveedorId = table.Column<int>(type: "int", nullable: false),
+                    Direccion = table.Column<string>(type: "nvarchar(100)", maxLength: 100, nullable: false),
+                    EstadoProveedorId = table.Column<int>(type: "int", nullable: false)
+                },
+                constraints: table =>
+                {
+                    table.PrimaryKey("PK_Proveedores", x => x.ProveedorId);
+                    table.ForeignKey(
+                        name: "FK_Proveedores_EstadosProveedores_EstadoProveedorId",
+                        column: x => x.EstadoProveedorId,
+                        principalTable: "EstadosProveedores",
+                        principalColumn: "EstadoProveedorId",
+                        onDelete: ReferentialAction.Cascade);
+                    table.ForeignKey(
+                        name: "FK_Proveedores_TiposProveedores_TipoProveedorId",
+                        column: x => x.TipoProveedorId,
+                        principalTable: "TiposProveedores",
+                        principalColumn: "TipoProveedorId",
+                        onDelete: ReferentialAction.Cascade);
+                });
+
+            migrationBuilder.CreateTable(
+                name: "Productos",
+                columns: table => new
+                {
+                    ProductoId = table.Column<int>(type: "int", nullable: false)
+                        .Annotation("SqlServer:Identity", "1, 1"),
+                    Eliminado = table.Column<bool>(type: "bit", nullable: false),
+                    CodigoProducto = table.Column<int>(type: "int", nullable: false),
+                    Nombre = table.Column<string>(type: "nvarchar(50)", maxLength: 50, nullable: false),
+                    Descripcion = table.Column<string>(type: "nvarchar(75)", maxLength: 75, nullable: false),
+                    CategoriaId = table.Column<int>(type: "int", nullable: false),
+                    PrecioCompra = table.Column<decimal>(type: "decimal(18,2)", nullable: false),
+                    PrecioVenta = table.Column<decimal>(type: "decimal(18,2)", nullable: false),
+                    CantidadInventario = table.Column<int>(type: "int", nullable: false),
+                    StockMinimo = table.Column<int>(type: "int", nullable: false),
+                    ProveedorId = table.Column<int>(type: "int", nullable: false),
+                    EstadoProductoId = table.Column<int>(type: "int", nullable: false),
+                    FechaRegistro = table.Column<DateTime>(type: "datetime2", nullable: false),
+                    CategoriasCategoriaId = table.Column<int>(type: "int", nullable: true),
+                    ProveedoresProveedorId = table.Column<int>(type: "int", nullable: true),
+                    EstadosProductosEstadoProductoId = table.Column<int>(type: "int", nullable: true)
+                },
+                constraints: table =>
+                {
+                    table.PrimaryKey("PK_Productos", x => x.ProductoId);
+                    table.ForeignKey(
+                        name: "FK_Productos_Categorias_CategoriasCategoriaId",
+                        column: x => x.CategoriasCategoriaId,
+                        principalTable: "Categorias",
+                        principalColumn: "CategoriaId");
+                    table.ForeignKey(
+                        name: "FK_Productos_EstadosProductos_EstadosProductosEstadoProductoId",
+                        column: x => x.EstadosProductosEstadoProductoId,
+                        principalTable: "EstadosProductos",
+                        principalColumn: "EstadoProductoId");
+                    table.ForeignKey(
+                        name: "FK_Productos_Proveedores_ProveedoresProveedorId",
+                        column: x => x.ProveedoresProveedorId,
+                        principalTable: "Proveedores",
+                        principalColumn: "ProveedorId");
+                });
+
             migrationBuilder.CreateIndex(
                 name: "IX_AspNetRoleClaims_RoleId",
                 table: "AspNetRoleClaims",
@@ -316,6 +346,31 @@ namespace ElectroHub.Migrations
                 column: "NormalizedUserName",
                 unique: true,
                 filter: "[NormalizedUserName] IS NOT NULL");
+
+            migrationBuilder.CreateIndex(
+                name: "IX_Productos_CategoriasCategoriaId",
+                table: "Productos",
+                column: "CategoriasCategoriaId");
+
+            migrationBuilder.CreateIndex(
+                name: "IX_Productos_EstadosProductosEstadoProductoId",
+                table: "Productos",
+                column: "EstadosProductosEstadoProductoId");
+
+            migrationBuilder.CreateIndex(
+                name: "IX_Productos_ProveedoresProveedorId",
+                table: "Productos",
+                column: "ProveedoresProveedorId");
+
+            migrationBuilder.CreateIndex(
+                name: "IX_Proveedores_EstadoProveedorId",
+                table: "Proveedores",
+                column: "EstadoProveedorId");
+
+            migrationBuilder.CreateIndex(
+                name: "IX_Proveedores_TipoProveedorId",
+                table: "Proveedores",
+                column: "TipoProveedorId");
         }
 
         /// <inheritdoc />
@@ -340,28 +395,28 @@ namespace ElectroHub.Migrations
                 name: "AspNetUserTokens");
 
             migrationBuilder.DropTable(
-                name: "Categorias");
-
-            migrationBuilder.DropTable(
-                name: "EstadosProductos");
-
-            migrationBuilder.DropTable(
-                name: "EstadosProveedores");
-
-            migrationBuilder.DropTable(
                 name: "Productos");
-
-            migrationBuilder.DropTable(
-                name: "Proveedores");
-
-            migrationBuilder.DropTable(
-                name: "TiposProveedores");
 
             migrationBuilder.DropTable(
                 name: "AspNetRoles");
 
             migrationBuilder.DropTable(
                 name: "AspNetUsers");
+
+            migrationBuilder.DropTable(
+                name: "Categorias");
+
+            migrationBuilder.DropTable(
+                name: "EstadosProductos");
+
+            migrationBuilder.DropTable(
+                name: "Proveedores");
+
+            migrationBuilder.DropTable(
+                name: "EstadosProveedores");
+
+            migrationBuilder.DropTable(
+                name: "TiposProveedores");
         }
     }
 }

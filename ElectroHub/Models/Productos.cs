@@ -48,7 +48,7 @@ public class Productos
     [Required(ErrorMessage = "Debe de llenar este campo.")]
     public DateTime FechaRegistro { get; set; } = DateTime.Now;
 
-    Categorias? Categorias { get; set; }
-    Proveedores? Proveedores { get; set; }
-    EstadosProductos? EstadosProductos { get; set; }
+    public Categorias? Categorias { get; set; }
+    public Proveedores? Proveedores { get; set; }
+    public EstadosProductos? EstadosProductos { get; set; }
 }
