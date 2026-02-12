@@ -1,0 +1,30 @@
+﻿.modal-container {
+    position: fixed;
+    top: 0;
+    bottom: 0;
+    left: 0;
+    right: 0;
+    margin: auto;
+    max-width: 400px;
+    height: 500px;
+    border: 2px #AA56D7 solid;
+    border-radius: 20px;
+    background-color: rgb(0, 0, 0, 0.7);
+    backdrop-filter: blur(100px);
+    display: flex;
+    flex-direction: column;
+    justify-content: center;
+    color: white;
+    padding: 20px;
+}
+.modal-header{
+    display: flex;
+    gap: 20px;
+}
+.cerrar-icon{
+    position:absolute;
+    right: 5%;
+    top: 5%;
+    cursor:pointer;
+}
+

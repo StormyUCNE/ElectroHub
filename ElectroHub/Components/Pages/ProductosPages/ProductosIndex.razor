@@ -34,7 +34,7 @@
             <svg @onclick="alternateModal" xmlns="http://www.w3.org/2000/svg" height="48px" viewBox="0 -960 960 960" width="48px" fill="#FFFFFF"><path d="M450-120v-330H120v-60h330v-330h60v330h330v60H510v330h-60Z" /></svg>
                 <div class="modal-add-options @(showModal ? "show":"")" @onclick:stopPropagation="true">
                     <ul>
-                        <li>Registra Productos</li>
+                        <li @onclick="()=> showModalRegister = true">Registra Productos</li>
                         <li>Administrar Categorías</li>
                     </ul>
                 </div>
@@ -111,10 +111,104 @@
             </tbody>
         </table>
     </div>
+
+
+        <RegistroComponente @bind-Mostrar="showModalRegister" Titulo="Registro Productos"> 
+            <EditForm Model="Productos" OnValidSubmit="Guardar">
+                <DataAnnotationsValidator/>
+            <section class="edit-form-container">
+                <div class="scroll-inputs">
+                    <div class="input-container-item">
+                        <label>Código:</label>
+                        <input type="text" @bind="Productos.CodigoProducto" />
+
+                    </div>
+                    <ValidationMessage For="() => Productos.CodigoProducto" />
+                    <div class="input-container-item">
+                        <label>Nombre:</label>
+                        <input type="text" @bind="Productos.Nombre" />
+                    </div>
+                    <ValidationMessage For="() => Productos.Nombre" />
+                    <div class="input-container-item">
+                        <label>Descripción:</label>
+                        <input type="text" @bind="Productos.Descripcion" />
+                       
+                    </div>
+                    <ValidationMessage For="() => Productos.Descripcion" />
+                    <div class="input-container-item">
+                        <label>Categoría:</label>
+                        <select @bind="Productos.CategoriaId">
+                            <option value="">Seleccione una Categoría</option>
+                            <option value="Sala">Sala</option>
+                        </select>
+                        
+                    </div>
+                    <ValidationMessage For="() => Productos.CategoriaId" />
+                    <div class="input-container-item">
+                        <label>Precio Compra:</label>
+                        <input type="number" @bind="Productos.PrecioCompra" />
+                        
+                    </div>
+                    <ValidationMessage For="() => Productos.PrecioCompra" />
+                    <div class="input-container-item">
+                        <label>Precio Venta:</label>
+                        <input type="number" @bind="Productos.PrecioVenta" />
+                        
+                    </div>
+                    <ValidationMessage For="() => Productos.PrecioVenta" />
+                    <div class="input-container-item">
+                        <label>Cantidad:</label>
+                        <input type="number" @bind="Productos.CantidadInventario" />
+                        
+                    </div>
+                    <ValidationMessage For="() => Productos.CantidadInventario" />
+                    <div class="input-container-item">
+                        <label>Stock Mínimo:</label>
+                        <input type="number" @bind="Productos.StockMinimo" />
+                        
+                    </div>
+                    <ValidationMessage For="() => Productos.StockMinimo" />
+                    <div class="input-container-item">
+                        <label>Proveedor:</label>
+                        <select @bind="Productos.ProveedorId">
+                            <option value="">Seleccione un Proveedor</option>
+                            <option value="CocaCola">Coca Cola</option>
+                        </select>
+                        
+                    </div>
+                    <ValidationMessage For="() => Productos.ProveedorId" />
+                    <div class="input-container-item">
+                        <label>Estado:</label>
+                        <select @bind="Productos.EstadoProductoId">
+                            <option value="">Seleccione un Estado</option>
+                            <option value="Activo">Activo</option>
+                        </select>
+                        
+                    </div>
+                    <ValidationMessage For="() => Productos.EstadoProductoId" />
+                    <div class="input-container-item">
+                        <label>Fecha:</label>
+                        <input type="date" @bind="Productos.FechaRegistro" />
+                        
+                    </div>
+                    <ValidationMessage For="() => Productos.FechaRegistro" />
+                </div>
+                <button>Guardar</button>
+                
+            </section>
+            
+            </EditForm>
+        </RegistroComponente>
+    
 </div>
 @code {
     private bool showModal = false;
+    private bool showModalRegister = true;
+
+    public Productos Productos = new Productos();
 
     private void alternateModal(){ showModal = !showModal; }
+
+    private void Guardar(){}
 
 }

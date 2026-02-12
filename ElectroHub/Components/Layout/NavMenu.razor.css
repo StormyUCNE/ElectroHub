@@ -2,11 +2,14 @@
     display:flex;
     align-items:center;
     padding: 10px 0px 10px 0px 10px;
-    background-color:black;
+    background: linear-gradient(to right, #6956D7, #372D72, #372D72, #6956D7);
     padding: 20px 0px 20px 0px;
 }
-.user-container-nav{
-    background-color:rgb(255, 255, 255, 0.3);
+.logo-container > a > img{
+    width: 100%;
+}
+.user-container-nav {
+    background-color: rgb(255, 255, 255, 0.3);
     border-radius: 20px;
 }
 .data-user-nav {
@@ -60,18 +63,7 @@
 .data-user button{
     padding:0;
 }
-.navbar-toggler:checked {
-    background-color: rgba(255, 255, 255, 0.5);
-}
 
-.top-row {
-    min-height: 3.5rem;
-    background-color: rgba(0,0,0,0.4);
-}
-
-.navbar-brand {
-    font-size: 1.1rem;
-}
 
 .bi {
     display: inline-block;
@@ -118,6 +110,7 @@
 .nav-item {
     font-size: 0.9rem;
     padding-bottom: 0.5rem;
+
 }
 
     .nav-item:first-of-type {
@@ -140,29 +133,29 @@
         width: 100%;
     }
 
-.nav-item ::deep a.active {
-    background-color: rgba(255,255,255,0.37);
-    color: white;
-}
+    .nav-item ::deep a.active {
+        background-color: rgba(255,255,255,0.37);
+        color: #D7AA56;
+    }
 
-.nav-item ::deep .nav-link:hover {
-    background-color: rgba(255,255,255,0.1);
-    color: white;
-}
+    .nav-item ::deep .nav-link:hover {
+        background-color: rgba(255,255,255,0.1);
+        color: #D7AA56;
+    }
 
 .nav-scrollable {
     display: none;
 }
     .nav-scrollable.show {
         display: block;
-        position: fixed; /* 🔴 CLAVE */
-        top: 4.5rem; /* debajo del navbar */
+        position: fixed;
+        top: 4.5rem;
         left: 0;
         right: 0;
         width: 100%;
         height: calc(100vh - 3.5rem);
-        background-color: rgba(0,0,0,0.95); /* 🔴 CLAVE */
         z-index: 1000;
+        background: linear-gradient(to right,#6956D7, #372D72);
     }
 
 @media (min-width: 900px) {
@@ -181,6 +174,7 @@
         /* Allow sidebar to scroll for tall menus */
         height: calc(100vh - 3.5rem);
         overflow-y: auto;
+        background: linear-gradient(to right,#6956D7, #372D72);
     }
 }
 @media (max-width: 900px){

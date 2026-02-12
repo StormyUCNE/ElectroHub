@@ -15,4 +15,16 @@
     backdrop-filter: blur(30%);
     border: 3px white solid;
     border-radius: 10px;
+    text-align:center;
+}
+a {
+    color: pink;
+}
+
+hr {
+    color: white;
+}
+
+h1, h2 {
+    color: white;
 }

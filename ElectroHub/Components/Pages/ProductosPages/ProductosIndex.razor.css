@@ -119,9 +119,36 @@ button {
     border: none;
     color: white;
 }
-.modal-add-mobile{
-    display:none;
+.input-container-item{
+    display: flex;
+    justify-content:space-between;
+    gap: 20px;
 }
+.input-container-item > input {
+    border-bottom: solid;
+}
+.modal-add-mobile {
+    display: none;
+}
+.scroll-inputs {
+    background-color: transparent;
+    height: 350px;
+    display: flex;
+    flex-direction:column;
+    padding-top: 30px;
+    gap: 30px;
+    overflow-y: auto;
+}
+
+ .scroll-inputs::-webkit-scrollbar {
+        width: 8px;
+    }
+.scroll-inputs::-webkit-scrollbar-thumb {
+    background: linear-gradient(#AA56D7, #D7AA56);
+    border-radius: 10px;
+}
+
+
 
 @media (max-width: 900px) {
     .inputs-container {
@@ -142,9 +169,10 @@ button {
         width: 100%;
         padding: 10px;
     }
-    nav{
+
+    nav {
         display: flex;
-        justify-content:space-between;
+        justify-content: space-between;
         padding-right: 10px;
         align-items: center;
     }
@@ -152,6 +180,7 @@ button {
     .modal-add-mobile {
         display: block;
     }
+
     thead, th {
         border: 1px black solid;
         padding: 10px;
@@ -166,7 +195,4 @@ button {
         text-align: center;
         font-size: 10px;
     }
-    
-
-
 }
