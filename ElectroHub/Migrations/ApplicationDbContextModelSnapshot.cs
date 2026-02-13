@@ -212,7 +212,7 @@ namespace ElectroHub.Migrations
                     b.ToTable("Productos");
                 });
 
-            modelBuilder.Entity("ElectroHub.Models.Proveedores", b =>
+            modelBuilder.Entity("ElectroHub.Models.Categories", b =>
                 {
                     b.Property<int>("ProveedorId")
                         .ValueGeneratedOnAdd()
@@ -253,7 +253,7 @@ namespace ElectroHub.Migrations
 
                     b.HasIndex("TipoProveedorId");
 
-                    b.ToTable("Proveedores");
+                    b.ToTable("Categories");
                 });
 
             modelBuilder.Entity("ElectroHub.Models.TiposProveedores", b =>
@@ -442,7 +442,7 @@ namespace ElectroHub.Migrations
                         .OnDelete(DeleteBehavior.Cascade)
                         .IsRequired();
 
-                    b.HasOne("ElectroHub.Models.Proveedores", "Proveedores")
+                    b.HasOne("ElectroHub.Models.Categories", "Categories")
                         .WithMany()
                         .HasForeignKey("ProveedorId")
                         .OnDelete(DeleteBehavior.Cascade)
@@ -452,10 +452,10 @@ namespace ElectroHub.Migrations
 
                     b.Navigation("EstadosProductos");
 
-                    b.Navigation("Proveedores");
+                    b.Navigation("Categories");
                 });
 
-            modelBuilder.Entity("ElectroHub.Models.Proveedores", b =>
+            modelBuilder.Entity("ElectroHub.Models.Categories", b =>
                 {
                     b.HasOne("ElectroHub.Models.EstadosProveedores", "EstadosProveedores")
                         .WithMany()

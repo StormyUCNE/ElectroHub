@@ -231,7 +231,7 @@ namespace ElectroHub.Migrations
                 });
 
             migrationBuilder.CreateTable(
-                name: "Proveedores",
+                name: "Categories",
                 columns: table => new
                 {
                     ProveedorId = table.Column<int>(type: "int", nullable: false)
@@ -298,7 +298,7 @@ namespace ElectroHub.Migrations
                     table.ForeignKey(
                         name: "FK_Productos_Proveedores_ProveedorId",
                         column: x => x.ProveedorId,
-                        principalTable: "Proveedores",
+                        principalTable: "Categories",
                         principalColumn: "ProveedorId",
                         onDelete: ReferentialAction.Cascade);
                 });
@@ -364,12 +364,12 @@ namespace ElectroHub.Migrations
 
             migrationBuilder.CreateIndex(
                 name: "IX_Proveedores_EstadoProveedorId",
-                table: "Proveedores",
+                table: "Categories",
                 column: "EstadoProveedorId");
 
             migrationBuilder.CreateIndex(
                 name: "IX_Proveedores_TipoProveedorId",
-                table: "Proveedores",
+                table: "Categories",
                 column: "TipoProveedorId");
         }
 
@@ -410,7 +410,7 @@ namespace ElectroHub.Migrations
                 name: "EstadosProductos");
 
             migrationBuilder.DropTable(
-                name: "Proveedores");
+                name: "Categories");
 
             migrationBuilder.DropTable(
                 name: "EstadosProveedores");

@@ -1,0 +1,35 @@
+﻿
+<div class="modal-overlay @(Mostrar ? "show" : "")" @onclick="Cerrar"></div>
+    <div class="modal-container @(Mostrar ? "show":"")" >
+        <div class="modal-header">
+            <img src="/DetalleIcon.svg" alt="" />
+            <h4>@Titulo</h4>
+            <img class="cerrar-icon"
+                 @onclick="Cerrar"
+                 @onclick:stopPropagation="true"
+                 src="/Cerrar.svg"
+                 alt="" />
+        </div>
+
+        <div class="modal-body" @onclick:stopPropagation="true">
+            @ChildContent
+        </div>
+    </div>
+
+
+
+@code {
+    [Parameter] public string Titulo { get; set; } = string.Empty;
+    
+    [Parameter] public bool Mostrar { get; set; }
+    
+    [Parameter] public EventCallback<bool> MostrarChanged { get; set; }
+    
+    [Parameter] public RenderFragment? ChildContent { get; set; }
+
+    public async Task Cerrar()
+    {
+        Mostrar = false;
+        await MostrarChanged.InvokeAsync(false);
+    }
+}

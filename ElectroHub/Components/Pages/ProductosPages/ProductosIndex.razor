@@ -1,8 +1,14 @@
 ﻿@page "/Productos/Index"
 @rendermode InteractiveServer
+@inject CategoriasService categoriasService
+@inject ProveedoresService proveedoresService
+@inject EstadosProductosService estadosProductosService
+@inject ProductosService productosService
+
 <PageTitle>Productos</PageTitle>
 
-<div class="container" @onclick="() => showModal = false">
+
+<div class="container">
     <nav>
         <span>Productos</span>
         <div class="modal-add-mobile" @onclick:stopPropagation="true">
@@ -19,20 +25,26 @@
 
     <section class="inputs-container">
         <div class="input-container">
-            <input type="text" placeholder="Buscar Producto..." />
+            <input type="text" placeholder="Buscar Producto..." @oninput="Buscar"/>
         </div>
         <div class="select-container">
-            <select>
+            <select class="form-select" @bind="Filtro">
                 <option value="">Seleccione Filtrar Por</option>
-                <option value="Categoría">Nombre</option>
-                <option value="Categoría">Categoría</option>
+                <option value="CodigoProducto">Código Producto</option>
+                <option value="Nombre">Nombre</option>
+                <option value="Categoria">Categoría</option>
                 <option value="Proveedor">Proveedor</option>
-                <option value="Precio">Precio</option>
+                <option value="PrecioVenta">Precio Venta</option>
+                <option value="PrecioCompra">Precio Compra</option>
+                <option value="CantidadInventario">Cantidad Inventario</option>
+                <option value="Estado">Estado</option>
+                <option value="StockMinimo">Stock Minimo</option>
+                <option value="FechaRegistro">Fecha Registro</option>
             </select>
         </div>
-        <div class="modal-add" @onclick:stopPropagation="true">
+        <div class="modal-add" >
             <svg @onclick="alternateModal" xmlns="http://www.w3.org/2000/svg" height="48px" viewBox="0 -960 960 960" width="48px" fill="#FFFFFF"><path d="M450-120v-330H120v-60h330v-330h60v330h330v60H510v330h-60Z" /></svg>
-                <div class="modal-add-options @(showModal ? "show":"")" @onclick:stopPropagation="true">
+                <div class="modal-add-options @(showModal ? "show":"")">
                     <ul>
                         <li @onclick="()=> showModalRegister = true">Registra Productos</li>
                         <li>Administrar Categorías</li>
@@ -54,161 +66,369 @@
                 </tr>
             </thead>
             <tbody>
-                <tr>
-                    <td>TV</td>
-                    <td>10</td>
-                    <td>Samsung</td>
-                    <td>Sala</td>
-                    <td>
-                        <button>Ver Detalles</button>
-                    </td>
-                </tr>
-                <tr>
-                    <td>TV</td>
-                    <td>10</td>
-                    <td>Samsung</td>
-                    <td>Sala</td>
-                    <td>
-                        <button>Ver Detalles</button>
-                    </td>
-                </tr>
-                <tr>
-                    <td>TV</td>
-                    <td>10</td>
-                    <td>Samsung</td>
-                    <td>Sala</td>
-                    <td>
-                        <button>Ver Detalles</button>
-                    </td>
-                </tr>
-                <tr>
-                    <td>TV</td>
-                    <td>10</td>
-                    <td>Samsung</td>
-                    <td>Sala</td>
-                    <td>
-                        <button>Ver Detalles</button>
-                    </td>
-                </tr>
-                <tr>
-                    <td>TV</td>
-                    <td>10</td>
-                    <td>Samsung</td>
-                    <td>Sala</td>
-                    <td>
-                        <button>Ver Detalles</button>
-                    </td>
-                </tr>
-                <tr>
-                    <td>TV</td>
-                    <td>10</td>
-                    <td>Samsung</td>
-                    <td>Sala</td>
-                    <td>
-                        <button>Ver Detalles</button>
-                    </td>
-                </tr>
+                @foreach(var p in ListaProductos)
+                {
+                    <tr>
+                        <td>@p.Nombre</td>
+                        <td>@p.StockMinimo</td>
+                        <td>@p.Proveedores?.Nombre</td>
+                        <td>@p.Categorias?.Nombre</td>
+                        <td>
+                            <button @onclick="()=> GetProducto(p)">Ver Detalles</button>
+                        </td>
+                    </tr>
+                }
             </tbody>
         </table>
     </div>
 
 
-        <RegistroComponente @bind-Mostrar="showModalRegister" Titulo="Registro Productos"> 
-            <EditForm Model="Productos" OnValidSubmit="Guardar">
-                <DataAnnotationsValidator/>
+  <RegistroComponente @bind-Mostrar="showModalRegister" Titulo="Registro Productos">
+        @* Agregamos OnInvalidSubmit para ver errores si los hay *@
+        <EditForm Model="Productos" OnValidSubmit="Guardar">
+            <DataAnnotationsValidator /> 
             <section class="edit-form-container">
                 <div class="scroll-inputs">
+                    @* CODIGO *@
                     <div class="input-container-item">
                         <label>Código:</label>
-                        <input type="text" @bind="Productos.CodigoProducto" />
-
+                        <input type="number" @bind="Productos.CodigoProducto" class="form-control" />
                     </div>
                     <ValidationMessage For="() => Productos.CodigoProducto" />
+
+                    @* NOMBRE *@
                     <div class="input-container-item">
                         <label>Nombre:</label>
-                        <input type="text" @bind="Productos.Nombre" />
+                        <input type="text" @bind="Productos.Nombre" class="form-control" />
                     </div>
                     <ValidationMessage For="() => Productos.Nombre" />
+
+                    @* DESCRIPCION *@
                     <div class="input-container-item">
                         <label>Descripción:</label>
-                        <input type="text" @bind="Productos.Descripcion" />
-                       
+                       <input type="text" @bind="Productos.Descripcion" class="form-control" />
                     </div>
                     <ValidationMessage For="() => Productos.Descripcion" />
+
+                    @* CATEGORIA (Corregido: Sin ValueExpression) *@
                     <div class="input-container-item">
                         <label>Categoría:</label>
-                        <select @bind="Productos.CategoriaId">
-                            <option value="">Seleccione una Categoría</option>
-                            <option value="Sala">Sala</option>
+                        <select @bind="Productos.CategoriaId" class="form-control">
+                            <option value="0">Seleccione una Categoría</option>
+                            @foreach (var c in ListaCategorias)
+                            {
+                                <option value="@c.CategoriaId">@c.Nombre</option>
+                            }
                         </select>
-                        
                     </div>
                     <ValidationMessage For="() => Productos.CategoriaId" />
+
+                    @* PRECIO COMPRA *@
                     <div class="input-container-item">
                         <label>Precio Compra:</label>
-                        <input type="number" @bind="Productos.PrecioCompra" />
-                        
+                        <input type="number" @bind="Productos.PrecioCompra" class="form-control" />
                     </div>
                     <ValidationMessage For="() => Productos.PrecioCompra" />
+
+                    @* PRECIO VENTA *@
                     <div class="input-container-item">
                         <label>Precio Venta:</label>
-                        <input type="number" @bind="Productos.PrecioVenta" />
-                        
+                        <input type="number" @bind="Productos.PrecioVenta" class="form-control" />
                     </div>
                     <ValidationMessage For="() => Productos.PrecioVenta" />
+
+                    @* CANTIDAD *@
                     <div class="input-container-item">
                         <label>Cantidad:</label>
-                        <input type="number" @bind="Productos.CantidadInventario" />
-                        
+                        <input type="number" @bind="Productos.CantidadInventario" class="form-control" />
                     </div>
                     <ValidationMessage For="() => Productos.CantidadInventario" />
+
+                    @* STOCK MINIMO *@
                     <div class="input-container-item">
                         <label>Stock Mínimo:</label>
-                        <input type="number" @bind="Productos.StockMinimo" />
-                        
+                        <input type="number" @bind="Productos.StockMinimo" class="form-control" />
                     </div>
                     <ValidationMessage For="() => Productos.StockMinimo" />
+
                     <div class="input-container-item">
                         <label>Proveedor:</label>
-                        <select @bind="Productos.ProveedorId">
-                            <option value="">Seleccione un Proveedor</option>
-                            <option value="CocaCola">Coca Cola</option>
+                        <select @bind="Productos.ProveedorId" class="form-control">
+                            <option value="0">Seleccione un Proveedor</option>
+                            @foreach (var p in ListaProveedore)
+                            {
+                                <option value="@p.ProveedorId">@p.Nombre</option>
+                            }
                         </select>
-                        
                     </div>
                     <ValidationMessage For="() => Productos.ProveedorId" />
+
+                    @* ESTADO (Corregido: Sin ValueExpression) *@
                     <div class="input-container-item">
                         <label>Estado:</label>
-                        <select @bind="Productos.EstadoProductoId">
-                            <option value="">Seleccione un Estado</option>
-                            <option value="Activo">Activo</option>
+                        <select @bind="Productos.EstadoProductoId" class="form-control">
+                            <option value="0">Seleccione un Estado</option>
+                            @foreach (var e in ListaEstadosProducto)
+                            {
+                                <option value="@e.EstadoProductoId">@e.Nombre</option>
+                            }
                         </select>
-                        
                     </div>
                     <ValidationMessage For="() => Productos.EstadoProductoId" />
+
+                    @* FECHA *@
                     <div class="input-container-item">
                         <label>Fecha:</label>
-                        <input type="date" @bind="Productos.FechaRegistro" />
-                        
+                        <input type="date" @bind="Productos.FechaRegistro" class="form-control" />
                     </div>
                     <ValidationMessage For="() => Productos.FechaRegistro" />
+
                 </div>
-                <button>Guardar</button>
-                
+                <button type="submit">Guardar</button>
             </section>
-            
-            </EditForm>
-        </RegistroComponente>
-    
+        </EditForm>
+    </RegistroComponente>
+
+    <DetalleComponente @bind-Mostrar="showModalDetails" Titulo="Detalle Productos">
+        <EditForm Model="productoSeleccionado" OnValidSubmit="Modificar">
+            <DataAnnotationsValidator />
+            <section class="edit-form-container">
+                <div class="scroll-inputs">
+                    @* CODIGO *@
+                    <div class="input-container-item">
+                        <label>Código:</label>
+                        <input type="number" @bind="productoSeleccionado.CodigoProducto" class="form-control" />
+                    </div>
+                    <ValidationMessage For="() => productoSeleccionado.CodigoProducto" />
+
+                    @* NOMBRE *@
+                    <div class="input-container-item">
+                        <label>Nombre:</label>
+                        <input type="text" @bind="productoSeleccionado.Nombre" class="form-control" />
+                    </div>
+                    <ValidationMessage For="() => productoSeleccionado.Nombre" />
+
+                    @* DESCRIPCION *@
+                    <div class="input-container-item">
+                        <label>Descripción:</label>
+                        <input type="text" @bind="productoSeleccionado.Descripcion" class="form-control" />
+                    </div>
+                    <ValidationMessage For="() => productoSeleccionado.Descripcion" />
+
+                    @* CATEGORIA (Corregido: Sin ValueExpression) *@
+                    <div class="input-container-item">
+                        <label>Categoría:</label>
+                        <select @bind="productoSeleccionado.CategoriaId" class="form-control">
+                            <option value="0">Seleccione una Categoría</option>
+                            @foreach (var c in ListaCategorias)
+                            {
+                                <option value="@c.CategoriaId">@c.Nombre</option>
+                            }
+                        </select>
+                    </div>
+                    <ValidationMessage For="() => productoSeleccionado.CategoriaId" />
+
+                    @* PRECIO COMPRA *@
+                    <div class="input-container-item">
+                        <label>Precio Compra:</label>
+                        <input type="number" @bind="productoSeleccionado.PrecioCompra" class="form-control" />
+                    </div>
+                    <ValidationMessage For="() => productoSeleccionado.PrecioCompra" />
+
+                    @* PRECIO VENTA *@
+                    <div class="input-container-item">
+                        <label>Precio Venta:</label>
+                        <input type="number" @bind="productoSeleccionado.PrecioVenta" class="form-control" />
+                    </div>
+                    <ValidationMessage For="() => productoSeleccionado.PrecioVenta" />
+
+                    @* CANTIDAD *@
+                    <div class="input-container-item">
+                        <label>Cantidad:</label>
+                        <input type="number" @bind="productoSeleccionado.CantidadInventario" class="form-control" />
+                    </div>
+                    <ValidationMessage For="() => productoSeleccionado.CantidadInventario" />
+
+                    @* STOCK MINIMO *@
+                    <div class="input-container-item">
+                        <label>Stock Mínimo:</label>
+                        <input type="number" @bind="productoSeleccionado.StockMinimo" class="form-control" />
+                    </div>
+                    <ValidationMessage For="() => productoSeleccionado.StockMinimo" />
+
+                    <div class="input-container-item">
+                        <label>Proveedor:</label>
+                        <select @bind="productoSeleccionado.ProveedorId" class="form-control">
+                            <option value="0">Seleccione un Proveedor</option>
+                            @foreach (var p in ListaProveedore)
+                            {
+                                <option value="@p.ProveedorId">@p.Nombre</option>
+                            }
+                        </select>
+                    </div>
+                    <ValidationMessage For="() => productoSeleccionado.ProveedorId" />
+
+                    @* ESTADO (Corregido: Sin ValueExpression) *@
+                    <div class="input-container-item">
+                        <label>Estado:</label>
+                        <select @bind="productoSeleccionado.EstadoProductoId" class="form-control">
+                            <option value="0">Seleccione un Estado</option>
+                            @foreach (var e in ListaEstadosProducto)
+                            {
+                                <option value="@e.EstadoProductoId">@e.Nombre</option>
+                            }
+                        </select>
+                    </div>
+                    <ValidationMessage For="() => productoSeleccionado.EstadoProductoId" />
+
+                    @* FECHA *@
+                    <div class="input-container-item">
+                        <label>Fecha:</label>
+                        <input type="date" @bind="productoSeleccionado.FechaRegistro" class="form-control" />
+                    </div>
+                    <ValidationMessage For="() => productoSeleccionado.FechaRegistro" />
+
+                </div>
+                <div class="button-container">
+                    <button type="submit">Guardar</button>
+                    <button type="button" @onclick="Eliminar">Eliminar</button>
+                </div>
+            </section>
+        </EditForm>
+    </DetalleComponente>
 </div>
+    
 @code {
     private bool showModal = false;
-    private bool showModalRegister = true;
+    private bool showModalRegister = false;
+    private bool showModalDetails = false;
+    private string Filtro { get; set; } = string.Empty;
+    private string ValorFiltro { get; set; } = string.Empty;
+    private void alternateModal() { showModal = !showModal; }
 
-    public Productos Productos = new Productos();
+    // Inicializamos con fecha actual para evitar errores de SQL
+    public Productos Productos { get; set; } = new Productos { FechaRegistro = DateTime.Now };
 
-    private void alternateModal(){ showModal = !showModal; }
+    public Productos productoSeleccionado { get; set; } = new Productos();
 
-    private void Guardar(){}
+    public List<Categorias> ListaCategorias = new List<Categorias>();
+    public List<Proveedores> ListaProveedore = new List<Proveedores>();
+    public List<Productos> ListaProductos = new List<Productos>();
+    public List<EstadosProductos> ListaEstadosProducto = new List<EstadosProductos>();
 
+    protected override async Task OnInitializedAsync()
+    {
+        ListaCategorias = await categoriasService.Listar(c => c.Eliminado == false);
+        ListaProveedore = await proveedoresService.Listar(p => p.Eliminado == false);
+        ListaEstadosProducto = await estadosProductosService.Listar(e => e.EstadoProductoId > 0);
+        ListaProductos = await productosService.Listar(p => p.Eliminado == false);
+    }
+
+    // Simplificamos la firma del método
+    private async Task Guardar()
+    {
+        var creado = await productosService.Guardar(Productos);
+        if (creado)
+        {
+            showModalRegister = false;
+            ListaProductos = await productosService.Listar(p => p.Eliminado == false);
+            Productos = new Productos { FechaRegistro = DateTime.Now };
+        }
+    }
+
+    private async Task Modificar()
+    {
+        var creado = await productosService.Guardar(productoSeleccionado);
+        if (creado)
+        {
+            showModalDetails = false;
+            ListaProductos = await productosService.Listar(p => p.Eliminado == false);
+        }
+    }
+
+    private async Task Eliminar()
+    {
+        var eliminado = await productosService.Eliminar(productoSeleccionado.ProductoId);
+        if (eliminado)
+        {
+            showModalDetails = false;
+            ListaProductos = await productosService.Listar(p => p.Eliminado == false);
+        }
+    }
+
+    private void GetProducto(Productos p)
+    {
+        productoSeleccionado = p;
+        showModalDetails = true;
+    }
+
+
+    public async Task Buscar(ChangeEventArgs e)
+    {
+        var valor = e.Value?.ToString();
+        if (!string.IsNullOrWhiteSpace(valor))
+        {
+
+            if (Filtro == "Nombre")
+                ListaProductos = await productosService.Listar(p => p.Nombre.ToLower().Contains(valor.ToLower()));
+
+            else if (Filtro == "Categoria")
+                ListaProductos = await productosService.Listar(p => p.Categorias.Nombre.ToLower().Contains(valor.ToLower()) && p.Eliminado == false);
+
+            else if (Filtro == "Proveedor")
+                ListaProductos = await productosService.Listar(p => p.Proveedores.Nombre.ToLower().Contains(valor.ToLower()) && p.Eliminado == false);
+
+            else if (Filtro == "PrecioVenta"){
+                if(decimal.TryParse(valor, out decimal PriceVenta)){
+                    ListaProductos = await productosService.Listar(p => p.PrecioVenta == PriceVenta && p.Eliminado == false );
+                }
+                else    
+                    ListaProductos = await productosService.Listar(p => p.Eliminado == false);
+            }
+
+            else if (Filtro == "PrecioCompra"){
+                if(decimal.TryParse(valor, out decimal PriceCompra)){
+                    ListaProductos = await productosService.Listar(p => p.PrecioCompra == PriceCompra && p.Eliminado == false );
+                }
+                else    
+                    ListaProductos = await productosService.Listar(p => p.Eliminado == false);
+            }
+
+            else if (Filtro == "CantidadInventario"){
+                if(int.TryParse(valor, out int CantidadInventario)){
+                    ListaProductos = await productosService.Listar(p => p.CantidadInventario == CantidadInventario && p.Eliminado == false );
+                }
+                else    
+                    ListaProductos = await productosService.Listar(p => p.Eliminado == false);
+            }
+
+            else if (Filtro == "CodigoProducto"){
+                if(int.TryParse(valor, out int CodigoProducto)){
+                    ListaProductos = await productosService.Listar(p => p.CodigoProducto == CodigoProducto && p.Eliminado == false );
+                }
+                else    
+                    ListaProductos = await productosService.Listar(p => p.Eliminado == false);
+            }
+
+            else if (Filtro == "StockMinimo"){
+                if(int.TryParse(valor, out int StockMinimo)){
+                    ListaProductos = await productosService.Listar(p => p.StockMinimo == StockMinimo && p.Eliminado == false );
+                }
+                else    
+                    ListaProductos = await productosService.Listar(p => p.Eliminado == false);
+            }
+            else if (Filtro == "Estado")
+                ListaProductos = await productosService.Listar(p => p.EstadosProductos.Nombre.ToLower().Contains(valor.ToLower()) && p.Eliminado == false);
+            else if (Filtro == "FechaRegistro")
+                if (DateTime.TryParse(valor, out var Fecha))
+                    ListaProductos = await productosService.Listar(p => p.FechaRegistro.Date == Fecha && p.Eliminado == false);
+                else
+                    ListaProductos = await productosService.Listar(p => p.Eliminado == false);
+        }
+        else
+        {
+            ListaProductos = await productosService.Listar(p => p.Eliminado == false);
+        }
+    }
 }
+

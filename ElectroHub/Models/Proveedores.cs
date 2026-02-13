@@ -23,7 +23,7 @@ public class Proveedores
     public TiposProveedores? TiposProveedores { get; set; }
 
     [Required(ErrorMessage = "Debe de llenar este campo.")]
-    public int TipoProveedorId { get; set; }
+    public int? TipoProveedorId { get; set; }
 
     [Required(ErrorMessage = "Campo es obligatorio.")]
     [StringLength(100, MinimumLength = 10, ErrorMessage = "La Dirección debe tener entre 10 y 100 caracteres")]
@@ -32,6 +32,6 @@ public class Proveedores
     [ForeignKey(nameof(EstadoProveedorId))]
     public EstadosProveedores? EstadosProveedores { get; set; }
 
-    [Required(ErrorMessage = "Debe de llenar este campo.")]
+    [Range(1, int.MaxValue, ErrorMessage = "Debe seleccionar un Estado.")]
     public int EstadoProveedorId { get; set; }
 }
