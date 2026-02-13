@@ -160,6 +160,20 @@ button {
     background-color: #7B2E2E;
 }
 
+.pagination{
+    position: absolute;
+    bottom: 5%;
+    left: 0;
+    right:0;
+    margin:auto;
+    display: flex;
+    justify-content:center;
+    gap:100px;
+}
+.pagination > img{
+    width:20px;
+    cursor:pointer;
+}
 
 
 @media (max-width: 900px) {
