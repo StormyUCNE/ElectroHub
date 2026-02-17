@@ -1,0 +1,96 @@
+﻿.titulo {
+    font-size: 3vw;
+    color: #5683D7;
+}
+
+.subtitulo {
+    font-size: 1.6vw;
+    color: #FFFFFF;
+}
+
+.input-container {
+    width: 80%;
+    border: 2px pink solid;
+    border-radius: 30px;
+    padding: 1px 10px 1px 10px;
+}
+
+    .input-container input, select{
+        border: none;
+        color: white;
+        background-color: transparent;
+    }
+    /*.input-container {
+    position: relative;
+    width: 80%;
+    border-radius: 28px;
+    background: linear-gradient(to right, #AA56D7, #D7AA56);
+    padding: 3px;*/ /* Grosor del borde */
+    /*}
+
+    .input-container input, select {
+        width: 100%;
+        padding: 5px;
+        border: none;
+        border-radius: 25px;
+        color: white;
+        background: rgba(0, 0, 0, 0.6);*/ /* ¡Semitransparente! */
+    /*backdrop-filter: blur(1px);*/ /* Efecto de vidrio */
+    /*}*/
+    /* Para efecto hover */
+    /*.input-container:hover {
+        background: linear-gradient(to right, #D7AA56, #AA56D7);
+    }*/
+    .boton {
+        color: white;
+        border-radius: 10px;
+        border: none;
+        padding: 5px 0px 5px 0px;
+    }
+
+.boton-aplicar {
+    width: 100%;
+    background-color: #5683D7;
+}
+
+.boton-restablecer {
+    width: 100%;
+    padding: 5px 10px 5px 10px;
+    background-color: #D7AA56;
+}
+
+.boton-registrar {
+    padding: 5px 10px 5px 10px;
+    background-color: #83D756;
+}
+
+/* Tabla */
+
+.table-responsive {
+    margin-top: 20px;
+    overflow-x: auto;
+    border: 4px solid #AA56D7;
+    border-radius: 20px;
+}
+
+table {
+    width: 100%;
+    color: white;
+}
+
+thead, th {
+    border: 1px black solid;
+    padding: 10px;
+    text-align: center;
+    background-color: rgb(86, 131, 215, 0.4);
+}
+
+tbody, tr, td {
+    border: 1px black solid;
+    padding: 10px;
+    text-align: center;
+}
+
+.boton-detalles {
+    background-color: #AA56D7;
+}

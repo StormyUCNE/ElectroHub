@@ -1,0 +1,156 @@
+﻿@page "/Ventas/Index";
+
+<PageTitle>VentasIndex</PageTitle>
+
+<div class="container">
+    <span class="titulo">Ventas</span>
+
+    @* Fecha *@
+    <div class="row align-items-end pb-3">
+        <div class="col-2">
+            <label class="subtitulo">Desde:</label>
+        </div>
+        <div class="col-4">
+            <div class="input-container">
+                <input class="form-control" type="date" />
+            </div>
+        </div>
+        <div class="col-2">
+            <label class="subtitulo">Hasta:</label>
+        </div>
+        <div class="col-4">
+            <div class="input-container">
+                <input class="form-control" type="date" />
+            </div>
+        </div>
+    </div>
+
+    @* Hora *@
+    <div class="row align-items-end pb-3">
+        <div class="col-2">
+            <label class="subtitulo">Desde:</label>
+        </div>
+        <div class="col-4">
+            <div class="input-container">
+                <input class="form-control" type="time" />
+            </div>
+        </div>
+        <div class="col-2">
+            <label class="subtitulo">Hasta:</label>
+        </div>
+        <div class="col-4">
+            <div class="input-container">
+                <input class="form-control" type="time" />
+            </div>
+        </div>
+    </div>
+
+    @* Vendedor y metodo de pago *@
+    <div class="row align-items-end pb-3">
+        <div class="col-2">
+            <label class="subtitulo">Vendedor:</label>
+        </div>
+        <div class="col-4">
+            <div class="input-container">
+                <select class="form-select">
+                    <option>Juan Luis Guerra</option>
+                    <option>Luis Fonsi</option>
+                    <option>Laufei</option>
+                </select>
+            </div>
+        </div>
+        <div class="col-2">
+            <label class="subtitulo">M&eacute;todo de pago:</label>
+        </div>
+        <div class="col-4">
+            <div class="input-container">
+                <select class="form-select">
+                    <option>Efectivo</option>
+                    <option>Tarjeta de d&eacute;bito</option>
+                    <option>Tarjeta de cr&eacute;dito</option>
+                    <option>Cheque</option>
+                </select>
+            </div>
+        </div>
+    </div>
+
+    @* Monto *@
+    <div class="row align-items-end pb-2">
+        <div class="col-2">
+            <label class="subtitulo">Monto:</label>
+        </div>
+        <div class="col-4">
+            <div class="input-container">
+                <input class="form-control"/>
+            </div>
+        </div>
+    </div>
+
+    @* Registros mostrados y botones *@
+    <div class="row align-items-end">
+        <div class="col-8">
+            <label class="subtitulo">Mostrando 3 de 3 ventas</label>
+        </div>
+        <div class="col-2">
+            <button class="boton boton-aplicar">Aplicar</button>
+        </div>
+        <div class="col-2">
+            <button class="boton boton-restablecer">Restablecer</button>
+        </div>
+    </div>
+
+    @* Tabla de ventas *@
+    <div class="table-responsive">
+        <table>
+            <thead>
+                <tr>
+                    <th>C&oacute;digo</th>
+                    <th>Fecha</th>
+                    <th>Total venta</th>
+                    <th>M&eacute;todo de pago</th>
+                    <th>Vendedor</th>
+                    <th>Acciones</th>
+                </tr>
+            </thead>
+            <tbody>
+                <tr>
+                    <td>00001</td>
+                    <td>2026-01-30 08:00:00 AM</td>
+                    <td>$1,483.00</td>
+                    <td>Efectivo</td>
+                    <td>Luis Fonsi</td>
+                    <td>
+                        <button class="boton boton-detalles">Detalles</button>
+                    </td>
+                </tr>
+                <tr>
+                    <td>00001</td>
+                    <td>2026-01-30 08:00:00 AM</td>
+                    <td>$1,483.00</td>
+                    <td>Efectivo</td>
+                    <td>Luis Fonsi</td>
+                    <td>
+                        <button class="boton boton-detalles">Detalles</button>
+                    </td>
+                </tr>
+                <tr>
+                    <td>00001</td>
+                    <td>2026-01-30 08:00:00 AM</td>
+                    <td>$1,483.00</td>
+                    <td>Efectivo</td>
+                    <td>Luis Fonsi</td>
+                    <td>
+                        <button class="boton boton-detalles">Detalles</button>
+                    </td>
+                </tr>
+            </tbody>
+        </table>
+    </div>
+    <div class="text-center pt-3">
+        <button class="boton boton-registrar">Registrar venta</button>
+    </div>
+</div>
+
+@code {
+
+}
