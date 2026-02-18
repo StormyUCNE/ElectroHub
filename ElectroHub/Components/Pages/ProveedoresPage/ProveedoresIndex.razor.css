@@ -1,3 +1,45 @@
+.gradient-border-transparent {
+    --border-width: 3px;
+    --radius: 15px;
+    position: relative;
+    color: white; /* O el color de tu texto */
+    border-radius: var(--radius);
+    background: transparent; /* Aquí está tu transparencia */
+    /* Para que el contenido no toque los bordes */
+    padding: var(--border-width);
+}
+
+    .gradient-border-transparent::before {
+        content: "";
+        position: absolute;
+        inset: 0;
+        border-radius: var(--radius);
+        padding: var(--border-width); /* Grosor del borde */
+        /* El gradiente que quieres */
+        background: linear-gradient(to right, #AA56D7, #D7AA56);
+        /* La magia del recorte (Masking) */
+        -webkit-mask: linear-gradient(#fff 0 0) content-box, linear-gradient(#fff 0 0);
+        -webkit-mask-composite: xor;
+        mask-composite: exclude;
+        pointer-events: none;
+    }
+
+    .gradient-border-transparent table {
+        width: 100%;
+        border-collapse: collapse;
+        background: transparent; /* Tabla transparente */
+    }
+
+
+
+
+
+
+
+
+
+
+
 .container{
     height:100vh;
     backdrop-filter: blur(10px);
@@ -31,14 +73,14 @@ hr{
 }
 .modal-add-options {
     position: absolute;
-    border: 2px pink solid;
+    border: 2px #AA56D7 solid;
     border-radius: 10px;
     right: 0;
     width: 300px;
     transform: translateY(-10px);
     opacity: 0%;
     transition: all 0.2s ease-in-out;
-    z-index:-1;
+    z-index: -1;
 }
 .modal-add-options.show {
     background-color: rgb(0, 0, 0, 0.8);
@@ -60,12 +102,70 @@ ul, li {
 li:hover{
     background-color: gray;
 }
+
+
+
+
+
+
 .select-container, .input-container {
     width: 40%;
-    border: 2px pink solid;
+    position: relative;
     border-radius: 30px;
-    padding: 1px 10px 1px 10px;
+    padding: 2px; /* Espacio para que se vea el borde */
+    background: transparent;
+    display: inline-block;
 }
+
+    /* El pseudo-elemento que crea el borde gradiente */
+    .select-container::before, .input-container::before {
+        content: "";
+        position: absolute;
+        inset: 0;
+        border-radius: 30px;
+        padding: 2px; /* Grosor del borde gradiente */
+        /* Tu gradiente lineal */
+        background: linear-gradient(to right, #AA56D7, #D7AA56);
+        /* El recorte mágico para que el centro sea transparente */
+        -webkit-mask: linear-gradient(#fff 0 0) content-box, linear-gradient(#fff 0 0);
+        -webkit-mask-composite: xor;
+        mask-composite: exclude;
+        pointer-events: none; /* Permite hacer clic a través del borde hacia el input */
+    }
+
+    /* Estilo para el input/select real dentro del contenedor */
+    .select-container select, .input-container input {
+        width: 100%;
+        background: rgba(255, 255, 255, 0.05); /* Fondo opaco sutil como la cabecera */
+        border: none;
+        outline: none;
+        border-radius: 30px;
+        padding: 8px 15px;
+        color: white;
+        backdrop-filter: blur(4px); /* Efecto cristal opcional */
+    }
+
+    /* Quitar la flecha por defecto del select si quieres algo más limpio */
+    .select-container select {
+        appearance: none;
+        -webkit-appearance: none;
+        cursor: pointer;
+    }
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
 input, select {
     border:none;
     width:100%;
@@ -81,7 +181,7 @@ option{
 .table-responsive {
     margin-top: 20px;
     overflow-x: auto;
-    border: 4px solid #AA56D7;
+    border: 0px solid #AA56D7;
     border-radius: 20px;
 }
 table {
@@ -92,7 +192,7 @@ thead, th {
     border: 1px black solid;
     padding: 10px;
     text-align: center;
-    background-color: rgb(86, 131, 215, 0.4);
+    background-color: rgba(255, 255, 255, 0.1);
 }
 tbody, tr, td {
     border: 1px black solid;

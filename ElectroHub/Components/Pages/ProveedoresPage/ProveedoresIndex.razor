@@ -9,15 +9,8 @@
     <nav>
         <span>Proveedores</span>
         <div class="modal-add-mobile" @onclick:stopPropagation="true">
-            <svg @onclick="alternateModal" xmlns="http://www.w3.org/2000/svg"
-                 height="48px" viewBox="0 -960 960 960" width="48px" fill="#FFFFFF">
-                <path d="M450-120v-330H120v-60h330v-330h60v330h330v60H510v330h-60Z" />
-            </svg>
             <div class="modal-add-options @(showModal ? "show" : "")"
                  @onclick:stopPropagation="true">
-                <ul>
-                    <li @onclick="() => showModalRegister = true">Registrar Proveedor</li>
-                </ul>
             </div>
         </div>
     </nav>
@@ -42,7 +35,7 @@
 
         <div class="modal-add">
             <svg @onclick="alternateModal" xmlns="http://www.w3.org/2000/svg"
-                 height="48px" viewBox="0 -960 960 960" width="48px" fill="#FFFFFF">
+                 height="48px" viewBox="0 -960 960 960" width="48px" fill="#AA56D7">
                 <path d="M450-120v-330H120v-60h330v-330h60v330h330v60H510v330h-60Z" />
             </svg>
             <div class="modal-add-options @(showModal ? "show" : "")">
@@ -53,7 +46,7 @@
         </div>
     </section>
 
-    <div class="table-responsive">
+    <div class="table-responsive gradient-border-transparent">
         <table>
             <thead>
                 <tr>
