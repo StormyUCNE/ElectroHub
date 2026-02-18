@@ -1,50 +1,84 @@
 ﻿using ElectroHub.Data;
-using ElectroHub.Models;
 using Microsoft.EntityFrameworkCore;
+using ElectroHub.Models;
 using System.Linq.Expressions;
+
 namespace ElectroHub.Services;
-public class ProveedoresService(IDbContextFactory<ApplicationDbContext> DbFactory)
+
+public class ProveedoresService(IDbContextFactory<ApplicationDbContext> DbContextFactory)
 {
-    public async Task<bool> Guardar(Proveedores Proveedores)
+
+    public async Task<bool> Existe(int Id)
     {
-        if (await Existe(Proveedores.ProveedorId))
-            return false;
-        if (!await Existe(Proveedores.ProveedorId))
-            return await Insertar(Proveedores);
+
+        await using var context = await DbContextFactory.CreateDbContextAsync();
+        return await context.Proveedores.AnyAsync(Proveedor => Proveedor.ProveedorId == Id);
+    }
+
+    public async Task<bool> Insertar(Proveedores Proveedor)
+    {
+        await using var context = await DbContextFactory.CreateDbContextAsync();
+
+        context.Proveedores.Add(Proveedor);
+
+        return await context.SaveChangesAsync() > 0;
+    }
+
+
+    public async Task<bool> Modificar(Proveedores Proveedor)
+    {
+        await using var context = await DbContextFactory.CreateDbContextAsync();
+
+        context.Update(Proveedor);
+        return await context.SaveChangesAsync() > 0;
+    }
+
+
+
+    public async Task<bool> Guardar(Proveedores Provedor)
+    {
+        if (!await Existe(Provedor.ProveedorId))
+            return await Insertar(Provedor);
         else
-            return await Modificar(Proveedores);
+            return await Modificar(Provedor);
     }
-    private async Task<bool> Existe(int proveedorId)
+
+
+
+    public async Task<Proveedores?> Buscar(int Id)
     {
-        await using var contexto = await DbFactory.CreateDbContextAsync();
-        return await contexto.Proveedores.AnyAsync(p => p.ProveedorId == proveedorId);
+        await using var context = await DbContextFactory.CreateDbContextAsync();
+
+        return await context.Proveedores.FirstOrDefaultAsync(proveedor => proveedor.ProveedorId == Id);
     }
-    private async Task<bool> Insertar(Proveedores proveedor)
+
+
+    public async Task<bool> Eliminar(int Id)
     {
-        await using var contexto = await DbFactory.CreateDbContextAsync();
-        contexto.Proveedores.Add(proveedor);
-        return await contexto.SaveChangesAsync() > 0;
+        await using var context = await DbContextFactory.CreateDbContextAsync();
+
+        var filasAfectadas = await context.Proveedores!.Where(proveedor => proveedor.ProveedorId == Id).ExecuteUpdateAsync(proveedor => proveedor.SetProperty(p => p.Eliminado, true));
+
+        return filasAfectadas > 0;
     }
-    private async Task<bool> Modificar(Proveedores proveedor)
-    {
-        await using var contexto = await DbFactory.CreateDbContextAsync();
-        contexto.Update(proveedor);
-        return await contexto.SaveChangesAsync() > 0;
-    }
-    public async Task<Proveedores?> Buscar(int proveedorId)
-    {
-        await using var contexto = await DbFactory.CreateDbContextAsync();
-        return await contexto.Proveedores.FirstOrDefaultAsync(p => p.ProveedorId == proveedorId);
-    }
-    public async Task<bool> Eliminar(int proveedorId)
-    {
-        await using var contexto = await DbFactory.CreateDbContextAsync();
-        contexto.Proveedores?.AsNoTracking().Where(p => p.ProveedorId == proveedorId).ExecuteUpdateAsync(p => p.SetProperty(p => p.Eliminado, true));
-        return await contexto.SaveChangesAsync() > 0;
-    }
+
+
     public async Task<List<Proveedores>> Listar(Expression<Func<Proveedores, bool>> criterio)
     {
-        await using var contexto = await DbFactory.CreateDbContextAsync();
-        return await contexto.Proveedores.Include(e => e.EstadosProveedores).Include(t => t.TiposProveedores).Where(criterio).ToListAsync();
+        await using var context = await DbContextFactory.CreateDbContextAsync();
+
+        return await context.Proveedores.Where(criterio).ToListAsync();
+
     }
+
+
+
+
+
+
+
+
+
+
+
 }
