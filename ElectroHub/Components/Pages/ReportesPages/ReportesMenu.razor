@@ -1,0 +1,183 @@
+﻿@page "/Reportes"
+@using System.Globalization
+
+<div class="dashboard-wrapper">
+    <header class="header">
+        <h1>Reportes de Ventas</h1>
+        <button class="btn-primary"><span>⬇</span> Exportar Reporte</button>
+    </header>
+
+    <div class="filters-container neon-box-style">
+        <div class="filter-group">
+            <label>Rango de Fecha</label>
+            <div class="input-wrapper">
+                <span>📅</span><span>1 Ene - 29 Ene</span><span>×</span>
+            </div>
+        </div>
+        <div class="filter-group" style="margin-left: 2rem;">
+            <label>Categoría</label>
+            <select class="clean-input" @onchange="FiltrarPorCategoria">
+                <option value="Todas">Todas las categorías</option>
+                @foreach (var cat in CategoriasDisponibles)
+                {
+                    <option value="@cat">@cat</option>
+                }
+            </select>
+        </div>
+    </div>
+
+    <div class="main-grid">
+        <section class="neon-card neon-box-style left-column-card">
+            <div class="card-header">
+                <h3>Ventas Recientes</h3>
+                <p>Historial detallado de transacciones</p>
+            </div>
+            <div class="table-container">
+                <table class="custom-table">
+                    <thead>
+                        <tr>
+                            <th>Producto</th>
+                            <th>Categoría</th>
+                            <th>Fecha</th>
+                            <th class="text-right">Ingreso</th>
+                        </tr>
+                    </thead>
+                    <tbody>
+                        @foreach (var venta in VentasPaginadas)
+                        {
+                            <tr>
+                                <td>@venta.Producto</td>
+                                <td>@venta.Categoria</td>
+                                <td>@venta.Fecha.ToString("dd MMM, yyyy")</td>
+                                <td class="text-right money-text">@venta.Ingreso.ToString("C", CultureInfo.GetCultureInfo("en-US"))</td>
+                            </tr>
+                        }
+                    </tbody>
+                </table>
+            </div>
+            <div class="pagination-controls">
+                <span class="page-info">Mostrando @VentasPaginadas.Count de @VentasFiltradas.Count</span>
+                <div style="display:flex; gap:0.5rem;">
+                    <button class="btn-arrow" @onclick="PrevPage" disabled="@(PaginaActual == 1)">‹</button>
+                    <button class="btn-arrow" @onclick="NextPage" disabled="@(PaginaActual == TotalPaginas)">›</button>
+                </div>
+            </div>
+        </section>
+
+        <aside class="sidebar">
+            <div class="stats-grid">
+                <div class="neon-card stat-minimal neon-box-style">
+                    <span class="stat-badge">+12.5%</span>
+                    <div class="stat-icon-bg">$</div>
+                    <div><span class="stat-label">Ingresos</span><h2 class="stat-value">@TotalIngresos.ToString("C0", CultureInfo.GetCultureInfo("en-US"))</h2></div>
+                </div>
+                <div class="neon-card stat-minimal neon-box-style">
+                    <span class="stat-badge">+8.2%</span>
+                    <div class="stat-icon-bg">🛒</div>
+                    <div><span class="stat-label">Ventas</span><h2 class="stat-value">@TotalVentasCount</h2></div>
+                </div>
+            </div>
+
+            <div class="neon-card chart-card neon-box-style">
+                <div class="card-header"><h3>Rendimiento</h3></div>
+                <div class="chart-body-grid">
+                    <div class="y-axis-labels">
+                        <span>$60k</span><span>$45k</span><span>$30k</span><span>$15k</span><span>$0k</span>
+                    </div>
+                    <div class="plot-area">
+                        <div class="grid-lines-container">
+                            <div class="grid-line"></div><div class="grid-line"></div><div class="grid-line"></div><div class="grid-line"></div><div class="grid-line"></div>
+                        </div>
+                        <div class="bars-container">
+                            @foreach (var dato in DatosGrafico)
+                            {
+                                <div class="bar-group">
+                                    <div class="bar-fill @dato.ColorClass" style="height: @((dato.Valor / 60000.0 * 100))%;"></div>
+                                    <span class="bar-txt">@dato.Label</span>
+                                </div>
+                            }
+                        </div>
+                    </div>
+                </div>
+            </div>
+
+            <div class="neon-card neon-box-style push-to-bottom">
+                <div class="card-header" style="margin-bottom:0.5rem;"><h3>Productos Top</h3></div>
+                <ul class="top-list">
+                    @foreach (var prod in ProductosTop)
+                    {
+                        <li class="top-item">
+                            <div class="rank-badge">@prod.Rank</div>
+                            <div style="flex-grow:1; font-size:0.85rem;">@prod.Nombre</div>
+                            <div style="font-weight:bold; font-size:0.85rem;">@prod.Precio.ToString("C0", CultureInfo.GetCultureInfo("en-US"))</div>
+                        </li>
+                    }
+                </ul>
+            </div>
+        </aside>
+    </div>
+</div>
+
+@code {
+    public class Venta { public string Producto { get; set; } public string Categoria { get; set; } public DateTime Fecha { get; set; } public decimal Ingreso; }
+    public class TopProd { public int Rank { get; set; } public string Nombre { get; set; } public decimal Precio; }
+    public class GraficoItem { public string Label { get; set; } public double Valor { get; set; } public string ColorClass { get; set; } }
+
+    private List<Venta> TodasLasVentas = new();
+    private List<Venta> VentasFiltradas = new();
+    private List<TopProd> ProductosTop = new();
+    private List<string> CategoriasDisponibles = new();
+    private List<GraficoItem> DatosGrafico = new();
+
+    private int PaginaActual = 1;
+    private int ElementosPorPagina = 7;
+    private int TotalPaginas => (int)Math.Ceiling((double)VentasFiltradas.Count / ElementosPorPagina);
+    private List<Venta> VentasPaginadas => VentasFiltradas.Skip((PaginaActual - 1) * ElementosPorPagina).Take(ElementosPorPagina).ToList();
+    private decimal TotalIngresos => VentasFiltradas.Sum(v => v.Ingreso);
+    private int TotalVentasCount => VentasFiltradas.Count;
+
+    protected override void OnInitialized()
+    {
+        GenerarDatos();
+        VentasFiltradas = TodasLasVentas.ToList();
+        RecalcularGrafico();
+    }
+
+    private void FiltrarPorCategoria(ChangeEventArgs e)
+    {
+        var seleccion = e.Value?.ToString();
+        if (string.IsNullOrEmpty(seleccion) || seleccion == "Todas") VentasFiltradas = TodasLasVentas.ToList();
+        else VentasFiltradas = TodasLasVentas.Where(v => v.Categoria == seleccion).ToList();
+        PaginaActual = 1;
+        RecalcularGrafico();
+    }
+
+    private void NextPage() { if (PaginaActual < TotalPaginas) PaginaActual++; }
+    private void PrevPage() { if (PaginaActual > 1) PaginaActual--; }
+
+    private void RecalcularGrafico()
+    {
+        DatosGrafico = new List<GraficoItem>
+        {
+            new GraficoItem { Label = "Neveras", Valor = 45000, ColorClass = "bar-blue" },
+            new GraficoItem { Label = "TVs", Valor = 10000, ColorClass = "bar-purple" },
+            new GraficoItem { Label = "Baños", Valor = 8000, ColorClass = "bar-pink" },
+            new GraficoItem { Label = "Cocina", Valor = 28000, ColorClass = "bar-orange" }
+        };
+    }
+
+    private void GenerarDatos()
+    {
+        CategoriasDisponibles = new List<string> { "Neveras", "Televisores", "Baños", "Cocina" };
+        var rnd = new Random();
+        for (int i = 0; i < 30; i++) { TodasLasVentas.Add(new Venta { Producto = "Refrigerador LG French Door", Categoria = "Neveras", Fecha = DateTime.Now.AddDays(-i), Ingreso = 1299.00m }); }
+        ProductosTop = new List<TopProd>
+        {
+            new TopProd { Rank = 1, Nombre = "Ref. Frigidaire", Precio = 2199 },
+            new TopProd { Rank = 2, Nombre = "Ref. LG Door", Precio = 1899 },
+            new TopProd { Rank = 3, Nombre = "Samsung Side", Precio = 1299 },
+            new TopProd { Rank = 4, Nombre = "Lavadora LG", Precio = 1149 },
+            new TopProd { Rank = 5, Nombre = "Samsung Eco", Precio = 949 },
+        };
+    }
+}
