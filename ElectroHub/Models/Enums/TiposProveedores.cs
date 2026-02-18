@@ -1,12 +1,12 @@
-﻿namespace ElectroHub.Models.Enums
+﻿namespace ElectroHub.Models.Enums;
+
+
+public enum TiposProveedores
 {
-    public enum TiposProveedores
-    {
-        ProveedorMayorista,
-        ProveedorMinorista,
-        ProveedorImportador,
-        ProveedorLocal,
-        ProveedorServicios,
-        ProveedorFabricante
-    }
+    ProveedorMayorista,
+    ProveedorMinorista,
+    ProveedorImportador,
+    ProveedorLocal,
+    ProveedorServicios,
+    ProveedorFabricante
 }

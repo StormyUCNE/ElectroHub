@@ -1,0 +1,150 @@
+.container{
+    height:100vh;
+    backdrop-filter: blur(10px);
+}
+nav > span {
+    font-size: 4vw;
+    color: #5683D7;
+}
+hr{
+    margin:0;
+    margin-bottom: 20px;
+    border: 2px white solid;
+}
+.inputs-container{
+    display: flex;
+    justify-content: start;
+    gap: 50px;
+    cursor:pointer;
+}
+.modal-add > svg {
+    border: 2px white solid;
+    border-radius: 100%;
+    transition: all 0.2s ease-in-out;
+}
+.modal-add > svg:hover {
+    border: 2px pink solid;
+    border-radius: 100%;
+}
+.modal-add{
+    position:relative;
+}
+.modal-add-options {
+    position: absolute;
+    border: 2px pink solid;
+    border-radius: 10px;
+    right: 0;
+    width: 300px;
+    transform: translateY(-10px);
+    opacity: 0%;
+    transition: all 0.2s ease-in-out;
+    z-index:-1;
+}
+.modal-add-options.show {
+    background-color: rgb(0, 0, 0, 0.8);
+    backdrop-filter: blur(5px);
+    transform: translateY(0px);
+    opacity: 100%;
+    z-index:1;
+}
+ul, li {
+    display: flex;
+    list-style: none;
+    flex-direction: column;
+    gap: 10px;
+    padding: 10px;
+    margin: 0;
+    border-bottom: 2px black solid;
+    color: white;
+}
+li:hover{
+    background-color: gray;
+}
+.select-container, .input-container {
+    width: 40%;
+    border: 2px pink solid;
+    border-radius: 30px;
+    padding: 1px 10px 1px 10px;
+}
+input, select {
+    border:none;
+    width:100%;
+    background-color: transparent;
+    color: white;
+}
+input:focus, select:focus{
+    outline:none;
+}
+option{
+    color: black;
+}
+.table-responsive {
+    margin-top: 20px;
+    overflow-x: auto;
+    border: 4px solid #AA56D7;
+    border-radius: 20px;
+}
+table {
+    width: 100%;
+    color: white;
+}
+thead, th {
+    border: 1px black solid;
+    padding: 10px;
+    text-align: center;
+    background-color: rgb(86, 131, 215, 0.4);
+}
+tbody, tr, td {
+    border: 1px black solid;
+    padding: 10px;
+    text-align: center;
+}
+button {
+    border-radius: 10px;
+    background-color: #AA56D7;
+    padding: 5px 10px;
+    border: none;
+    color: white;
+}
+.input-container-item{
+    display: flex;
+    justify-content:space-between;
+    gap: 20px;
+}
+.input-container-item > input {
+    border-bottom: solid;
+}
+.scroll-inputs {
+    height: 350px;
+    display: flex;
+    flex-direction:column;
+    padding-top: 30px;
+    gap: 30px;
+    overflow-y: auto;
+}
+.button-container{
+    display:flex;
+    justify-content:center;
+    gap:20px;
+    padding: 10px;
+}
+.button-container button:first-child {
+    background-color: #5683D7;
+}
+.button-container button:last-child {
+    background-color: #7B2E2E;
+}
+.pagination{
+    position: absolute;
+    bottom: 5%;
+    left: 0;
+    right:0;
+    margin:auto;
+    display: flex;
+    justify-content:center;
+    gap:100px;
+}
+.pagination > img{
+    width:20px;
+    cursor:pointer;
+}
