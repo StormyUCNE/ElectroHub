@@ -15,18 +15,18 @@
     padding: 1px 10px 1px 10px;
 }
 
-    .input-container input, select{
+    .input-container input, select {
         border: none;
         color: white;
         background-color: transparent;
     }
-    /*.input-container {
+/*.input-container {
     position: relative;
     width: 80%;
     border-radius: 28px;
     background: linear-gradient(to right, #AA56D7, #D7AA56);
     padding: 3px;*/ /* Grosor del borde */
-    /*}
+/*}
 
     .input-container input, select {
         width: 100%;
@@ -35,18 +35,19 @@
         border-radius: 25px;
         color: white;
         background: rgba(0, 0, 0, 0.6);*/ /* ¡Semitransparente! */
-    /*backdrop-filter: blur(1px);*/ /* Efecto de vidrio */
-    /*}*/
-    /* Para efecto hover */
-    /*.input-container:hover {
+/*backdrop-filter: blur(1px);*/ /* Efecto de vidrio */
+/*}*/
+/* Para efecto hover */
+/*.input-container:hover {
         background: linear-gradient(to right, #D7AA56, #AA56D7);
     }*/
-    .boton {
-        color: white;
-        border-radius: 10px;
-        border: none;
-        padding: 5px 0px 5px 0px;
-    }
+.boton {
+    color: white;
+    border-radius: 10px;
+    border: none;
+    padding: 5px 0px 5px 0px;
+    font-weight: bold;
+}
 
 .boton-aplicar {
     width: 100%;
@@ -92,5 +93,7 @@ tbody, tr, td {
 }
 
 .boton-detalles {
+    padding: 8px 10px 8px 10px;
     background-color: #AA56D7;
+    text-decoration: none;
 }
