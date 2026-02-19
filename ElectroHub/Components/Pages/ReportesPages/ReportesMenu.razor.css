@@ -11,6 +11,7 @@
     padding: 2rem;
     box-sizing: border-box;
     color: #ffffff !important;
+    backdrop-filter: blur(10px);
 }
 
     .dashboard-wrapper h1,
