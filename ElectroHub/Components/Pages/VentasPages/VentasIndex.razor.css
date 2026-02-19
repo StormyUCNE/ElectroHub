@@ -76,7 +76,9 @@ tbody, tr, td {
 }
 
 .boton-detalles {
+    padding: 8px 10px 8px 10px;
     background-color: #AA56D7;
+    text-decoration: none;
 }
 
 /* Gradiente tabla rosita */

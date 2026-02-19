@@ -1,0 +1,138 @@
+﻿@page "/Ventas/Detalles";
+
+<PageTitle>VentasDetalles</PageTitle>
+
+<div class="container">
+    <label class="titulo">Detalles de venta</label>
+
+    @* Tabla de productos *@
+    <div class="table-responsive">
+        <table>
+            <thead>
+                <tr>
+                    <th>C&oacute;digo</th>
+                    <th>Fecha</th>
+                    <th>Total venta</th>
+                    <th>M&eacute;todo de pago</th>
+                    <th>Vendedor</th>
+                </tr>
+            </thead>
+            <tbody>
+                <tr>
+                    <td>00001</td>
+                    <td>2026-01-30 08:00:00 AM</td>
+                    <td>$1,483.00</td>
+                    <td>Efectivo</td>
+                    <td>Luis Fonsi</td>
+                </tr>
+                <tr>
+                    <td>00001</td>
+                    <td>2026-01-30 08:00:00 AM</td>
+                    <td>$1,483.00</td>
+                    <td>Efectivo</td>
+                    <td>Luis Fonsi</td>
+                </tr>
+                <tr>
+                    <td>00001</td>
+                    <td>2026-01-30 08:00:00 AM</td>
+                    <td>$1,483.00</td>
+                    <td>Efectivo</td>
+                    <td>Luis Fonsi</td>
+                </tr>
+            </tbody>
+        </table>
+    </div>
+
+    <div class="neon-card neon-box-style mt-3">
+        <label class="titulo">Detalle</label>
+
+        @* Fecha y subtotal *@
+        <div class="row align-items-center pb-3">
+            <div class="col-3">
+                <label class="subtitulo-detalle">Fecha:</label>
+            </div>
+            <div class="col-3">
+                <label class="texto-detalle">2026-01-30 08:00:00 AM</label>
+            </div>
+
+            <div class="col-3">
+                <label class="subtitulo-detalle">Subtotal:</label>
+            </div>
+            <div class="col-3">
+                <label class="texto-detalle">$1,355.00</label>
+            </div>
+        </div>
+
+        @* Vendedor y descuento aplicado *@
+        <div class="row align-items-center pb-3">
+            <div class="col-3">
+                <label class="subtitulo-detalle">Vendedor:</label>
+            </div>
+            <div class="col-3">
+                <label class="texto-detalle">Luis Fonsi</label>
+            </div>
+            <div class="col-3">
+                <label class="subtitulo-detalle">Desc. Aplicado:</label>
+            </div>
+            <div class="col-3">
+                <label class="texto-detalle">$0.00</label>
+            </div>
+        </div>
+
+        @* Descuento y ITBIS *@
+        <div class="row align-items-center pb-3">
+            <div class="col-3">
+                <label class="subtitulo-detalle">Descuento:</label>
+            </div>
+            <div class="col-3">
+                <label class="texto-detalle">0.0 %</label>
+            </div>
+            <div class="col-3">
+                <label class="subtitulo-detalle">ITBIS:</label>
+            </div>
+            <div class="col-3">
+                <label class="texto-detalle">$138.00</label>
+            </div>
+        </div>
+
+        @* Metodo de pago y Total *@
+        <div class="row align-items-center pb-3">
+            <div class="col-3">
+                <label class="subtitulo-detalle">M&eacute;todo de pago:</label>
+            </div>
+            <div class="col-3">
+                <label class="texto-detalle">Efectivo</label>
+            </div>
+            <div class="col-3">
+                <label class="subtitulo-detalle total">Total:</label>
+            </div>
+            <div class="col-3">
+                <label class="texto-detalle total">$1,493.00</label>
+            </div>
+        </div>
+
+        @* Monto recibido y Vuelto*@
+        <div class="row align-items-center pb-3">
+            <div class="col-3">
+                <label class="subtitulo-detalle">Monto recibido:</label>
+            </div>
+            <div class="col-3">
+                <label class="texto-detalle">$2,000.00</label>
+            </div>
+            <div class="col-3">
+                <label class="subtitulo-detalle">Vuelto:</label>
+            </div>
+            <div class="col-3">
+                <label class="texto-detalle">$507.00</label>
+            </div>
+        </div>
+    </div>
+
+    <div class="text-center pt-3">
+        <a class="boton boton-volver" href="/Ventas/Index">Volver</a>
+    </div>
+</div>
+
+@code {
+
+}
