@@ -1,11 +1,11 @@
 ﻿.container {
     min-height: 100vh;
     backdrop-filter: blur(10px);
-    padding: 1rem;
+    padding: 2rem 1rem 2rem 1rem;
 }
 
 .titulo {
-    font-size: 3vw;
+    font-size: 4vw;
     color: #5683D7;
 }
 
