@@ -12,7 +12,7 @@ using Microsoft.EntityFrameworkCore.Storage.ValueConversion;
 namespace ElectroHub.Migrations
 {
     [DbContext(typeof(ApplicationDbContext))]
-    [Migration("20260218040636_InitialCreate")]
+    [Migration("20260218230518_InitialCreate")]
     partial class InitialCreate
     {
         /// <inheritdoc />
