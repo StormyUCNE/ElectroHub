@@ -1,97 +1,329 @@
-﻿@page "/Proveedores/Index"
+﻿@page "/ProveedoresReal/Index"
 @rendermode InteractiveServer
-@inject NavigationManager NavigationManager
-@inject ProveedoresService ProveedoresService;
+@inject ProveedoresService proveedoresService
+@using ElectroHub.Models.Enums
+
+<PageTitle>Proveedores</PageTitle>
 
 <div class="container">
-    <div class="card shadow-lg">
-        <div class="card-header d-flex justify-content-between">
-            <h4 class="card-title">Registro de Proveedores</h4>
-            <div class="d-flex gap-3">
-                <a href="Proveedores/Create" class="btn btn-outline-primary">Crear</a>
-                <a href="Proveedores/TiposProveedores/Create" class="btn btn-outline-primary">Crear Tipo Proveedor</a>
-                <a href="Proveedores/EstadosProveedores/Create" class="btn btn-outline-primary">Crear Estados Proveedores</a>
-            </div> 
+    <nav>
+        <span>Proveedores</span>
+        <div class="modal-add-mobile" @onclick:stopPropagation="true">
+            <div class="modal-add-options @(showModal ? "show" : "")"
+                 @onclick:stopPropagation="true">
+            </div>
         </div>
-        <div class="card-body">
-            <table class="table mt-3">
-                <thead>
+    </nav>
+    <hr />
+
+    <section class="inputs-container">
+        <div class="input-container">
+            <input type="text" placeholder="Buscar Proveedor..." @oninput="Buscar" />
+        </div>
+
+        <div class="select-container">
+            <select class="form-select" @bind="Filtro">
+                <option value="">Seleccione Filtrar Por</option>
+                <option value="NombreEmpresa">Nombre Empresa</option>
+                <option value="Contacto">Contacto</option>
+                <option value="Telefono">Teléfono</option>
+                <option value="CorreoElectronico">Correo</option>
+                <option value="TipoProveedor">Tipo</option>
+                <option value="EstadoProveedor">Estado</option>
+            </select>
+        </div>
+
+        <div class="modal-add">
+            <svg @onclick="alternateModal" xmlns="http://www.w3.org/2000/svg"
+                 height="48px" viewBox="0 -960 960 960" width="48px" fill="#AA56D7">
+                <path d="M450-120v-330H120v-60h330v-330h60v330h330v60H510v330h-60Z" />
+            </svg>
+            <div class="modal-add-options @(showModal ? "show" : "")">
+                <ul>
+                    <li @onclick="() => showModalRegister = true">Registrar Proveedor</li>
+                </ul>
+            </div>
+        </div>
+    </section>
+
+    <div class="table-responsive gradient-border-transparent">
+        <table>
+            <thead>
+                <tr>
+                    <th>Empresa</th>
+                    <th>Contacto</th>
+                    <th>Teléfono</th>
+                    <th>Tipo</th>
+                    <th>Estado</th>
+                    <th>Opción</th>
+                </tr>
+            </thead>
+            <tbody>
+                @foreach (var p in ProveedoresPaginados)
+                {
                     <tr>
-                        <th>Id</th>
-                        <th>Nombre</th>
-                        <th>Tipo</th>
-                        <th>Direccion</th>
-                        <th>Estado</th>
+                        <td>@p.NombreEmpresa</td>
+                        <td>@p.Contacto</td>
+                        <td>@p.Telefono</td>
+                        <td>@p.TipoProveedor</td>
+                        <td>@p.EstadoProveedor</td>
+                        <td>
+                            <button @onclick="() => GetProveedor(p)">Ver Detalles</button>
+                        </td>
                     </tr>
-                </thead>
-                <tbody>
-                    @foreach(var p in ListaProveedores)
-                    {
-                        <tr>
-                            <td>@p.ProveedorId</td>
-                            <td>@p.Nombre</td>
-                            <td>@p.TiposProveedores?.Nombre</td>
-                            <td>@p.Direccion</td>
-                            <td>@p.EstadosProveedores?.Nombre</td>
-                        </tr>
-                    }
-                </tbody>
-            </table>
-        </div>
+                }
+            </tbody>
+        </table>
     </div>
+
+    <div class="pagination">
+        <img src="/NavigationFlechas.svg" @onclick="PaginaAnterior"
+             class="@(paginaActual == 1 ? "opacity-25" : "opacity-100")" />
+        <img src="/RigthNav.svg" @onclick="PaginaSiguiente"
+             class="@(paginaActual == TotalPaginas ? "opacity-25" : "opacity-100")" />
+    </div>
+
+    <!-- MODAL REGISTRO -->
+    <RegistroComponente @bind-Mostrar="showModalRegister" Titulo="Registro Proveedor">
+        <EditForm Model="Proveedor" OnValidSubmit="Guardar">
+            <DataAnnotationsValidator />
+
+            <section class="edit-form-container">
+                <div class="scroll-inputs">
+
+                    <div class="input-container-item">
+                        <label>Nombre Empresa:</label>
+                        <input type="text" @bind="Proveedor.NombreEmpresa" class="form-control" />
+                    </div>
+                    <ValidationMessage For="() => Proveedor.NombreEmpresa" />
+
+                    <div class="input-container-item">
+                        <label>Contacto:</label>
+                        <input type="text" @bind="Proveedor.Contacto" class="form-control" />
+                    </div>
+                    <ValidationMessage For="() => Proveedor.Contacto" />
+
+                    <div class="input-container-item">
+                        <label>Teléfono:</label>
+                        <input type="text" @bind="Proveedor.Telefono" class="form-control" />
+                    </div>
+
+                    <div class="input-container-item">
+                        <label>Correo:</label>
+                        <input type="email" @bind="Proveedor.CorreoElectronico" class="form-control" />
+                    </div>
+
+                    <div class="input-container-item">
+                        <label>Dirección:</label>
+                        <input type="text" @bind="Proveedor.Direccion" class="form-control" />
+                    </div>
+
+                    <div class="input-container-item">
+                        <label>Tipo:</label>
+                        <select @bind="Proveedor.TipoProveedor" class="form-control">
+                            @foreach (var tipo in Enum.GetValues<TiposProveedores>())
+                            {
+                                <option value="@tipo">@tipo</option>
+                            }
+                        </select>
+                    </div>
+
+                    <div class="input-container-item">
+                        <label>Estado:</label>
+                        <select @bind="Proveedor.EstadoProveedor" class="form-control">
+                            @foreach (var estado in Enum.GetValues<EstadosProveedores>())
+                            {
+                                <option value="@estado">@estado</option>
+                            }
+                        </select>
+                    </div>
+
+                </div>
+                <button type="submit">Guardar</button>
+            </section>
+        </EditForm>
+    </RegistroComponente>
+
+    <!-- MODAL DETALLE -->
+    <DetalleComponente @bind-Mostrar="showModalDetails" Titulo="Detalle Proveedor">
+        <EditForm Model="proveedorSeleccionado" OnValidSubmit="Modificar">
+            <DataAnnotationsValidator />
+
+            <section class="edit-form-container">
+                <div class="scroll-inputs">
+
+                    <div class="input-container-item">
+                        <label>Nombre Empresa:</label>
+                        <input type="text" @bind="proveedorSeleccionado.NombreEmpresa" class="form-control" />
+                    </div>
+
+                    <div class="input-container-item">
+                        <label>Contacto:</label>
+                        <input type="text" @bind="proveedorSeleccionado.Contacto" class="form-control" />
+                    </div>
+
+                    <div class="input-container-item">
+                        <label>Teléfono:</label>
+                        <input type="text" @bind="proveedorSeleccionado.Telefono" class="form-control" />
+                    </div>
+
+                    <div class="input-container-item">
+                        <label>Correo:</label>
+                        <input type="email" @bind="proveedorSeleccionado.CorreoElectronico" class="form-control" />
+                    </div>
+
+                    <div class="input-container-item">
+                        <label>Dirección:</label>
+                        <input type="text" @bind="proveedorSeleccionado.Direccion" class="form-control" />
+                    </div>
+
+                    <div class="input-container-item">
+                        <label>Tipo:</label>
+                        <select @bind="proveedorSeleccionado.TipoProveedor" class="form-control">
+                            @foreach (var tipo in Enum.GetValues<TiposProveedores>())
+                            {
+                                <option value="@tipo">@tipo</option>
+                            }
+                        </select>
+                    </div>
+
+                    <div class="input-container-item">
+                        <label>Estado:</label>
+                        <select @bind="proveedorSeleccionado.EstadoProveedor" class="form-control">
+                            @foreach (var estado in Enum.GetValues<EstadosProveedores>())
+                            {
+                                <option value="@estado">@estado</option>
+                            }
+                        </select>
+                    </div>
+
+                </div>
+
+                <div class="button-container">
+                    <button type="submit">Guardar</button>
+                    <button type="button" @onclick="Eliminar">Eliminar</button>
+                </div>
+            </section>
+        </EditForm>
+    </DetalleComponente>
+
 </div>
 
 @code {
-    public List<Proveedores> ListaProveedores {get; set;} = new List<Proveedores>();
 
-    public string Filtro { get; set; } 
-    public string ValorFiltro {get; set;}
+    private bool showModal = false;
+    private bool showModalRegister = false;
+    private bool showModalDetails = false;
 
-    protected override async Task OnInitializedAsync(){
-        Filtro = string.Empty;
-        ListaProveedores = await ProveedoresService.Listar(p => p.ProveedorId > 0);
+    private string Filtro { get; set; } = string.Empty;
+
+    private int paginaActual = 1;
+    private int registrosPorPagina = 6;
+
+
+    private int TotalPaginas =>
+        (int)Math.Ceiling((double)ListaProveedores.Count / registrosPorPagina);
+
+    private IEnumerable<Proveedores> ProveedoresPaginados =>
+        ListaProveedores
+            .Skip((paginaActual - 1) * registrosPorPagina)
+            .Take(registrosPorPagina);
+
+    public Proveedores Proveedor { get; set; } = new();
+
+    public Proveedores proveedorSeleccionado { get; set; } = new();
+
+    public List<Proveedores> ListaProveedores = new();
+
+    protected override async Task OnInitializedAsync()
+    {
+        ListaProveedores = await proveedoresService.Listar(p => p.Eliminado == false);
     }
 
-    public async Task Buscar(){
-        if(ValorFiltro != null){
-
-            if(Filtro == "Nombre"){
-                ListaProveedores = await ProveedoresService.Listar(p => p.Nombre.ToLower().Contains(ValorFiltro.ToLower()));
-            }
-
-            if(Filtro == "Contacto"){
-                ListaProveedores = await ProveedoresService.Listar(p => p.Contacto.ToLower().Contains(ValorFiltro.ToLower()));
-            }
-
-            if(Filtro == "CorreoElectronico"){
-                ListaProveedores = await ProveedoresService.Listar(p => p.CorreoElectronico.ToLower().Contains(ValorFiltro.ToLower()));
-            }
-
-            if(Filtro == "TipoProveedorId"){
-
-                if(int.TryParse(ValorFiltro, out int TipoProveedorId)){
-                    ListaProveedores = await ProveedoresService.Listar(p => p.TipoProveedorId == TipoProveedorId);
-                }
-            }
-
-            if(Filtro == "Direccion"){
-                ListaProveedores = await ProveedoresService.Listar(p => p.Direccion.ToLower().Contains(ValorFiltro.ToLower()));
-            }
-
-            if(Filtro == "EstadoProveedorId"){
-                
-                if(int.TryParse(ValorFiltro, out int EstadoProveedorId)){
-                    ListaProveedores = await ProveedoresService.Listar(p => p.EstadoProveedorId == EstadoProveedorId);
-                }
-            }
-
-            if(Filtro == "Direccion"){
-                ListaProveedores = await ProveedoresService.Listar(p => p.Direccion.ToLower().Contains(ValorFiltro.ToLower()));
-            }
-
+    private async Task Guardar()
+    {
+        var creado = await proveedoresService.Guardar(Proveedor);
+        if (creado)
+        {
+            showModalRegister = false;
+            ListaProveedores = await proveedoresService.Listar(p => p.Eliminado == false);
+            Proveedor = new Proveedores();
         }
     }
 
-    private void IrACrear() => NavigationManager.NavigateTo("");
-    private void IrAEditar() => NavigationManager.NavigateTo("");
+    private async Task Modificar()
+    {
+        var actualizado = await proveedoresService.Guardar(proveedorSeleccionado);
+        if (actualizado)
+        {
+            showModalDetails = false;
+            ListaProveedores = await proveedoresService.Listar(p => p.Eliminado == false);
+        }
+    }
+
+    private void Eliminar()
+    {
+        showModalDetails = false;
+    }
+
+    private void GetProveedor(Proveedores p)
+    {
+        proveedorSeleccionado = p;
+        showModalDetails = true;
+    }
+
+    private void alternateModal()
+    {
+        showModal = !showModal;
+    }
+
+    private void PaginaAnterior()
+    {
+        if (paginaActual > 1)
+            paginaActual--;
+    }
+
+    private void PaginaSiguiente()
+    {
+        if (paginaActual < TotalPaginas)
+            paginaActual++;
+    }
+
+    public async Task Buscar(ChangeEventArgs e)
+    {
+        var valor = e.Value?.ToString();
+
+        if (!string.IsNullOrWhiteSpace(valor))
+        {
+            if (Filtro == "NombreEmpresa")
+                ListaProveedores = await proveedoresService.Listar(p =>
+                    p.NombreEmpresa.ToLower().Contains(valor.ToLower()) && !p.Eliminado);
+
+            else if (Filtro == "Contacto")
+                ListaProveedores = await proveedoresService.Listar(p =>
+                    p.Contacto.ToLower().Contains(valor.ToLower()) && !p.Eliminado);
+
+            else if (Filtro == "Telefono")
+                ListaProveedores = await proveedoresService.Listar(p =>
+                    p.Telefono.Contains(valor) && !p.Eliminado);
+
+            else if (Filtro == "CorreoElectronico")
+                ListaProveedores = await proveedoresService.Listar(p =>
+                    p.CorreoElectronico.ToLower().Contains(valor.ToLower()) && !p.Eliminado);
+
+            else if (Filtro == "TipoProveedor")
+                ListaProveedores = await proveedoresService.Listar(p =>
+                    p.TipoProveedor.ToString().ToLower().Contains(valor.ToLower()) && !p.Eliminado);
+
+            else if (Filtro == "EstadoProveedor")
+                ListaProveedores = await proveedoresService.Listar(p =>
+                    p.EstadoProveedor.ToString().ToLower().Contains(valor.ToLower()) && !p.Eliminado);
+        }
+        else
+        {
+            ListaProveedores = await proveedoresService.Listar(p => !p.Eliminado);
+        }
+
+        paginaActual = 1;
+    }
 }

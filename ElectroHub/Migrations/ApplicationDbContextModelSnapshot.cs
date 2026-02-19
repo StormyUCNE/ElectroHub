@@ -135,24 +135,6 @@ namespace ElectroHub.Migrations
                     b.ToTable("EstadosProductos");
                 });
 
-            modelBuilder.Entity("ElectroHub.Models.EstadosProveedores", b =>
-                {
-                    b.Property<int>("EstadoProveedorId")
-                        .ValueGeneratedOnAdd()
-                        .HasColumnType("int");
-
-                    SqlServerPropertyBuilderExtensions.UseIdentityColumn(b.Property<int>("EstadoProveedorId"));
-
-                    b.Property<string>("Nombre")
-                        .IsRequired()
-                        .HasMaxLength(50)
-                        .HasColumnType("nvarchar(50)");
-
-                    b.HasKey("EstadoProveedorId");
-
-                    b.ToTable("EstadosProveedores");
-                });
-
             modelBuilder.Entity("ElectroHub.Models.Productos", b =>
                 {
                     b.Property<int>("ProductoId")
@@ -212,7 +194,7 @@ namespace ElectroHub.Migrations
                     b.ToTable("Productos");
                 });
 
-            modelBuilder.Entity("ElectroHub.Models.Categories", b =>
+            modelBuilder.Entity("ElectroHub.Models.Proveedores", b =>
                 {
                     b.Property<int>("ProveedorId")
                         .ValueGeneratedOnAdd()
@@ -236,42 +218,24 @@ namespace ElectroHub.Migrations
                     b.Property<bool>("Eliminado")
                         .HasColumnType("bit");
 
-                    b.Property<int>("EstadoProveedorId")
+                    b.Property<int>("EstadoProveedor")
                         .HasColumnType("int");
 
-                    b.Property<string>("Nombre")
+                    b.Property<string>("NombreEmpresa")
                         .IsRequired()
                         .HasMaxLength(50)
                         .HasColumnType("nvarchar(50)");
 
-                    b.Property<int>("TipoProveedorId")
+                    b.Property<string>("Telefono")
+                        .IsRequired()
+                        .HasColumnType("nvarchar(max)");
+
+                    b.Property<int>("TipoProveedor")
                         .HasColumnType("int");
 
                     b.HasKey("ProveedorId");
 
-                    b.HasIndex("EstadoProveedorId");
-
-                    b.HasIndex("TipoProveedorId");
-
-                    b.ToTable("Categories");
-                });
-
-            modelBuilder.Entity("ElectroHub.Models.TiposProveedores", b =>
-                {
-                    b.Property<int>("TipoProveedorId")
-                        .ValueGeneratedOnAdd()
-                        .HasColumnType("int");
-
-                    SqlServerPropertyBuilderExtensions.UseIdentityColumn(b.Property<int>("TipoProveedorId"));
-
-                    b.Property<string>("Nombre")
-                        .IsRequired()
-                        .HasMaxLength(50)
-                        .HasColumnType("nvarchar(50)");
-
-                    b.HasKey("TipoProveedorId");
-
-                    b.ToTable("TiposProveedores");
+                    b.ToTable("Proveedores");
                 });
 
             modelBuilder.Entity("Microsoft.AspNetCore.Identity.IdentityRole", b =>
@@ -442,7 +406,7 @@ namespace ElectroHub.Migrations
                         .OnDelete(DeleteBehavior.Cascade)
                         .IsRequired();
 
-                    b.HasOne("ElectroHub.Models.Categories", "Categories")
+                    b.HasOne("ElectroHub.Models.Proveedores", "Proveedores")
                         .WithMany()
                         .HasForeignKey("ProveedorId")
                         .OnDelete(DeleteBehavior.Cascade)
@@ -452,26 +416,7 @@ namespace ElectroHub.Migrations
 
                     b.Navigation("EstadosProductos");
 
-                    b.Navigation("Categories");
-                });
-
-            modelBuilder.Entity("ElectroHub.Models.Categories", b =>
-                {
-                    b.HasOne("ElectroHub.Models.EstadosProveedores", "EstadosProveedores")
-                        .WithMany()
-                        .HasForeignKey("EstadoProveedorId")
-                        .OnDelete(DeleteBehavior.Cascade)
-                        .IsRequired();
-
-                    b.HasOne("ElectroHub.Models.TiposProveedores", "TiposProveedores")
-                        .WithMany()
-                        .HasForeignKey("TipoProveedorId")
-                        .OnDelete(DeleteBehavior.Cascade)
-                        .IsRequired();
-
-                    b.Navigation("EstadosProveedores");
-
-                    b.Navigation("TiposProveedores");
+                    b.Navigation("Proveedores");
                 });
 
             modelBuilder.Entity("Microsoft.AspNetCore.Identity.IdentityRoleClaim<string>", b =>

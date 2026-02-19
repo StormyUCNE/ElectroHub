@@ -25,7 +25,7 @@
 
     <section class="inputs-container">
         <div class="input-container">
-            <input type="text" placeholder="Buscar Producto..." @oninput="Buscar"/>
+            <input type="text" placeholder="Buscar Producto..." @oninput="Buscar" />
         </div>
         <div class="select-container">
             <select class="form-select" @bind="Filtro">
@@ -42,19 +42,19 @@
                 <option value="FechaRegistro">Fecha Registro</option>
             </select>
         </div>
-        <div class="modal-add" >
+        <div class="modal-add">
             <svg @onclick="alternateModal" xmlns="http://www.w3.org/2000/svg" height="48px" viewBox="0 -960 960 960" width="48px" fill="#FFFFFF"><path d="M450-120v-330H120v-60h330v-330h60v330h330v60H510v330h-60Z" /></svg>
-                <div class="modal-add-options @(showModal ? "show":"")">
-                    <ul>
-                        <li @onclick="()=> showModalRegister = true">Registra Productos</li>
-                        <li>Administrar Categorías</li>
-                    </ul>
-                </div>
+            <div class="modal-add-options @(showModal ? "show" : "")">
+                <ul>
+                    <li @onclick="() => showModalRegister = true">Registra Productos</li>
+                    <li>Administrar Categorías</li>
+                </ul>
+            </div>
         </div>
-        
+
     </section>
 
-    <div class="table-responsive">
+    <div class="table-responsive gradient-border-transparent">
         <table>
             <thead>
                 <tr>
@@ -66,15 +66,15 @@
                 </tr>
             </thead>
             <tbody>
-                @foreach(var p in ProductosPaginados)
+                @foreach (var p in ProductosPaginados)
                 {
                     <tr>
                         <td>@p.Nombre</td>
                         <td>@p.StockMinimo</td>
-                        <td>@p.Proveedores?.Nombre</td>
+                        <td>@p.Proveedores?.NombreEmpresa</td>
                         <td>@p.Categorias?.Nombre</td>
                         <td>
-                            <button @onclick="()=> GetProducto(p)">Ver Detalles</button>
+                            <button @onclick="() => GetProducto(p)">Ver Detalles</button>
                         </td>
                     </tr>
                 }
@@ -88,10 +88,10 @@
     </div>
 
 
-  <RegistroComponente @bind-Mostrar="showModalRegister" Titulo="Registro Productos">
+    <RegistroComponente @bind-Mostrar="showModalRegister" Titulo="Registro Productos">
         @* Agregamos OnInvalidSubmit para ver errores si los hay *@
         <EditForm Model="Productos" OnValidSubmit="Guardar">
-            <DataAnnotationsValidator /> 
+            <DataAnnotationsValidator />
             <section class="edit-form-container">
                 <div class="scroll-inputs">
                     @* CODIGO *@
@@ -111,7 +111,7 @@
                     @* DESCRIPCION *@
                     <div class="input-container-item">
                         <label>Descripción:</label>
-                       <input type="text" @bind="Productos.Descripcion" class="form-control" />
+                        <input type="text" @bind="Productos.Descripcion" class="form-control" />
                     </div>
                     <ValidationMessage For="() => Productos.Descripcion" />
 
@@ -162,7 +162,7 @@
                             <option value="0">Seleccione un Proveedor</option>
                             @foreach (var p in ListaProveedore)
                             {
-                                <option value="@p.ProveedorId">@p.Nombre</option>
+                                <option value="@p.ProveedorId">@p.NombreEmpresa</option>
                             }
                         </select>
                     </div>
@@ -267,7 +267,7 @@
                             <option value="0">Seleccione un Proveedor</option>
                             @foreach (var p in ListaProveedore)
                             {
-                                <option value="@p.ProveedorId">@p.Nombre</option>
+                                <option value="@p.ProveedorId">@p.NombreEmpresa</option>
                             }
                         </select>
                     </div>
@@ -306,7 +306,7 @@
     <ConfirmacionModificadoComponente @bind-Mostrar="showConfirmationUpdateModal" NombreProducto="@productoSeleccionado.Nombre" />
     <AvisoEliminarComponente @bind-Mostrar="showWarningModal" Productos="@productoSeleccionado" OnProductoEliminado="RefrescarLista" />
 </div>
-    
+
 @code {
     private bool showModal = false;
     private bool showModalRegister = false;
@@ -403,45 +403,55 @@
                 ListaProductos = await productosService.Listar(p => p.Categorias.Nombre.ToLower().Contains(valor.ToLower()) && p.Eliminado == false);
 
             else if (Filtro == "Proveedor")
-                ListaProductos = await productosService.Listar(p => p.Proveedores.Nombre.ToLower().Contains(valor.ToLower()) && p.Eliminado == false);
+                ListaProductos = await productosService.Listar(p => p.Proveedores.NombreEmpresa.ToLower().Contains(valor.ToLower()) && p.Eliminado == false);
 
-            else if (Filtro == "PrecioVenta"){
-                if(decimal.TryParse(valor, out decimal PriceVenta)){
-                    ListaProductos = await productosService.Listar(p => p.PrecioVenta == PriceVenta && p.Eliminado == false );
+            else if (Filtro == "PrecioVenta")
+            {
+                if (decimal.TryParse(valor, out decimal PriceVenta))
+                {
+                    ListaProductos = await productosService.Listar(p => p.PrecioVenta == PriceVenta && p.Eliminado == false);
                 }
-                else    
+                else
                     ListaProductos = await productosService.Listar(p => p.Eliminado == false);
             }
 
-            else if (Filtro == "PrecioCompra"){
-                if(decimal.TryParse(valor, out decimal PriceCompra)){
-                    ListaProductos = await productosService.Listar(p => p.PrecioCompra == PriceCompra && p.Eliminado == false );
+            else if (Filtro == "PrecioCompra")
+            {
+                if (decimal.TryParse(valor, out decimal PriceCompra))
+                {
+                    ListaProductos = await productosService.Listar(p => p.PrecioCompra == PriceCompra && p.Eliminado == false);
                 }
-                else    
+                else
                     ListaProductos = await productosService.Listar(p => p.Eliminado == false);
             }
 
-            else if (Filtro == "CantidadInventario"){
-                if(int.TryParse(valor, out int CantidadInventario)){
-                    ListaProductos = await productosService.Listar(p => p.CantidadInventario == CantidadInventario && p.Eliminado == false );
+            else if (Filtro == "CantidadInventario")
+            {
+                if (int.TryParse(valor, out int CantidadInventario))
+                {
+                    ListaProductos = await productosService.Listar(p => p.CantidadInventario == CantidadInventario && p.Eliminado == false);
                 }
-                else    
+                else
                     ListaProductos = await productosService.Listar(p => p.Eliminado == false);
             }
 
-            else if (Filtro == "CodigoProducto"){
-                if(int.TryParse(valor, out int CodigoProducto)){
-                    ListaProductos = await productosService.Listar(p => p.CodigoProducto == CodigoProducto && p.Eliminado == false );
+            else if (Filtro == "CodigoProducto")
+            {
+                if (int.TryParse(valor, out int CodigoProducto))
+                {
+                    ListaProductos = await productosService.Listar(p => p.CodigoProducto == CodigoProducto && p.Eliminado == false);
                 }
-                else    
+                else
                     ListaProductos = await productosService.Listar(p => p.Eliminado == false);
             }
 
-            else if (Filtro == "StockMinimo"){
-                if(int.TryParse(valor, out int StockMinimo)){
-                    ListaProductos = await productosService.Listar(p => p.StockMinimo == StockMinimo && p.Eliminado == false );
+            else if (Filtro == "StockMinimo")
+            {
+                if (int.TryParse(valor, out int StockMinimo))
+                {
+                    ListaProductos = await productosService.Listar(p => p.StockMinimo == StockMinimo && p.Eliminado == false);
                 }
-                else    
+                else
                     ListaProductos = await productosService.Listar(p => p.Eliminado == false);
             }
             else if (Filtro == "Estado")

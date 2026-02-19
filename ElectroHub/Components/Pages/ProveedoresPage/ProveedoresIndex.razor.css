@@ -1,0 +1,241 @@
+.gradient-border-transparent {
+    --border-width: 3px;
+    --radius: 20px;
+    position: relative;
+    color: white; /* O el color de tu texto */
+    border-radius: var(--radius);
+    background: transparent; /* Aquí está tu transparencia */
+    /* Para que el contenido no toque los bordes */
+    padding: var(--border-width);
+}
+
+    .gradient-border-transparent::before {
+        content: "";
+        position: absolute;
+        inset: 0;
+        border-radius: var(--radius);
+        padding: var(--border-width); /* Grosor del borde */
+        /* El gradiente que quieres */
+        background: linear-gradient(to right, #AA56D7, #D7AA56);
+        /* La magia del recorte (Masking) */
+        -webkit-mask: linear-gradient(#fff 0 0) content-box, linear-gradient(#fff 0 0);
+        -webkit-mask-composite: xor;
+        mask-composite: exclude;
+        pointer-events: none;
+    }
+
+    .gradient-border-transparent table {
+        width: 100%;
+        border-collapse: collapse;
+        background: transparent; /* Tabla transparente */
+    }
+
+/*  COPIA de aqui pa arriba  */
+
+.container{
+    height:100vh;
+    backdrop-filter: blur(10px);
+}
+nav > span {
+    font-size: 4vw;
+    color: #5683D7;
+}
+hr{
+    margin:0;
+    margin-bottom: 20px;
+    border: 2px white solid;
+}
+.inputs-container{
+    display: flex;
+    justify-content: start;
+    gap: 50px;
+    cursor:pointer;
+}
+.modal-add > svg {
+    border: 2px white solid;
+    border-radius: 100%;
+    transition: all 0.2s ease-in-out;
+}
+.modal-add > svg:hover {
+    border: 2px pink solid;
+    border-radius: 100%;
+}
+.modal-add{
+    position:relative;
+}
+.modal-add-options {
+    position: absolute;
+    border: 2px #AA56D7 solid;
+    border-radius: 10px;
+    right: 0;
+    width: 300px;
+    transform: translateY(-10px);
+    opacity: 0%;
+    transition: all 0.2s ease-in-out;
+    z-index: -1;
+}
+.modal-add-options.show {
+    background-color: rgb(0, 0, 0, 0.8);
+    backdrop-filter: blur(5px);
+    transform: translateY(0px);
+    opacity: 100%;
+    z-index:1;
+}
+ul, li {
+    display: flex;
+    list-style: none;
+    flex-direction: column;
+    gap: 10px;
+    padding: 10px;
+    margin: 0;
+    border-bottom: 2px black solid;
+    color: white;
+}
+li:hover{
+    background-color: gray;
+}
+
+
+
+
+
+
+.select-container, .input-container {
+    width: 40%;
+    position: relative;
+    border-radius: 30px;
+    padding: 2px; /* Espacio para que se vea el borde */
+    background: transparent;
+    display: inline-block;
+}
+
+    /* El pseudo-elemento que crea el borde gradiente */
+    .select-container::before, .input-container::before {
+        content: "";
+        position: absolute;
+        inset: 0;
+        border-radius: 30px;
+        padding: 2px; /* Grosor del borde gradiente */
+        /* Tu gradiente lineal */
+        background: linear-gradient(to right, #AA56D7, #D7AA56);
+        /* El recorte mágico para que el centro sea transparente */
+        -webkit-mask: linear-gradient(#fff 0 0) content-box, linear-gradient(#fff 0 0);
+        -webkit-mask-composite: xor;
+        mask-composite: exclude;
+        pointer-events: none; /* Permite hacer clic a través del borde hacia el input */
+    }
+
+    /* Estilo para el input/select real dentro del contenedor */
+    .select-container select, .input-container input {
+        width: 100%;
+        background: rgba(255, 255, 255, 0.05); /* Fondo opaco sutil como la cabecera */
+        border: none;
+        outline: none;
+        border-radius: 30px;
+        padding: 8px 15px;
+        color: white;
+    }
+
+    /* Quitar la flecha por defecto del select si quieres algo más limpio */
+    .select-container select {
+        appearance: none;
+        -webkit-appearance: none;
+        cursor: pointer;
+    }
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+input, select {
+    border:none;
+    width:100%;
+    background-color: transparent;
+    color: white;
+}
+input:focus, select:focus{
+    outline:none;
+}
+option{
+    color: black;
+}
+.table-responsive {
+    margin-top: 20px;
+    overflow-x: auto;
+    border: 0px solid #AA56D7;
+    border-radius: 20px;
+}
+table {
+    width: 100%;
+    color: white;
+}
+thead, th {
+    border: 1px black solid;
+    padding: 10px;
+    text-align: center;
+    background-color: rgba(255, 255, 255, 0.1);
+}
+tbody, tr, td {
+    border: 1px black solid;
+    padding: 10px;
+    text-align: center;
+}
+button {
+    border-radius: 10px;
+    background-color: #AA56D7;
+    padding: 5px 10px;
+    border: none;
+    color: white;
+}
+.input-container-item{
+    display: flex;
+    justify-content:space-between;
+    gap: 20px;
+}
+.input-container-item > input {
+    border-bottom: solid;
+}
+.scroll-inputs {
+    height: 350px;
+    display: flex;
+    flex-direction:column;
+    padding-top: 30px;
+    gap: 30px;
+    overflow-y: auto;
+}
+.button-container{
+    display:flex;
+    justify-content:center;
+    gap:20px;
+    padding: 10px;
+}
+.button-container button:first-child {
+    background-color: #5683D7;
+}
+.button-container button:last-child {
+    background-color: #7B2E2E;
+}
+.pagination{
+    position: absolute;
+    bottom: 5%;
+    left: 0;
+    right:0;
+    margin:auto;
+    display: flex;
+    justify-content:center;
+    gap:100px;
+}
+.pagination > img{
+    width:20px;
+    cursor:pointer;
+}

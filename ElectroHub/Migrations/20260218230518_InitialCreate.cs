@@ -6,7 +6,7 @@ using Microsoft.EntityFrameworkCore.Migrations;
 namespace ElectroHub.Migrations
 {
     /// <inheritdoc />
-    public partial class Inicial : Migration
+    public partial class InitialCreate : Migration
     {
         /// <inheritdoc />
         protected override void Up(MigrationBuilder migrationBuilder)
@@ -80,29 +80,23 @@ namespace ElectroHub.Migrations
                 });
 
             migrationBuilder.CreateTable(
-                name: "EstadosProveedores",
+                name: "Proveedores",
                 columns: table => new
                 {
-                    EstadoProveedorId = table.Column<int>(type: "int", nullable: false)
+                    ProveedorId = table.Column<int>(type: "int", nullable: false)
                         .Annotation("SqlServer:Identity", "1, 1"),
-                    Nombre = table.Column<string>(type: "nvarchar(50)", maxLength: 50, nullable: false)
+                    Eliminado = table.Column<bool>(type: "bit", nullable: false),
+                    NombreEmpresa = table.Column<string>(type: "nvarchar(50)", maxLength: 50, nullable: false),
+                    Contacto = table.Column<string>(type: "nvarchar(max)", nullable: false),
+                    Telefono = table.Column<string>(type: "nvarchar(max)", nullable: false),
+                    CorreoElectronico = table.Column<string>(type: "nvarchar(max)", nullable: false),
+                    TipoProveedor = table.Column<int>(type: "int", nullable: false),
+                    Direccion = table.Column<string>(type: "nvarchar(100)", maxLength: 100, nullable: false),
+                    EstadoProveedor = table.Column<int>(type: "int", nullable: false)
                 },
                 constraints: table =>
                 {
-                    table.PrimaryKey("PK_EstadosProveedores", x => x.EstadoProveedorId);
-                });
-
-            migrationBuilder.CreateTable(
-                name: "TiposProveedores",
-                columns: table => new
-                {
-                    TipoProveedorId = table.Column<int>(type: "int", nullable: false)
-                        .Annotation("SqlServer:Identity", "1, 1"),
-                    Nombre = table.Column<string>(type: "nvarchar(50)", maxLength: 50, nullable: false)
-                },
-                constraints: table =>
-                {
-                    table.PrimaryKey("PK_TiposProveedores", x => x.TipoProveedorId);
+                    table.PrimaryKey("PK_Proveedores", x => x.ProveedorId);
                 });
 
             migrationBuilder.CreateTable(
@@ -231,37 +225,6 @@ namespace ElectroHub.Migrations
                 });
 
             migrationBuilder.CreateTable(
-                name: "Categories",
-                columns: table => new
-                {
-                    ProveedorId = table.Column<int>(type: "int", nullable: false)
-                        .Annotation("SqlServer:Identity", "1, 1"),
-                    Eliminado = table.Column<bool>(type: "bit", nullable: false),
-                    Nombre = table.Column<string>(type: "nvarchar(50)", maxLength: 50, nullable: false),
-                    Contacto = table.Column<string>(type: "nvarchar(max)", nullable: false),
-                    CorreoElectronico = table.Column<string>(type: "nvarchar(max)", nullable: false),
-                    TipoProveedorId = table.Column<int>(type: "int", nullable: false),
-                    Direccion = table.Column<string>(type: "nvarchar(100)", maxLength: 100, nullable: false),
-                    EstadoProveedorId = table.Column<int>(type: "int", nullable: false)
-                },
-                constraints: table =>
-                {
-                    table.PrimaryKey("PK_Proveedores", x => x.ProveedorId);
-                    table.ForeignKey(
-                        name: "FK_Proveedores_EstadosProveedores_EstadoProveedorId",
-                        column: x => x.EstadoProveedorId,
-                        principalTable: "EstadosProveedores",
-                        principalColumn: "EstadoProveedorId",
-                        onDelete: ReferentialAction.Cascade);
-                    table.ForeignKey(
-                        name: "FK_Proveedores_TiposProveedores_TipoProveedorId",
-                        column: x => x.TipoProveedorId,
-                        principalTable: "TiposProveedores",
-                        principalColumn: "TipoProveedorId",
-                        onDelete: ReferentialAction.Cascade);
-                });
-
-            migrationBuilder.CreateTable(
                 name: "Productos",
                 columns: table => new
                 {
@@ -298,7 +261,7 @@ namespace ElectroHub.Migrations
                     table.ForeignKey(
                         name: "FK_Productos_Proveedores_ProveedorId",
                         column: x => x.ProveedorId,
-                        principalTable: "Categories",
+                        principalTable: "Proveedores",
                         principalColumn: "ProveedorId",
                         onDelete: ReferentialAction.Cascade);
                 });
@@ -361,16 +324,6 @@ namespace ElectroHub.Migrations
                 name: "IX_Productos_ProveedorId",
                 table: "Productos",
                 column: "ProveedorId");
-
-            migrationBuilder.CreateIndex(
-                name: "IX_Proveedores_EstadoProveedorId",
-                table: "Categories",
-                column: "EstadoProveedorId");
-
-            migrationBuilder.CreateIndex(
-                name: "IX_Proveedores_TipoProveedorId",
-                table: "Categories",
-                column: "TipoProveedorId");
         }
 
         /// <inheritdoc />
@@ -410,13 +363,7 @@ namespace ElectroHub.Migrations
                 name: "EstadosProductos");
 
             migrationBuilder.DropTable(
-                name: "Categories");
-
-            migrationBuilder.DropTable(
-                name: "EstadosProveedores");
-
-            migrationBuilder.DropTable(
-                name: "TiposProveedores");
+                name: "Proveedores");
         }
     }
 }
