@@ -1,6 +1,7 @@
 ﻿.container {
     min-height: 100vh;
     backdrop-filter: blur(10px);
+    padding: 1rem;
 }
 
 .titulo {
