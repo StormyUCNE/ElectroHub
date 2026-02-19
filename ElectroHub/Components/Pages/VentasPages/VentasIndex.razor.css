@@ -1,4 +1,9 @@
-﻿.titulo {
+﻿.container {
+    min-height: 100vh;
+    backdrop-filter: blur(10px);
+}
+
+.titulo {
     font-size: 3vw;
     color: #5683D7;
 }
@@ -15,38 +20,18 @@
     padding: 1px 10px 1px 10px;
 }
 
-    .input-container input, select{
+    .input-container input, select {
         border: none;
         color: white;
         background-color: transparent;
     }
-    /*.input-container {
-    position: relative;
-    width: 80%;
-    border-radius: 28px;
-    background: linear-gradient(to right, #AA56D7, #D7AA56);
-    padding: 3px;*/ /* Grosor del borde */
-    /*}
 
-    .input-container input, select {
-        width: 100%;
-        padding: 5px;
-        border: none;
-        border-radius: 25px;
-        color: white;
-        background: rgba(0, 0, 0, 0.6);*/ /* ¡Semitransparente! */
-    /*backdrop-filter: blur(1px);*/ /* Efecto de vidrio */
-    /*}*/
-    /* Para efecto hover */
-    /*.input-container:hover {
-        background: linear-gradient(to right, #D7AA56, #AA56D7);
-    }*/
-    .boton {
-        color: white;
-        border-radius: 10px;
-        border: none;
-        padding: 5px 0px 5px 0px;
-    }
+.boton {
+    color: white;
+    border-radius: 10px;
+    border: none;
+    padding: 5px 0px 5px 0px;
+}
 
 .boton-aplicar {
     width: 100%;
@@ -69,8 +54,7 @@
 .table-responsive {
     margin-top: 20px;
     overflow-x: auto;
-    border: 4px solid #AA56D7;
-    border-radius: 20px;
+    border: none;
 }
 
 table {
@@ -94,3 +78,86 @@ tbody, tr, td {
 .boton-detalles {
     background-color: #AA56D7;
 }
+
+/* Gradiente tabla rosita */
+
+.gradient-border-transparent {
+    --border-width: 3px;
+    --radius: 20px;
+    position: relative;
+    color: white; /* O el color de tu texto */
+    border-radius: var(--radius);
+    background: transparent; /* Aquí está tu transparencia */
+    /* Para que el contenido no toque los bordes */
+    padding: var(--border-width);
+}
+
+    .gradient-border-transparent::before {
+        content: "";
+        position: absolute;
+        inset: 0;
+        border-radius: var(--radius);
+        padding: var(--border-width); /* Grosor del borde */
+        /* El gradiente que quieres */
+        background: linear-gradient(to right, #AA56D7, #D7AA56);
+        /* La magia del recorte (Masking) */
+        -webkit-mask: linear-gradient(#fff 0 0) content-box, linear-gradient(#fff 0 0);
+        -webkit-mask-composite: xor;
+        mask-composite: exclude;
+        pointer-events: none;
+    }
+
+    .gradient-border-transparent table {
+        width: 100%;
+        border-collapse: collapse;
+        background: transparent; /* Tabla transparente */
+    }
+
+select option {
+    color: white;
+    background: #AA56D7;
+}
+
+.select-container, .input-container {
+    width: 100%;
+    position: relative;
+    border-radius: 30px;
+    padding: 2px; /* Espacio para que se vea el borde */
+    background: transparent;
+    display: inline-block;
+}
+
+    /* El pseudo-elemento que crea el borde gradiente */
+    .select-container::before, .input-container::before {
+        content: "";
+        position: absolute;
+        inset: 0;
+        border-radius: 30px;
+        padding: 2px; /* Grosor del borde gradiente */
+        /* Tu gradiente lineal */
+        background: linear-gradient(to right, #AA56D7, #D7AA56);
+        /* El recorte mágico para que el centro sea transparente */
+        -webkit-mask: linear-gradient(#fff 0 0) content-box, linear-gradient(#fff 0 0);
+        -webkit-mask-composite: xor;
+        mask-composite: exclude;
+        pointer-events: none; /* Permite hacer clic a través del borde hacia el input */
+    }
+
+    /* Estilo para el input/select real dentro del contenedor */
+    .select-container select, .input-container input {
+        width: 100%;
+        background: rgba(255, 255, 255, 0.05); /* Fondo opaco sutil como la cabecera */
+        border: none;
+        outline: none;
+        border-radius: 30px;
+        padding: 8px 15px;
+        color: white;
+        backdrop-filter: blur(4px); /* Efecto cristal opcional */
+    }
+
+    /* Quitar la flecha por defecto del select si quieres algo más limpio */
+    .select-container select {
+        appearance: none;
+        -webkit-appearance: none;
+        cursor: pointer;
+    }

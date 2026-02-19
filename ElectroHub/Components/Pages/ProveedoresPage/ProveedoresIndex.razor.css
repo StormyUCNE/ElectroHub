@@ -1,6 +1,6 @@
 .gradient-border-transparent {
     --border-width: 3px;
-    --radius: 15px;
+    --radius: 20px;
     position: relative;
     color: white; /* O el color de tu texto */
     border-radius: var(--radius);
@@ -30,15 +30,7 @@
         background: transparent; /* Tabla transparente */
     }
 
-
-
-
-
-
-
-
-
-
+/*  COPIA de aqui pa arriba  */
 
 .container{
     height:100vh;
