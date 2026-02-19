@@ -134,7 +134,6 @@ li:hover{
         border-radius: 30px;
         padding: 8px 15px;
         color: white;
-        backdrop-filter: blur(4px); /* Efecto cristal opcional */
     }
 
     /* Quitar la flecha por defecto del select si quieres algo más limpio */

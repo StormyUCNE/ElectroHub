@@ -16,7 +16,6 @@
 
 .input-container {
     width: 80%;
-    border: 2px pink solid;
     border-radius: 30px;
     padding: 1px 10px 1px 10px;
 }
@@ -67,7 +66,7 @@ thead, th {
     border: 1px black solid;
     padding: 10px;
     text-align: center;
-    background-color: rgb(86, 131, 215, 0.4);
+    background-color: rgba(255, 255, 255, 0.1);
 }
 
 tbody, tr, td {
@@ -153,7 +152,6 @@ select option {
         border-radius: 30px;
         padding: 8px 15px;
         color: white;
-        backdrop-filter: blur(4px); /* Efecto cristal opcional */
     }
 
     /* Quitar la flecha por defecto del select si quieres algo más limpio */
