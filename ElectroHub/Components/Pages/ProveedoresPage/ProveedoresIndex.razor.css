@@ -160,6 +160,7 @@ li:hover{
 input, select {
     border:none;
     width:100%;
+    height: 100%;
     background-color: transparent;
     color: white;
 }
