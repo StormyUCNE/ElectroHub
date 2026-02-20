@@ -219,3 +219,18 @@ select option {
             display: none;
             -webkit-appearance: none;
         }
+
+/* Flecha en los select */
+
+.select-container {
+    background-image: url('/VentasSVG/SelectArrow.svg');
+    background-repeat: no-repeat;
+    background-position: right 15px center;
+    background-size: 14px;
+    pointer-events: none;
+}
+
+    .select-container select {
+        pointer-events: auto;
+        cursor: pointer;
+    }
