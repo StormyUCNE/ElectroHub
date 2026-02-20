@@ -48,8 +48,7 @@ hr {
 .table-responsive {
     margin-top: 20px;
     overflow-x: auto;
-    border: 4px solid #AA56D7;
-    border-radius: 20px;
+    border: none;
 }
 
 table {
@@ -61,7 +60,7 @@ thead, th {
     border: 1px black solid;
     padding: 10px;
     text-align: center;
-    background-color: rgb(86, 131, 215, 0.4);
+    background-color: rgba(255, 255, 255, 0.1);
 }
 
 tbody, tr, td {
@@ -85,3 +84,37 @@ tbody, tr, td {
     display: flex;
     flex-direction: column;
 }
+
+/* Gradiente tabla rosita */
+
+.gradient-border-transparent {
+    --border-width: 3px;
+    --radius: 20px;
+    position: relative;
+    color: white; /* O el color de tu texto */
+    border-radius: var(--radius);
+    background: transparent; /* Aquí está tu transparencia */
+    /* Para que el contenido no toque los bordes */
+    padding: var(--border-width);
+}
+
+    .gradient-border-transparent::before {
+        content: "";
+        position: absolute;
+        inset: 0;
+        border-radius: var(--radius);
+        padding: var(--border-width); /* Grosor del borde */
+        /* El gradiente que quieres */
+        background: linear-gradient(to right, #AA56D7, #D7AA56);
+        /* La magia del recorte (Masking) */
+        -webkit-mask: linear-gradient(#fff 0 0) content-box, linear-gradient(#fff 0 0);
+        -webkit-mask-composite: xor;
+        mask-composite: exclude;
+        pointer-events: none;
+    }
+
+    .gradient-border-transparent table {
+        width: 100%;
+        border-collapse: collapse;
+        background: transparent; /* Tabla transparente */
+    }
