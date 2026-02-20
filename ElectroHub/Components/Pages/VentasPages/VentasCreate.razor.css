@@ -1,0 +1,202 @@
+﻿.container {
+    min-height: 100vh;
+    backdrop-filter: blur(10px);
+    padding: 2rem 1rem 2rem 1rem;
+}
+
+.titulo {
+    font-size: 4vw;
+    color: #5683D7;
+}
+
+.subtitulo {
+    font-size: 1.6vw;
+    color: #FFFFFF;
+}
+
+.subtitulo-detalle {
+    font-size: 1.8vw;
+    color: #AA56D7;
+}
+
+.texto-detalle {
+    font-size: 1.6vw;
+    color: #FFFFFF;
+}
+
+hr {
+    margin: 0;
+    margin-bottom: 20px;
+    border: 2px white solid;
+}
+
+.total {
+    font-size: 3vw;
+}
+
+.boton {
+    color: white;
+    width: 100%;
+    display: flow;
+    border-radius: 10px;
+    border: none;
+    padding: 5px 0px 5px 0px;
+    font-weight: bold;
+}
+
+.boton-volver {
+    background-color: #5683D7;
+    padding: 5px 10px 5px 10px;
+    font-weight: bold;
+    text-decoration: none;
+    text-align: center;
+}
+
+.boton-agregar {
+    background-color: #5683D7;
+    padding: 5px 10px 5px 10px;
+    font-weight: bold;
+    text-decoration: none;
+}
+
+.boton-finalizar {
+    background-color: #83D756;
+    padding: 5px 10px 5px 10px;
+    font-weight: bold;
+    text-decoration: none;
+}
+
+.boton-limpiar {
+    background-color: #D00707;
+    padding: 5px 10px 5px 10px;
+    font-weight: bold;
+    text-decoration: none;
+}
+
+/* Tabla */
+
+.table-responsive {
+    margin-top: 20px;
+    overflow-x: auto;
+    border: none;
+}
+
+table {
+    width: 100%;
+    color: white;
+}
+
+thead, th {
+    border: 1px black solid;
+    padding: 10px;
+    text-align: center;
+    background-color: rgba(255, 255, 255, 0.1);
+}
+
+tbody, tr, td {
+    border: 1px black solid;
+    padding: 10px;
+    text-align: center;
+}
+
+/* --- ESTILO DE CAJA --- */
+.neon-box-style {
+    background: rgba(0, 0, 0, 0.25);
+    border: 2px solid var(--neon-color) !important;
+    box-shadow: 0 0 10px var(--neon-color), inset 0 0 5px rgba(217, 70, 239, 0.3);
+    backdrop-filter: blur(10px);
+    border-radius: 20px;
+}
+
+/* Tarjetas */
+.neon-card {
+    padding: 1.5rem;
+    display: flex;
+    flex-direction: column;
+}
+
+/* Gradiente tabla rosita */
+
+.gradient-border-transparent {
+    --border-width: 3px;
+    --radius: 20px;
+    position: relative;
+    color: white; /* O el color de tu texto */
+    border-radius: var(--radius);
+    background: transparent; /* Aquí está tu transparencia */
+    /* Para que el contenido no toque los bordes */
+    padding: var(--border-width);
+}
+
+    .gradient-border-transparent::before {
+        content: "";
+        position: absolute;
+        inset: 0;
+        border-radius: var(--radius);
+        padding: var(--border-width); /* Grosor del borde */
+        /* El gradiente que quieres */
+        background: linear-gradient(to right, #AA56D7, #D7AA56);
+        /* La magia del recorte (Masking) */
+        -webkit-mask: linear-gradient(#fff 0 0) content-box, linear-gradient(#fff 0 0);
+        -webkit-mask-composite: xor;
+        mask-composite: exclude;
+        pointer-events: none;
+    }
+
+    .gradient-border-transparent table {
+        width: 100%;
+        border-collapse: collapse;
+        background: transparent; /* Tabla transparente */
+    }
+
+.input-cantidad {
+    max-width: 5vw;
+}
+
+select option {
+    color: white;
+    background: #AA56D7;
+}
+
+.select-container, .input-container {
+    width: 100%;
+    position: relative;
+    border-radius: 30px;
+    padding: 2px; /* Espacio para que se vea el borde */
+    background: transparent;
+    display: inline-block;
+}
+
+    /* El pseudo-elemento que crea el borde gradiente */
+    .select-container::before, .input-container::before {
+        content: "";
+        position: absolute;
+        inset: 0;
+        border-radius: 30px;
+        padding: 2px; /* Grosor del borde gradiente */
+        /* Tu gradiente lineal */
+        background: linear-gradient(to right, #AA56D7, #D7AA56);
+        /* El recorte mágico para que el centro sea transparente */
+        -webkit-mask: linear-gradient(#fff 0 0) content-box, linear-gradient(#fff 0 0);
+        -webkit-mask-composite: xor;
+        mask-composite: exclude;
+        pointer-events: none; /* Permite hacer clic a través del borde hacia el input */
+    }
+
+    /* Estilo para el input/select real dentro del contenedor */
+    .select-container select, .input-container input {
+        width: 100%;
+        background: rgba(255, 255, 255, 0.05); /* Fondo opaco sutil como la cabecera */
+        border: none;
+        outline: none;
+        border-radius: 30px;
+        padding: 8px 15px;
+        color: white;
+    }
+
+    /* Quitar la flecha por defecto del select si quieres algo más limpio */
+    .select-container select {
+        appearance: none;
+        -webkit-appearance: none;
+        cursor: pointer;
+    }
