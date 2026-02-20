@@ -1,0 +1,172 @@
+﻿.container {
+    min-height: 100vh;
+    backdrop-filter: blur(10px);
+    padding: 2rem 1rem 2rem 1rem;
+}
+
+nav > span {
+    font-size: 3vw;
+    color: #5683D7;
+    font-weight: bold;
+}
+
+hr {
+    margin: 0;
+    margin-bottom: 20px;
+    border: 2px white solid;
+}
+
+.inputs-container {
+    display: flex;
+    justify-content: space-around;
+    gap: 30px;
+    margin-bottom: 30px;
+}
+
+/* Reutilizando tus estilos de contenedores con gradiente */
+.select-container, .input-container {
+    width: 100%;
+    position: relative;
+    border-radius: 30px;
+    padding: 2px;
+    background: transparent;
+    display: inline-block;
+}
+
+    .select-container::before, .input-container::before {
+        content: "";
+        position: absolute;
+        inset: 0;
+        border-radius: 30px;
+        padding: 2px;
+        background: linear-gradient(to right, #AA56D7, #D7AA56);
+        -webkit-mask: linear-gradient(#fff 0 0) content-box, linear-gradient(#fff 0 0);
+        -webkit-mask-composite: xor;
+        mask-composite: exclude;
+        pointer-events: none;
+    }
+
+    .select-container select, .input-container input {
+        width: 100%;
+        background: rgba(255, 255, 255, 0.05);
+        border: none;
+        outline: none;
+        border-radius: 30px;
+        padding: 8px 15px;
+        color: white;
+    }
+
+/* Estilo de la tabla con gradiente */
+.gradient-border-transparent {
+    --border-width: 3px;
+    --radius: 20px;
+    position: relative;
+    color: white;
+    border-radius: var(--radius);
+    background: transparent;
+    padding: var(--border-width);
+    margin-top: 20px;
+}
+
+    .gradient-border-transparent::before {
+        content: "";
+        position: absolute;
+        inset: 0;
+        border-radius: var(--radius);
+        padding: var(--border-width);
+        background: linear-gradient(to right, #AA56D7, #D7AA56);
+        -webkit-mask: linear-gradient(#fff 0 0) content-box, linear-gradient(#fff 0 0);
+        -webkit-mask-composite: xor;
+        mask-composite: exclude;
+        pointer-events: none;
+    }
+
+table {
+    width: 100%;
+    border-collapse: collapse;
+}
+
+thead, th {
+    padding: 15px;
+    text-align: center;
+    background-color: rgba(255, 255, 255, 0.1);
+    border-bottom: 1px solid rgba(255, 255, 255, 0.2);
+}
+
+tbody td {
+    padding: 12px;
+    text-align: center;
+    border-bottom: 1px solid rgba(255, 255, 255, 0.05);
+}
+
+/* Badges de la imagen */
+.badge-entrada {
+    background-color: #7ED957;
+    color: black;
+    padding: 5px 12px;
+    border-radius: 20px;
+    font-weight: bold;
+    font-size: 12px;
+}
+
+.badge-salida {
+    background-color: #FF3131;
+    color: white;
+    padding: 5px 12px;
+    border-radius: 20px;
+    font-weight: bold;
+    font-size: 12px;
+}
+
+.badge-ajuste {
+    background-color: #FFDE59;
+    color: black;
+    padding: 5px 12px;
+    border-radius: 20px;
+    font-weight: bold;
+    font-size: 12px;
+}
+
+.pagination {
+    margin-top: 30px;
+    display: flex;
+    justify-content: center;
+    align-items: center;
+    gap: 40px;
+}
+
+    .pagination img {
+        width: 25px;
+        cursor: pointer;
+        transition: 0.2s;
+    }
+
+.btn-detalles {
+    border-radius: 15px;
+    background-color: transparent;
+    border: 1px solid #AA56D7;
+    color: #AA56D7;
+    padding: 5px 15px;
+    cursor: pointer;
+}
+
+    .btn-detalles:hover {
+        background-color: #AA56D7;
+        color: white;
+    }
+
+@media (max-width: 700px) {
+    .inputs-container {
+        flex-direction: column;
+        gap: 10px;
+    }
+
+    nav > span {
+        font-size: 8vw;
+    }
+
+    thead, th, tbody td {
+        font-size: 12px;
+        padding: 8px;
+    }
+}
