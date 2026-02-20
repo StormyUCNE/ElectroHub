@@ -159,13 +159,23 @@ select option {
 }
 
 .select-container, .input-container {
-    width: 100%;
+    width: 90%;
     position: relative;
     border-radius: 30px;
     padding: 2px; /* Espacio para que se vea el borde */
-    background: transparent;
-    display: inline-block;
+    background: rgba(255, 255, 255, 0.05); /* Fondo opaco sutil como la cabecera */
+
+    display: flex;
+    align-items: center;
 }
+
+    .select-container .img-container, .input-container .img-container {
+        padding: 0 0 0 10px;
+        width: 20%;
+        display: flex;
+        align-items: center;
+        justify-content: center;
+    }
 
     /* El pseudo-elemento que crea el borde gradiente */
     .select-container::before, .input-container::before {
@@ -185,18 +195,27 @@ select option {
 
     /* Estilo para el input/select real dentro del contenedor */
     .select-container select, .input-container input {
-        width: 100%;
-        background: rgba(255, 255, 255, 0.05); /* Fondo opaco sutil como la cabecera */
+        width: 80%;
+        background: transparent;
         border: none;
         outline: none;
         border-radius: 30px;
         padding: 8px 15px;
         color: white;
+        position: relative;
+        z-index: 2;
     }
 
     /* Quitar la flecha por defecto del select si quieres algo más limpio */
-    .select-container select {
+    .select-container select, .input-container input {
         appearance: none;
         -webkit-appearance: none;
         cursor: pointer;
     }
+
+        /* Ocultar el icono de calendario/reloj en Chrome, Edge, Safari */
+        .input-container input[type="date"]::-webkit-calendar-picker-indicator,
+        .input-container input[type="time"]::-webkit-calendar-picker-indicator {
+            display: none;
+            -webkit-appearance: none;
+        }
