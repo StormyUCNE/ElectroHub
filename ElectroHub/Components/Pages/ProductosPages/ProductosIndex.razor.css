@@ -14,8 +14,8 @@ hr{
 }
 .inputs-container{
     display: flex;
-    justify-content: start;
-    gap: 50px;
+    justify-content: space-around;
+    gap: 30px;
     cursor:pointer;
 }
 .modal-add > svg {
@@ -62,29 +62,22 @@ ul, li {
     gap: 10px;
     padding: 10px;
     margin: 0;
-    border-bottom: 2px black solid;
+    border-bottom: 2px white solid;
+    border-radius: 10px;
     color: white;
     transition: all 0.2s ease-in-out;
 }
 li:hover{
-    background-color: gray;
+    background-color: rgb(180, 100, 242);
     transition: all 0.2s ease-in-out;
+    border-radius:10px;
 }
 .select-container, .input-container {
     width: 40%;
     border: none;
     padding: 1px 10px 1px 10px;
 }
-input, select {
-    border:none;
-    width:100%;
-    height:100%;
-    background-color: transparent;
-    color: white;
-}
-input, select:focus{
-    outline:none;
-}
+
 option{
     color: black;
 }
@@ -114,34 +107,60 @@ button {
     padding: 5px 10px 5px 10px;
     border: none;
     color: white;
+    
 }
 .input-container-item{
     display: flex;
     justify-content:space-between;
+    align-items:center;
     gap: 20px;
+    background-color:transparent;
+    border: 2px pink solid;
+    border-radius: 10px;
+    padding: 3px 6px 3px 6px;
 }
-.input-container-item > input {
-    border-bottom: solid;
+.input-container-item > input, select{
+    height: 90%;
+    border-radius: 0;
+    border:none;
+    border-bottom: 2px white solid;
+    background-color:transparent;
+    color:white;
+}
+.input-container-item > input:focus, select:focus {
+    outline: none !important;
+    box-shadow: none !important;
+    background-color:transparent;
+    color:white;
 }
 .modal-add-mobile {
     display: none;
+}
+.edit-form-container{
+    display:flex;
+    flex-direction:column;
+    justify-content:center;
+    align-items:center;
+    gap:20px;
 }
 .scroll-inputs {
     background-color: transparent;
     height: 350px;
     display: flex;
-    flex-direction:column;
+    flex-direction: column;
     padding-top: 30px;
     gap: 30px;
     overflow-y: auto;
 }
 
  .scroll-inputs::-webkit-scrollbar {
-        width: 8px;
+        width: 20px;
     }
 .scroll-inputs::-webkit-scrollbar-thumb {
     background: linear-gradient(#AA56D7, #D7AA56);
     border-radius: 10px;
+    border: 5px solid transparent;
+    background-clip: content-box;
 }
 .button-container{
     display:flex;
@@ -156,15 +175,15 @@ button {
     background-color: #7B2E2E;
 }
 
-.pagination{
+.pagination {
     position: absolute;
     bottom: 5%;
     left: 0;
-    right:0;
-    margin:auto;
+    right: 0;
+    margin: auto;
     display: flex;
-    justify-content:center;
-    gap:100px;
+    justify-content: center;
+    gap: 100px;
 }
 .pagination > img{
     width:20px;
@@ -172,7 +191,7 @@ button {
 }
 
 
-@media (max-width: 900px) {
+@media (max-width: 700px) {
     .inputs-container {
         flex-direction: column;
         gap: 10px;
@@ -180,7 +199,6 @@ button {
 
     nav > span {
         font-size: 10vw;
-        color: pink;
     }
 
     .modal-add {
@@ -216,6 +234,10 @@ button {
         padding: 10px;
         text-align: center;
         font-size: 10px;
+    }
+
+    option{
+        width:30px;;
     }
 }
 
@@ -263,7 +285,7 @@ select option {
     width: 100%;
     position: relative;
     border-radius: 30px;
-    padding: 2px; /* Espacio para que se vea el borde */
+    padding: 2px; 
     background: transparent;
     display: inline-block;
 }

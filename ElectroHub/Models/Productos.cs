@@ -1,6 +1,6 @@
-﻿using System.ComponentModel.DataAnnotations;
+﻿using ElectroHub.Models.Enums;
+using System.ComponentModel.DataAnnotations;
 using System.ComponentModel.DataAnnotations.Schema;
-
 namespace ElectroHub.Models;
 
 public class Productos
@@ -44,16 +44,12 @@ public class Productos
     public int? StockMinimo { get; set; }
 
     [ForeignKey(nameof(ProveedorId))]
-    public Proveedores? Proveedores { get; set; } // <--- ¡SIN [Required]!
+    public Proveedores? Proveedores { get; set; } 
 
     [Range(1, int.MaxValue, ErrorMessage = "Debe seleccionar un Proveedor.")]
     public int ProveedorId { get; set; }
 
-    [ForeignKey(nameof(EstadoProductoId))]
-    public EstadosProductos? EstadosProductos { get; set; } // <--- ¡SIN [Required]!
-
-    [Range(1, int.MaxValue, ErrorMessage = "Debe seleccionar un Estado.")]
-    public int EstadoProductoId { get; set; }
+    public Estados EstadosProductos { get; set; } = Estados.Activo;
 
     [Required(ErrorMessage = "La fecha es obligatoria.")]
     public DateTime FechaRegistro { get; set; } = DateTime.Now;
