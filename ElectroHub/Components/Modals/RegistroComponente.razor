@@ -17,16 +17,19 @@
 
 @code {
     [Parameter] public string Titulo { get; set; } = string.Empty;
-    
+
     [Parameter] public bool Mostrar { get; set; }
-    
+
     [Parameter] public EventCallback<bool> MostrarChanged { get; set; }
-    
+
     [Parameter] public RenderFragment? ChildContent { get; set; }
+
+    [Parameter] public EventCallback<bool> OnCerrar { get; set; }
 
     public async Task Cerrar()
     {
         Mostrar = false;
         await MostrarChanged.InvokeAsync(false);
+        await OnCerrar.InvokeAsync();
     }
 }

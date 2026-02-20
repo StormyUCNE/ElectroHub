@@ -52,7 +52,6 @@
                 <tr>
                     <th>Empresa</th>
                     <th>Contacto</th>
-                    <th>Teléfono</th>
                     <th>Tipo</th>
                     <th>Estado</th>
                     <th>Opción</th>
@@ -64,7 +63,6 @@
                     <tr>
                         <td>@p.NombreEmpresa</td>
                         <td>@p.Contacto</td>
-                        <td>@p.Telefono</td>
                         <td>@p.TipoProveedor</td>
                         <td>@p.EstadoProveedor</td>
                         <td>
@@ -104,19 +102,16 @@
                     <ValidationMessage For="() => Proveedor.Contacto" />
 
                     <div class="input-container-item">
-                        <label>Teléfono:</label>
-                        <input type="text" @bind="Proveedor.Telefono" class="form-control" />
-                    </div>
-
-                    <div class="input-container-item">
                         <label>Correo:</label>
                         <input type="email" @bind="Proveedor.CorreoElectronico" class="form-control" />
                     </div>
+                    <ValidationMessage For="() => Proveedor.CorreoElectronico" />
 
                     <div class="input-container-item">
                         <label>Dirección:</label>
                         <input type="text" @bind="Proveedor.Direccion" class="form-control" />
                     </div>
+                    <ValidationMessage For="() => Proveedor.Direccion" />
 
                     <div class="input-container-item">
                         <label>Tipo:</label>
@@ -127,16 +122,18 @@
                             }
                         </select>
                     </div>
+                    <ValidationMessage For="() => Proveedor.TipoProveedor" />
 
                     <div class="input-container-item">
                         <label>Estado:</label>
                         <select @bind="Proveedor.EstadoProveedor" class="form-control">
-                            @foreach (var estado in Enum.GetValues<EstadosProveedores>())
+                            @foreach (var estado in Enum.GetValues<Estados>())
                             {
                                 <option value="@estado">@estado</option>
                             }
                         </select>
                     </div>
+                    <ValidationMessage For="() => Proveedor.EstadoProveedor" />
 
                 </div>
                 <button type="submit">Guardar</button>
@@ -163,11 +160,6 @@
                     </div>
 
                     <div class="input-container-item">
-                        <label>Teléfono:</label>
-                        <input type="text" @bind="proveedorSeleccionado.Telefono" class="form-control" />
-                    </div>
-
-                    <div class="input-container-item">
                         <label>Correo:</label>
                         <input type="email" @bind="proveedorSeleccionado.CorreoElectronico" class="form-control" />
                     </div>
@@ -190,7 +182,7 @@
                     <div class="input-container-item">
                         <label>Estado:</label>
                         <select @bind="proveedorSeleccionado.EstadoProveedor" class="form-control">
-                            @foreach (var estado in Enum.GetValues<EstadosProveedores>())
+                            @foreach (var estado in Enum.GetValues<Estados>())
                             {
                                 <option value="@estado">@estado</option>
                             }
@@ -302,10 +294,6 @@
             else if (Filtro == "Contacto")
                 ListaProveedores = await proveedoresService.Listar(p =>
                     p.Contacto.ToLower().Contains(valor.ToLower()) && !p.Eliminado);
-
-            else if (Filtro == "Telefono")
-                ListaProveedores = await proveedoresService.Listar(p =>
-                    p.Telefono.Contains(valor) && !p.Eliminado);
 
             else if (Filtro == "CorreoElectronico")
                 ListaProveedores = await proveedoresService.Listar(p =>

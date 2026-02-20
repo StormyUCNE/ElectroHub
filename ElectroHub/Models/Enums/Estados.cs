@@ -1,6 +1,5 @@
 ﻿namespace ElectroHub.Models.Enums;
-
-public enum EstadosProveedores
+public enum Estados
 {
     Inactivo,
     Activo

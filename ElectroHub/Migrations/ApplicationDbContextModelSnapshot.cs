@@ -117,24 +117,6 @@ namespace ElectroHub.Migrations
                     b.ToTable("Categorias");
                 });
 
-            modelBuilder.Entity("ElectroHub.Models.EstadosProductos", b =>
-                {
-                    b.Property<int>("EstadoProductoId")
-                        .ValueGeneratedOnAdd()
-                        .HasColumnType("int");
-
-                    SqlServerPropertyBuilderExtensions.UseIdentityColumn(b.Property<int>("EstadoProductoId"));
-
-                    b.Property<string>("Nombre")
-                        .IsRequired()
-                        .HasMaxLength(50)
-                        .HasColumnType("nvarchar(50)");
-
-                    b.HasKey("EstadoProductoId");
-
-                    b.ToTable("EstadosProductos");
-                });
-
             modelBuilder.Entity("ElectroHub.Models.Productos", b =>
                 {
                     b.Property<int>("ProductoId")
@@ -160,7 +142,7 @@ namespace ElectroHub.Migrations
                     b.Property<bool>("Eliminado")
                         .HasColumnType("bit");
 
-                    b.Property<int>("EstadoProductoId")
+                    b.Property<int>("EstadosProductos")
                         .HasColumnType("int");
 
                     b.Property<DateTime>("FechaRegistro")
@@ -186,8 +168,6 @@ namespace ElectroHub.Migrations
                     b.HasKey("ProductoId");
 
                     b.HasIndex("CategoriaId");
-
-                    b.HasIndex("EstadoProductoId");
 
                     b.HasIndex("ProveedorId");
 
@@ -225,10 +205,6 @@ namespace ElectroHub.Migrations
                         .IsRequired()
                         .HasMaxLength(50)
                         .HasColumnType("nvarchar(50)");
-
-                    b.Property<string>("Telefono")
-                        .IsRequired()
-                        .HasColumnType("nvarchar(max)");
 
                     b.Property<int>("TipoProveedor")
                         .HasColumnType("int");
@@ -400,12 +376,6 @@ namespace ElectroHub.Migrations
                         .OnDelete(DeleteBehavior.Cascade)
                         .IsRequired();
 
-                    b.HasOne("ElectroHub.Models.EstadosProductos", "EstadosProductos")
-                        .WithMany()
-                        .HasForeignKey("EstadoProductoId")
-                        .OnDelete(DeleteBehavior.Cascade)
-                        .IsRequired();
-
                     b.HasOne("ElectroHub.Models.Proveedores", "Proveedores")
                         .WithMany()
                         .HasForeignKey("ProveedorId")
@@ -413,8 +383,6 @@ namespace ElectroHub.Migrations
                         .IsRequired();
 
                     b.Navigation("Categorias");
-
-                    b.Navigation("EstadosProductos");
 
                     b.Navigation("Proveedores");
                 });
