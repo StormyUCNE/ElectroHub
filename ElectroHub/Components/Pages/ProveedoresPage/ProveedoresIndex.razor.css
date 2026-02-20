@@ -328,7 +328,7 @@ button {
     }
 
     .modal-add-mobile {
-        display: block;
+        display: none;
     }
 
     thead, th {
