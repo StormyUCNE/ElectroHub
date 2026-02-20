@@ -14,6 +14,12 @@
     color: #FFFFFF;
 }
 
+hr {
+    margin: 0;
+    margin-bottom: 20px;
+    border: 2px white solid;
+}
+
 .input-container {
     width: 80%;
     border-radius: 30px;

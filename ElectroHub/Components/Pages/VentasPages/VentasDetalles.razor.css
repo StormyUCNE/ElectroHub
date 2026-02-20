@@ -18,6 +18,12 @@
     color: #FFFFFF;
 }
 
+hr {
+    margin: 0;
+    margin-bottom: 20px;
+    border: 2px white solid;
+}
+
 .total {
     font-size: 3vw;
 }
