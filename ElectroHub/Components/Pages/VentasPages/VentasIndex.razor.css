@@ -51,7 +51,8 @@ hr {
 }
 
 .boton-registrar {
-    padding: 5px 10px 5px 10px;
+    padding: 8px 10px 8px 10px;
+    text-decoration: none;
     background-color: #83D756;
 }
 
@@ -82,8 +83,8 @@ tbody, tr, td {
 }
 
 .boton-detalles {
-    padding: 8px 10px 8px 10px;
     background-color: #AA56D7;
+    padding: 8px 10px 8px 10px;
     text-decoration: none;
 }
 
