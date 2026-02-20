@@ -6,7 +6,7 @@ using Microsoft.EntityFrameworkCore.Migrations;
 namespace ElectroHub.Migrations
 {
     /// <inheritdoc />
-    public partial class InitialCreate : Migration
+    public partial class Inicial : Migration
     {
         /// <inheritdoc />
         protected override void Up(MigrationBuilder migrationBuilder)
@@ -67,19 +67,6 @@ namespace ElectroHub.Migrations
                 });
 
             migrationBuilder.CreateTable(
-                name: "EstadosProductos",
-                columns: table => new
-                {
-                    EstadoProductoId = table.Column<int>(type: "int", nullable: false)
-                        .Annotation("SqlServer:Identity", "1, 1"),
-                    Nombre = table.Column<string>(type: "nvarchar(50)", maxLength: 50, nullable: false)
-                },
-                constraints: table =>
-                {
-                    table.PrimaryKey("PK_EstadosProductos", x => x.EstadoProductoId);
-                });
-
-            migrationBuilder.CreateTable(
                 name: "Proveedores",
                 columns: table => new
                 {
@@ -88,7 +75,6 @@ namespace ElectroHub.Migrations
                     Eliminado = table.Column<bool>(type: "bit", nullable: false),
                     NombreEmpresa = table.Column<string>(type: "nvarchar(50)", maxLength: 50, nullable: false),
                     Contacto = table.Column<string>(type: "nvarchar(max)", nullable: false),
-                    Telefono = table.Column<string>(type: "nvarchar(max)", nullable: false),
                     CorreoElectronico = table.Column<string>(type: "nvarchar(max)", nullable: false),
                     TipoProveedor = table.Column<int>(type: "int", nullable: false),
                     Direccion = table.Column<string>(type: "nvarchar(100)", maxLength: 100, nullable: false),
@@ -240,7 +226,7 @@ namespace ElectroHub.Migrations
                     CantidadInventario = table.Column<int>(type: "int", nullable: false),
                     StockMinimo = table.Column<int>(type: "int", nullable: false),
                     ProveedorId = table.Column<int>(type: "int", nullable: false),
-                    EstadoProductoId = table.Column<int>(type: "int", nullable: false),
+                    EstadosProductos = table.Column<int>(type: "int", nullable: false),
                     FechaRegistro = table.Column<DateTime>(type: "datetime2", nullable: false)
                 },
                 constraints: table =>
@@ -251,12 +237,6 @@ namespace ElectroHub.Migrations
                         column: x => x.CategoriaId,
                         principalTable: "Categorias",
                         principalColumn: "CategoriaId",
-                        onDelete: ReferentialAction.Cascade);
-                    table.ForeignKey(
-                        name: "FK_Productos_EstadosProductos_EstadoProductoId",
-                        column: x => x.EstadoProductoId,
-                        principalTable: "EstadosProductos",
-                        principalColumn: "EstadoProductoId",
                         onDelete: ReferentialAction.Cascade);
                     table.ForeignKey(
                         name: "FK_Productos_Proveedores_ProveedorId",
@@ -316,11 +296,6 @@ namespace ElectroHub.Migrations
                 column: "CategoriaId");
 
             migrationBuilder.CreateIndex(
-                name: "IX_Productos_EstadoProductoId",
-                table: "Productos",
-                column: "EstadoProductoId");
-
-            migrationBuilder.CreateIndex(
                 name: "IX_Productos_ProveedorId",
                 table: "Productos",
                 column: "ProveedorId");
@@ -358,9 +333,6 @@ namespace ElectroHub.Migrations
 
             migrationBuilder.DropTable(
                 name: "Categorias");
-
-            migrationBuilder.DropTable(
-                name: "EstadosProductos");
 
             migrationBuilder.DropTable(
                 name: "Proveedores");

@@ -2,7 +2,6 @@
 @rendermode InteractiveServer
 @inject CategoriasService categoriasService
 @inject ProveedoresService proveedoresService
-@inject EstadosProductosService estadosProductosService
 @inject ProductosService productosService
 
 <PageTitle>Productos</PageTitle>
@@ -15,7 +14,7 @@
             <svg @onclick="alternateModal" xmlns="http://www.w3.org/2000/svg" height="48px" viewBox="0 -960 960 960" width="48px" fill="#FFFFFF"><path d="M450-120v-330H120v-60h330v-330h60v330h330v60H510v330h-60Z" /></svg>
             <div class="modal-add-options @(showModal ? "show" : "")" @onclick:stopPropagation="true">
                 <ul>
-                    <li>Registra Productos</li>
+                    <li @onclick="() => { showModalRegister = true; showModal = false; }">Registra Productos</li>
                     <li>Administrar Categorías</li>
                 </ul>
             </div>
@@ -46,7 +45,7 @@
             <svg @onclick="alternateModal" xmlns="http://www.w3.org/2000/svg" height="48px" viewBox="0 -960 960 960" width="48px" fill="#FFFFFF"><path d="M450-120v-330H120v-60h330v-330h60v330h330v60H510v330h-60Z" /></svg>
             <div class="modal-add-options @(showModal ? "show" : "")">
                 <ul>
-                    <li @onclick="() => showModalRegister = true">Registra Productos</li>
+                    <li @onclick="() => {showModalRegister = true; showModal = false;}">Registra Productos</li>
                     <li>Administrar Categorías</li>
                 </ul>
             </div>
@@ -88,7 +87,7 @@
     </div>
 
 
-    <RegistroComponente @bind-Mostrar="showModalRegister" Titulo="Registro Productos">
+    <RegistroComponente @bind-Mostrar="showModalRegister" Titulo="Registro Productos" OnCerrar="LimpiarCampos">
         @* Agregamos OnInvalidSubmit para ver errores si los hay *@
         <EditForm Model="Productos" OnValidSubmit="Guardar">
             <DataAnnotationsValidator />
@@ -171,15 +170,15 @@
                     @* ESTADO (Corregido: Sin ValueExpression) *@
                     <div class="input-container-item">
                         <label>Estado:</label>
-                        <select @bind="Productos.EstadoProductoId" class="form-control">
+                        <select @bind="Productos.EstadosProductos" class="form-control">
                             <option value="0">Seleccione un Estado</option>
-                            @foreach (var e in ListaEstadosProducto)
+                            @foreach (var e in Enum.GetValues<Estados>())
                             {
-                                <option value="@e.EstadoProductoId">@e.Nombre</option>
+                                <option value="@e">@e</option>
                             }
                         </select>
                     </div>
-                    <ValidationMessage For="() => Productos.EstadoProductoId" />
+                    <ValidationMessage For="() => Productos.EstadosProductos" />
 
                     @* FECHA *@
                     <div class="input-container-item">
@@ -276,15 +275,15 @@
                     @* ESTADO (Corregido: Sin ValueExpression) *@
                     <div class="input-container-item">
                         <label>Estado:</label>
-                        <select @bind="productoSeleccionado.EstadoProductoId" class="form-control">
+                        <select @bind="productoSeleccionado.EstadosProductos" class="form-control">
                             <option value="0">Seleccione un Estado</option>
-                            @foreach (var e in ListaEstadosProducto)
+                            @foreach (var e in Enum.GetValues<Estados>())
                             {
-                                <option value="@e.EstadoProductoId">@e.Nombre</option>
+                                <option value="@e">@e</option>
                             }
                         </select>
                     </div>
-                    <ValidationMessage For="() => productoSeleccionado.EstadoProductoId" />
+                    <ValidationMessage For="() => productoSeleccionado.EstadosProductos" />
 
                     @* FECHA *@
                     <div class="input-container-item">
@@ -337,14 +336,16 @@
     public List<Categorias> ListaCategorias = new List<Categorias>();
     public List<Proveedores> ListaProveedore = new List<Proveedores>();
     public List<Productos> ListaProductos = new List<Productos>();
-    public List<EstadosProductos> ListaEstadosProducto = new List<EstadosProductos>();
 
     protected override async Task OnInitializedAsync()
     {
         ListaCategorias = await categoriasService.Listar(c => c.Eliminado == false);
         ListaProveedore = await proveedoresService.Listar(p => p.Eliminado == false);
-        ListaEstadosProducto = await estadosProductosService.Listar(e => e.EstadoProductoId > 0);
         ListaProductos = await productosService.Listar(p => p.Eliminado == false);
+    }
+    private async Task LimpiarCampos()
+    {
+        Productos = new Productos();
     }
 
     private async Task RefrescarLista()
@@ -368,6 +369,8 @@
 
     private async Task Modificar()
     {
+        productoSeleccionado.Categorias = null;
+        productoSeleccionado.Proveedores = null;
         var creado = await productosService.Guardar(productoSeleccionado);
         if (creado)
         {
@@ -454,13 +457,7 @@
                 else
                     ListaProductos = await productosService.Listar(p => p.Eliminado == false);
             }
-            else if (Filtro == "Estado")
-                ListaProductos = await productosService.Listar(p => p.EstadosProductos.Nombre.ToLower().Contains(valor.ToLower()) && p.Eliminado == false);
-            else if (Filtro == "FechaRegistro")
-                if (DateTime.TryParse(valor, out var Fecha))
-                    ListaProductos = await productosService.Listar(p => p.FechaRegistro.Date == Fecha && p.Eliminado == false);
-                else
-                    ListaProductos = await productosService.Listar(p => p.Eliminado == false);
+        
         }
         else
         {
@@ -480,4 +477,3 @@
             paginaActual++;
     }
 }
-

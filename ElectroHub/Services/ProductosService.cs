@@ -48,6 +48,6 @@ public class ProductosService(IDbContextFactory<ApplicationDbContext> DbFactory)
     public async Task<List<Productos>> Listar(Expression<Func<Productos, bool>> criterio)
     {
         await using var contexto = await DbFactory.CreateDbContextAsync();
-        return await contexto.Productos.Include(c => c.Categorias).Include(p => p.Proveedores).Include(e => e.EstadosProductos).Where(criterio).ToListAsync();
+        return await contexto.Productos.Include(c => c.Categorias).Include(p => p.Proveedores).Where(criterio).ToListAsync();
     }
 }

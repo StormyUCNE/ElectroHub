@@ -1,6 +1,4 @@
 ﻿namespace ElectroHub.Models.Enums;
-
-
 public enum TiposProveedores
 {
     ProveedorMayorista,

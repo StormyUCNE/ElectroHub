@@ -12,7 +12,6 @@ namespace ElectroHub.Data
         }
 
         public DbSet<Productos> Productos { get; set; }
-        public DbSet<EstadosProductos> EstadosProductos { get; set; }
         public DbSet<Categorias> Categorias { get; set; }
         public DbSet<Proveedores> Proveedores { get; set; }
     }
