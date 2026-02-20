@@ -4,55 +4,71 @@
 
 <div class="container">
     <span class="titulo">Ventas</span>
+    <hr />
 
     @* Fecha *@
-    <div class="row align-items-end pb-3">
+    <div class="row align-items-center pb-3">
         <div class="col-2">
             <label class="subtitulo">Desde:</label>
         </div>
         <div class="col-4">
-            <div class="input-container">
-                <input class="form-control" type="date" />
+            <div class="input-container" onclick="this.querySelector('input').showPicker()">
+                <div class="img-container">
+                    <img src="/VentasSVG/Calendar.svg" width="20" height="20" />
+                </div>
+                <input type="date" />
             </div>
         </div>
         <div class="col-2">
             <label class="subtitulo">Hasta:</label>
         </div>
         <div class="col-4">
-            <div class="input-container">
-                <input class="form-control" type="date" />
+            <div class="input-container" onclick="this.querySelector('input').showPicker()">
+                <div class="img-container">
+                    <img src="/VentasSVG/Calendar.svg" width="20" height="20" />
+                </div>
+                <input type="date" />
             </div>
         </div>
     </div>
 
     @* Hora *@
-    <div class="row align-items-end pb-3">
+    <div class="row align-items-center pb-3">
         <div class="col-2">
             <label class="subtitulo">Desde:</label>
         </div>
         <div class="col-4">
-            <div class="input-container">
-                <input class="form-control" type="time" />
+            <div class="input-container" onclick="this.querySelector('input').showPicker()">
+                <div class="img-container">
+                    <img src="/VentasSVG/Watch.svg" width="20" height="20" />
+                </div>
+                <input type="time" />
             </div>
         </div>
         <div class="col-2">
             <label class="subtitulo">Hasta:</label>
         </div>
         <div class="col-4">
-            <div class="input-container">
-                <input class="form-control" type="time" />
+            <div class="input-container" onclick="this.querySelector('input').showPicker()">
+                <div class="img-container">
+                    <img src="/VentasSVG/Watch.svg" width="20" height="20" />
+                </div>
+                <input type="time" />
             </div>
         </div>
     </div>
 
     @* Vendedor y metodo de pago *@
-    <div class="row align-items-end pb-3">
+    <div class="row align-items-center pb-3">
         <div class="col-2">
             <label class="subtitulo">Vendedor:</label>
         </div>
         <div class="col-4">
             <div class="select-container">
-                <select class="form-select">
+                <div class="img-container">
+                    <img src="/VentasSVG/Person.svg" width="20" height="20" />
+                </div>
+                <select>
                     <option>Juan Luis Guerra</option>
                     <option>Luis Fonsi</option>
                     <option>Laufei</option>
@@ -63,8 +79,11 @@
             <label class="subtitulo">M&eacute;todo de pago:</label>
         </div>
         <div class="col-4">
-            <div class="input-container">
-                <select class="form-select">
+            <div class="select-container">
+                <div class="img-container">
+                    <img src="/VentasSVG/PaymentMethod.svg" width="20" height="20" />
+                </div>
+                <select>
                     <option>Efectivo</option>
                     <option>Tarjeta de d&eacute;bito</option>
                     <option>Tarjeta de cr&eacute;dito</option>
@@ -75,19 +94,22 @@
     </div>
 
     @* Monto *@
-    <div class="row align-items-end pb-2">
+    <div class="row align-items-center pb-2">
         <div class="col-2">
             <label class="subtitulo">Monto:</label>
         </div>
         <div class="col-4">
             <div class="input-container">
-                <input class="form-control" />
+                <div class="img-container">
+                    <img src="/VentasSVG/MoneyBag.svg" width="20" height="20" />
+                </div>
+                <input type="number" value="0.00"/>
             </div>
         </div>
     </div>
 
     @* Registros mostrados y botones *@
-    <div class="row align-items-end">
+    <div class="row align-items-center">
         <div class="col-8">
             <label class="subtitulo">Mostrando 3 de 3 ventas</label>
         </div>
@@ -147,7 +169,7 @@
         </table>
     </div>
     <div class="text-center pt-3">
-        <button class="boton boton-registrar">Registrar venta</button>
+        <a class="boton boton-registrar" href="/Ventas/Create">Registrar venta</a>
     </div>
 </div>
 

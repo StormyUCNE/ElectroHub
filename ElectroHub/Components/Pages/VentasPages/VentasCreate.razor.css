@@ -14,35 +14,63 @@
     color: #FFFFFF;
 }
 
+.subtitulo-detalle {
+    font-size: 1.8vw;
+    color: #AA56D7;
+}
+
+.texto-detalle {
+    font-size: 1.6vw;
+    color: #FFFFFF;
+}
+
 hr {
     margin: 0;
     margin-bottom: 20px;
     border: 2px white solid;
 }
 
+.total {
+    font-size: 3vw;
+}
+
 .boton {
     color: white;
+    width: 100%;
+    display: flow;
     border-radius: 10px;
     border: none;
-    font-weight: bold;
     padding: 5px 0px 5px 0px;
+    font-weight: bold;
 }
 
-.boton-aplicar {
-    width: 100%;
+.boton-volver {
     background-color: #5683D7;
-}
-
-.boton-restablecer {
-    width: 100%;
     padding: 5px 10px 5px 10px;
-    background-color: #D7AA56;
+    font-weight: bold;
+    text-decoration: none;
+    text-align: center;
 }
 
-.boton-registrar {
-    padding: 8px 10px 8px 10px;
+.boton-agregar {
+    background-color: #5683D7;
+    padding: 5px 10px 5px 10px;
+    font-weight: bold;
     text-decoration: none;
+}
+
+.boton-finalizar {
     background-color: #83D756;
+    padding: 5px 10px 5px 10px;
+    font-weight: bold;
+    text-decoration: none;
+}
+
+.boton-limpiar {
+    background-color: #D00707;
+    padding: 5px 10px 5px 10px;
+    font-weight: bold;
+    text-decoration: none;
 }
 
 /* Tabla */
@@ -71,10 +99,20 @@ tbody, tr, td {
     text-align: center;
 }
 
-.boton-detalles {
-    background-color: #AA56D7;
-    padding: 8px 10px 8px 10px;
-    text-decoration: none;
+/* --- ESTILO DE CAJA --- */
+.neon-box-style {
+    background: rgba(0, 0, 0, 0.25);
+    border: 2px solid var(--neon-color) !important;
+    box-shadow: 0 0 10px var(--neon-color), inset 0 0 5px rgba(217, 70, 239, 0.3);
+    backdrop-filter: blur(10px);
+    border-radius: 20px;
+}
+
+/* Tarjetas */
+.neon-card {
+    padding: 1.5rem;
+    display: flex;
+    flex-direction: column;
 }
 
 /* Gradiente tabla rosita */
@@ -111,7 +149,9 @@ tbody, tr, td {
         background: transparent; /* Tabla transparente */
     }
 
-
+.input-cantidad {
+    max-width: 5vw;
+}
 
 select option {
     color: white;

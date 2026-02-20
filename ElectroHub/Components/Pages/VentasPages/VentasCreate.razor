@@ -1,0 +1,228 @@
+﻿@page "/Ventas/Create";
+
+<PageTitle>VentasCreate</PageTitle>
+
+<div class="container">
+    <label class="titulo">Nueva venta</label>
+    <hr />
+
+    @* Agregar producto *@
+    <div class="row align-items-center">
+        <div class="col-5">
+            <div class="input-container">
+                <div class="img-container">
+                    <img class="" src="/VentasSVG/Search.svg" width="30" height="30" />
+                </div>
+                <input class="" type="text" placeholder="Agregar producto..." />
+            </div>
+        </div>
+        <div class="col-3">
+            <button class="boton boton-agregar">Agregar producto</button>
+        </div>
+    </div>
+
+    @* Tabla de productos *@
+    <div class="table-responsive gradient-border-transparent">
+        <table>
+            <thead>
+                <tr>
+                    <th>C&oacute;digo</th>
+                    <th>Descripci&oacute;n</th>
+                    <th>Categor&iacute;a</th>
+                    <th>Cantidad</th>
+                    <th>Precio</th>
+                    <th>ITBIS</th>
+                    <th>Subtotal</th>
+                    <th>Acciones</th>
+                </tr>
+            </thead>
+            <tbody>
+                <tr>
+                    <td>00001</td>
+                    <td>Pantalla OLED 120Hz 8K con pasola incluida</td>
+                    <td>Electrodomestico</td>
+                    <td>
+                        <div class="input-container input-cantidad">
+                            <input type="text" value="1" />
+                        </div>
+                    </td>
+                    <td>$2,500.00</td>
+                    <td>$139.90</td>
+                    <td>$2,639.90</td>
+                    <td>
+                        <svg xmlns="http://www.w3.org/2000/svg" height="48px" viewBox="0 -960 960 960" width="48px" fill="#D00707"><path d="M261-120q-24.75 0-42.37-17.63Q201-155.25 201-180v-570h-41v-60h188v-30h264v30h188v60h-41v570q0 24-18 42t-42 18H261Zm438-630H261v570h438v-570ZM367-266h60v-399h-60v399Zm166 0h60v-399h-60v399ZM261-750v570-570Z" /></svg>
+                    </td>
+                </tr>
+                <tr>
+                    <td>00001</td>
+                    <td>Pantalla OLED 120Hz 8K con pasola incluida</td>
+                    <td>Electrodomestico</td>
+                    <td>
+                        <div class="input-container input-cantidad">
+                            <input type="text" value="1" />
+                        </div>
+                    </td>
+                    <td>$2,500.00</td>
+                    <td>$139.90</td>
+                    <td>$2,639.90</td>
+                    <td>
+                        <svg xmlns="http://www.w3.org/2000/svg" height="48px" viewBox="0 -960 960 960" width="48px" fill="#D00707"><path d="M261-120q-24.75 0-42.37-17.63Q201-155.25 201-180v-570h-41v-60h188v-30h264v30h188v60h-41v570q0 24-18 42t-42 18H261Zm438-630H261v570h438v-570ZM367-266h60v-399h-60v399Zm166 0h60v-399h-60v399ZM261-750v570-570Z" /></svg>
+                    </td>
+                </tr>
+                <tr>
+                    <td>00001</td>
+                    <td>Pantalla OLED 120Hz 8K con pasola incluida</td>
+                    <td>Electrodomestico</td>
+                    <td>
+                        <div class="input-container input-cantidad">
+                            <input type="text" value="1" />
+                        </div>
+                    </td>
+                    <td>$2,500.00</td>
+                    <td>$139.90</td>
+                    <td>$2,639.90</td>
+                    <td>
+                        <svg xmlns="http://www.w3.org/2000/svg" height="48px" viewBox="0 -960 960 960" width="48px" fill="#D00707"><path d="M261-120q-24.75 0-42.37-17.63Q201-155.25 201-180v-570h-41v-60h188v-30h264v30h188v60h-41v570q0 24-18 42t-42 18H261Zm438-630H261v570h438v-570ZM367-266h60v-399h-60v399Zm166 0h60v-399h-60v399ZM261-750v570-570Z" /></svg>
+                    </td>
+                </tr>
+                <tr>
+                    <td>00001</td>
+                    <td>Pantalla OLED 120Hz 8K con pasola incluida</td>
+                    <td>Electrodomestico</td>
+                    <td>
+                        <div class="input-container input-cantidad">
+                            <input type="text" value="1" />
+                        </div>
+                    </td>
+                    <td>$2,500.00</td>
+                    <td>$139.90</td>
+                    <td>$2,639.90</td>
+                    <td>
+                        <svg xmlns="http://www.w3.org/2000/svg" height="48px" viewBox="0 -960 960 960" width="48px" fill="#D00707"><path d="M261-120q-24.75 0-42.37-17.63Q201-155.25 201-180v-570h-41v-60h188v-30h264v30h188v60h-41v570q0 24-18 42t-42 18H261Zm438-630H261v570h438v-570ZM367-266h60v-399h-60v399Zm166 0h60v-399h-60v399ZM261-750v570-570Z" /></svg>
+                    </td>
+                </tr>
+            </tbody>
+        </table>
+    </div>
+
+    <div class="neon-card neon-box-style mt-3">
+        <label class="titulo">Detalle</label>
+
+        @* Fecha y subtotal *@
+        <div class="row align-items-center pb-3">
+            <div class="col-3">
+                <label class="subtitulo-detalle">Fecha:</label>
+            </div>
+            <div class="col-3">
+                <label class="texto-detalle">2026-01-30 08:00:00 AM</label>
+            </div>
+
+            <div class="col-3">
+                <label class="subtitulo-detalle">Subtotal:</label>
+            </div>
+            <div class="col-3">
+                <label class="texto-detalle">$1,355.00</label>
+            </div>
+        </div>
+
+        @* Vendedor y descuento aplicado *@
+        <div class="row align-items-center pb-3">
+            <div class="col-3">
+                <label class="subtitulo-detalle">Vendedor:</label>
+            </div>
+            <div class="col-3">
+                <label class="texto-detalle">Luis Fonsi</label>
+            </div>
+            <div class="col-3">
+                <label class="subtitulo-detalle">Desc. Aplicado:</label>
+            </div>
+            <div class="col-3">
+                <label class="texto-detalle">$0.00</label>
+            </div>
+        </div>
+
+        @* Descuento y ITBIS *@
+        <div class="row align-items-center pb-3">
+            <div class="col-3">
+                <label class="subtitulo-detalle">Descuento:</label>
+            </div>
+            <div class="col-3">
+                <div class="input-container">
+                    <div class="img-container">
+                        <img class="" src="/VentasSVG/Discount.svg" width="20" height="20" />
+                    </div>
+                    <input type="number" value="0.0"/>
+                </div>
+            </div>
+            <div class="col-3">
+                <label class="subtitulo-detalle">ITBIS:</label>
+            </div>
+            <div class="col-3">
+                <label class="texto-detalle">$138.00</label>
+            </div>
+        </div>
+
+        @* Metodo de pago y Total *@
+        <div class="row align-items-center pb-3">
+            <div class="col-3">
+                <label class="subtitulo-detalle">M&eacute;todo de pago:</label>
+            </div>
+            <div class="col-3">
+                <div class="select-container">
+                    <div class="img-container">
+                        <img class="" src="/VentasSVG/PaymentMethod.svg" width="20" height="20" />
+                    </div>
+                    <select>
+                        <option>Efectivo</option>
+                        <option>Tarjeta de d&eacute;bito</option>
+                        <option>Tarjeta de cr&eacute;dito</option>
+                        <option>Cheque</option>
+                    </select>
+                </div>
+            </div>
+            <div class="col-3">
+                <label class="subtitulo-detalle total">Total:</label>
+            </div>
+            <div class="col-3">
+                <label class="texto-detalle total">$1,493.00</label>
+            </div>
+        </div>
+
+        @* Monto recibido y Vuelto*@
+        <div class="row align-items-center pb-3">
+            <div class="col-3">
+                <label class="subtitulo-detalle">Monto recibido:</label>
+            </div>
+            <div class="col-3">
+                <div class="input-container">
+                    <div class="img-container">
+                        <img class="" src="/VentasSVG/MoneyBag.svg" width="20" height="20" />
+                    </div>
+                    <input type="number" value="0.00"/>
+                </div>
+            </div>
+            <div class="col-3">
+                <label class="subtitulo-detalle">Vuelto:</label>
+            </div>
+            <div class="col-3">
+                <label class="texto-detalle">$507.00</label>
+            </div>
+        </div>
+    </div>
+
+    <div class="row justify-content-center pt-3">
+        <div class="col-2">
+            <a class="boton boton-volver" href="/Ventas/Index">Volver</a>
+        </div>
+        <div class="col-2">
+            <button class="boton boton-finalizar">Finalizar venta</button>
+        </div>
+        <div class="col-2">
+            <button class="boton boton-limpiar">Limpiar</button>
+        </div>
+    </div>
+</div>
+
+@code {
+
+}
