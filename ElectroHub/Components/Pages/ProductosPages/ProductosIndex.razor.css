@@ -72,6 +72,9 @@ li:hover{
     transition: all 0.2s ease-in-out;
     border-radius:10px;
 }
+
+
+
 .select-container, .input-container {
     width: 40%;
     border: none;
