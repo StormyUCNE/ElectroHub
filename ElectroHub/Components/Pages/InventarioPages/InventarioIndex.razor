@@ -74,6 +74,7 @@
     </div>
 
     @* --- MODAL DE DETALLES --- *@
+    @* --- MODAL DE DETALLES CORREGIDO --- *@
     <DetalleComponente @bind-Mostrar="showModalDetails" Titulo="@($"DETALLES: {movimientoSeleccionado?.Producto?.Nombre}")">
         <section class="edit-form-container">
             <div class="d-flex justify-content-end mb-2">
@@ -82,18 +83,19 @@
                 </span>
             </div>
 
-            <div class="row text-center mb-4" style="color: white; font-weight: bold; font-size: 0.9rem;">
-                <div class="col-4">
-                    <div style="border: 2px solid #00F2FF; border-radius: 50%; width: 15px; height: 15px; display: inline-block; vertical-align: middle;"></div>
-                    <span class="ms-1">Anterior: @(movimientoSeleccionado?.StockResultante - movimientoSeleccionado?.Cantidad)</span>
+            @* Ajuste de columnas para evitar saltos de línea *@
+            <div class="d-flex justify-content-around mb-4" style="color: white; font-weight: bold; font-size: 0.85rem; white-space: nowrap;">
+                <div class="d-flex align-items-center">
+                    <div style="border: 2px solid #00F2FF; border-radius: 50%; width: 12px; height: 12px; display: inline-block;"></div>
+                    <span class="ms-2">Anterior: @(movimientoSeleccionado?.StockResultante - movimientoSeleccionado?.Cantidad)</span>
                 </div>
-                <div class="col-4">
-                    <div style="border: 2px solid #00F2FF; border-radius: 50%; width: 15px; height: 15px; display: inline-block; vertical-align: middle;"></div>
-                    <span class="ms-1">Cant: @movimientoSeleccionado?.Cantidad</span>
+                <div class="d-flex align-items-center">
+                    <div style="border: 2px solid #00F2FF; border-radius: 50%; width: 12px; height: 12px; display: inline-block;"></div>
+                    <span class="ms-2">Cant: @movimientoSeleccionado?.Cantidad</span>
                 </div>
-                <div class="col-4">
-                    <div style="border: 2px solid #00F2FF; border-radius: 50%; width: 15px; height: 15px; display: inline-block; vertical-align: middle;"></div>
-                    <span class="ms-1">Final: @movimientoSeleccionado?.StockResultante</span>
+                <div class="d-flex align-items-center">
+                    <div style="border: 2px solid #00F2FF; border-radius: 50%; width: 12px; height: 12px; display: inline-block;"></div>
+                    <span class="ms-2">Final: @movimientoSeleccionado?.StockResultante</span>
                 </div>
             </div>
 
@@ -102,9 +104,17 @@
                     <h6 class="text-white fw-bold mb-3" style="font-size: 0.85rem; letter-spacing: 1px;">INFORMACIÓN PRODUCTO</h6>
                     <div class="text-white-50 small">
                         <p class="mb-1"><strong class="text-white">PRODUCTO:</strong> @movimientoSeleccionado?.Producto?.Nombre</p>
-                        <p class="mb-1"><strong class="text-white">SKU:</strong> @movimientoSeleccionado?.ProductoId</p>
+                    
+                        @* Cambiado a la propiedad de código del producto *@
+                        <p class="mb-1"><strong class="text-white">SKU:</strong> @movimientoSeleccionado?.Producto?.CodigoProducto</p>
+                    
                         <p class="mb-1"><strong class="text-white">CATEGORÍA:</strong> @movimientoSeleccionado?.Producto?.Categorias?.Nombre?.ToUpper()</p>
-                        <p class="mb-1"><strong class="text-white">PROVEEDOR:</strong> @movimientoSeleccionado?.Producto?.Proveedores?.NombreEmpresa?.ToUpper()</p>
+                        
+                        @* --- CORRECCIÓN PROVEEDOR LARGO --- *@
+                        <p class="mb-1" style="word-break: break-all; line-height: 1.2;">
+                            <strong class="text-white">PROVEEDOR:</strong>
+                            @movimientoSeleccionado?.Producto?.Proveedores?.NombreEmpresa?.ToUpper()
+                        </p>
                     </div>
                 </div>
 
