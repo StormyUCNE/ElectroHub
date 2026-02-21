@@ -6,15 +6,14 @@
 
 <PageTitle>Productos</PageTitle>
 
-
-<div class="container">
+<div class="product-container" @onclick="()=> showAddModal = false">
     <nav>
         <span>Productos</span>
         <div class="modal-add-mobile" @onclick:stopPropagation="true">
             <svg @onclick="alternateModal" xmlns="http://www.w3.org/2000/svg" height="48px" viewBox="0 -960 960 960" width="48px" fill="#FFFFFF"><path d="M450-120v-330H120v-60h330v-330h60v330h330v60H510v330h-60Z" /></svg>
-            <div class="modal-add-options @(showModal ? "show" : "")" @onclick:stopPropagation="true">
+            <div class="modal-add-options @(showAddModal ? "show" : "")" @onclick:stopPropagation="true">
                 <ul>
-                    <li @onclick="() => { showModalRegister = true; showModal = false; }">Registra Productos</li>
+                    <li @onclick="() => { showRegisterModal = true; showAddModal = false; }">Registra Productos</li>
                     <li>Administrar Categorías</li>
                 </ul>
             </div>
@@ -22,39 +21,50 @@
     </nav>
     <hr />
 
-    <section class="inputs-container">
-        <div class="input-container">
-            <input type="text" placeholder="Buscar Producto..." @oninput="Buscar" />
-        </div>
-        <div class="select-container">
-            <select class="form-select" @bind="Filtro">
-                <option value="">Seleccione Filtrar Por</option>
-                <option value="CodigoProducto">Código Producto</option>
-                <option value="Nombre">Nombre</option>
-                <option value="Categoria">Categoría</option>
-                <option value="Proveedor">Proveedor</option>
-                <option value="PrecioVenta">Precio Venta</option>
-                <option value="PrecioCompra">Precio Compra</option>
-                <option value="CantidadInventario">Cantidad Inventario</option>
-                <option value="Estado">Estado</option>
-                <option value="StockMinimo">Stock Minimo</option>
-                <option value="FechaRegistro">Fecha Registro</option>
-            </select>
-        </div>
-        <div class="modal-add">
+    @*Filtros*@
+    <section class="filter-container">
+        <section class="input-container">
+            <div class="form-field">
+                <input type="text" placeholder="Buscar Producto..." @oninput="Buscar"/>
+            </div>
+
+            <div class="select-container">
+                <select class="form-field-select" @bind="Filtro">
+                    <option value="">Seleccione Filtrar Por</option>
+                    <option value="CodigoProducto">Código Producto</option>
+                    <option value="Nombre">Nombre</option>
+                    <option value="Categoria">Categoría</option>
+                    <option value="Proveedor">Proveedor</option>
+                    <option value="Estado">Estado</option>
+                </select>
+            </div>
+
+            <!-- CONTENEDOR NUEVO -->
+            <div class="date-group">
+                <div class="form-field">
+                    <input type="date" @bind="FechaInicial" @bind:after="AplicarFiltros"/>
+                </div>
+                <div class="form-field">
+                    <input type="date" @bind="FechaFinal" @bind:after="AplicarFiltros" />
+                </div>
+            </div>
+        </section>
+
+        @*Botón Agregar*@
+        <div class="modal-add" @onclick:stopPropagation="true">
             <svg @onclick="alternateModal" xmlns="http://www.w3.org/2000/svg" height="48px" viewBox="0 -960 960 960" width="48px" fill="#AA56D7"><path d="M450-120v-330H120v-60h330v-330h60v330h330v60H510v330h-60Z" /></svg>
-            <div class="modal-add-options @(showModal ? "show" : "")">
+            <div class="modal-add-options @(showAddModal ? "show" : "")">
                 <ul>
-                    <li @onclick="() => {showModalRegister = true; showModal = false;}">Registra Productos</li>
+                    <li @onclick="() => {showRegisterModal = true; showAddModal = false;}">Registra Productos</li>
                     <li>Administrar Categorías</li>
                 </ul>
             </div>
         </div>
-
     </section>
 
-    <div class="table-responsive gradient-border-transparent">
-        <table>
+    @*Tabla*@
+    <div class="table-responsive table-containaer">
+        <table class="gradient-border-transparent">
             <thead>
                 <tr>
                     <th>Nombre</th>
@@ -79,16 +89,15 @@
                 }
             </tbody>
         </table>
+        <div class="pagination">
+            <img src="/ProductosSVG/NavigationFlechas.svg" alt="Prev" @onclick="PaginaAnterior" disabled="@(paginaActual == 1)" class="@(paginaActual == 1 ? "opacity-25" : "opacity-100")" />
+            <span>@paginaActual | @TotalPaginas</span>
+            <img src="/ProductosSVG/RigthNav.svg" alt="Next" @onclick="PaginaSiguiente" disabled="@(paginaActual == TotalPaginas)" class="@(paginaActual == TotalPaginas ? "opacity-25" : "opacity-100")" />
+        </div>
     </div>
 
-    <div class="pagination">
-        <img src="/NavigationFlechas.svg" alt="Prev" @onclick="PaginaAnterior" disabled="@(paginaActual == 1)" class="@(paginaActual == 1 ? "opacity-25" : "opacity-100")" />
-        <img src="/RigthNav.svg" alt="Next" @onclick="PaginaSiguiente" disabled="@(paginaActual == TotalPaginas)" class="@(paginaActual == TotalPaginas ? "opacity-25" : "opacity-100")" />
-    </div>
-
-
-    <RegistroComponente @bind-Mostrar="showModalRegister" Titulo="Registro Productos" OnCerrar="LimpiarCampos">
-        @* Agregamos OnInvalidSubmit para ver errores si los hay *@
+    @*Registro para Crear Producto*@
+    <RegistroComponente @bind-Mostrar="showRegisterModal" Titulo="Registro Productos" OnCerrar="LimpiarCampos">
         <EditForm Model="Productos" OnValidSubmit="Guardar">
             <DataAnnotationsValidator />
             <section class="edit-form-container">
@@ -186,14 +195,14 @@
                         <input type="date" @bind="Productos.FechaRegistro" class="form-control" />
                     </div>
                     <ValidationMessage For="() => Productos.FechaRegistro" />
-
                 </div>
                 <button type="submit">Guardar</button>
             </section>
         </EditForm>
     </RegistroComponente>
 
-    <DetalleComponente @bind-Mostrar="showModalDetails" Titulo="Detalle Productos">
+    @*Detalle Producto*@
+    <DetalleComponente @bind-Mostrar="showDetailsModal" Titulo="Detalle Productos">
         <EditForm Model="productoSeleccionado" OnValidSubmit="Modificar">
             <DataAnnotationsValidator />
             <section class="edit-form-container">
@@ -291,7 +300,6 @@
                         <input type="date" @bind="productoSeleccionado.FechaRegistro" class="form-control" />
                     </div>
                     <ValidationMessage For="() => productoSeleccionado.FechaRegistro" />
-
                 </div>
                 <div class="button-container">
                     <button type="submit">Guardar</button>
@@ -301,24 +309,51 @@
         </EditForm>
     </DetalleComponente>
 
-    <ConfirmacionAgregadoComponente @bind-Mostrar="showConfirmationAddModal" NombreProducto="@nombreConfirmacion" />
-    <ConfirmacionModificadoComponente @bind-Mostrar="showConfirmationUpdateModal" NombreProducto="@productoSeleccionado.Nombre" />
-    <AvisoEliminarComponente @bind-Mostrar="showWarningModal" Productos="@productoSeleccionado" OnProductoEliminado="RefrescarLista" />
+    <ConfirmacionAgregadoComponente @bind-Mostrar="showAddedModal" NombreProducto="@Productos.Nombre" LimpiarObjeto="LimpiarCampos" />
+    <ConfirmacionModificadoComponente @bind-Mostrar="showUpdatedModal" NombreProducto="@productoSeleccionado.Nombre" />
+    <AvisoEliminarComponente @bind-Mostrar="showDeleteConfirmationModal" Productos="@productoSeleccionado" OnProductoEliminado="RefrescarLista" />
 </div>
 
 @code {
-    private bool showModal = false;
-    private bool showModalRegister = false;
-    private bool showModalDetails = false;
-    private bool showConfirmationAddModal = false;
-    private bool showConfirmationUpdateModal = false;
-    private bool showWarningModal = false;
-    private string nombreConfirmacion = string.Empty;
+        // Modal para Crear
+    private bool showAddModal = false;
+
+    // Modal para Registrar un Producto
+    private bool showRegisterModal = false;
+
+    //Modal para Mostrar Detalles del Producto
+    private bool showDetailsModal = false;
+
+    //Modal para confirmar el registro del Producto
+    private bool showAddedModal = false;
+
+    //Modal para confirmar la modificación del Producto 
+    private bool showUpdatedModal = false;
+
+    //Modal para confirmar la eliminación del Producto
+    private bool showDeleteConfirmationModal = false;
+
+    //Filtro para el rango de Fechas
+    private DateTime FechaInicial { get; set; } = DateTime.Today;
+    private DateTime FechaFinal { get; set; } = DateTime.Today.Date.AddDays(1);
+
+    //Objetos y Listas
+    public Productos Productos { get; set; } = new Productos { FechaRegistro = DateTime.Now };
+    public Productos productoSeleccionado { get; set; } = new Productos();
+
+    public List<Categorias> ListaCategorias = new List<Categorias>();
+    public List<Proveedores> ListaProveedore = new List<Proveedores>();
+    public List<Productos> ListaProductos = new List<Productos>();
+    public List<Productos> ListaProductosFiltrada = new List<Productos>();
+
+    private void alternateModal() { showAddModal = !showAddModal; }
+
+    //Filtro
     private string Filtro { get; set; } = string.Empty;
-    private string ValorFiltro { get; set; } = string.Empty;
-    private void alternateModal() { showModal = !showModal; }
+
+    //Pagination Valores
     private int paginaActual = 1;
-    private int registrosPorPagina = 6;
+    private int registrosPorPagina = 5;
 
     private int TotalPaginas =>
     (int)Math.Ceiling((double)ListaProductos.Count / registrosPorPagina);
@@ -328,14 +363,6 @@
             .Skip((paginaActual - 1) * registrosPorPagina)
             .Take(registrosPorPagina);
 
-    // Inicializamos con fecha actual para evitar errores de SQL
-    public Productos Productos { get; set; } = new Productos { FechaRegistro = DateTime.Now };
-
-    public Productos productoSeleccionado { get; set; } = new Productos();
-
-    public List<Categorias> ListaCategorias = new List<Categorias>();
-    public List<Proveedores> ListaProveedore = new List<Proveedores>();
-    public List<Productos> ListaProductos = new List<Productos>();
 
     protected override async Task OnInitializedAsync()
     {
@@ -343,27 +370,18 @@
         ListaProveedore = await proveedoresService.Listar(p => p.Eliminado == false);
         ListaProductos = await productosService.Listar(p => p.Eliminado == false);
     }
-    private async Task LimpiarCampos()
-    {
-        Productos = new Productos();
-    }
+    private async Task LimpiarCampos(){ Productos = new Productos { FechaRegistro = DateTime.Now };}
 
-    private async Task RefrescarLista()
-    {
-        ListaProductos = await productosService.Listar(p => p.Eliminado == false);
-    }
+    private async Task RefrescarLista(){ListaProductos = await productosService.Listar(p => p.Eliminado == false);}
 
-    // Simplificamos la firma del método
     private async Task Guardar()
     {
         var creado = await productosService.Guardar(Productos);
         if (creado)
         {
-            showModalRegister = false;
-            nombreConfirmacion = Productos.Nombre;
+            showRegisterModal = false;
             ListaProductos = await productosService.Listar(p => p.Eliminado == false);
-            showConfirmationAddModal = true;
-            Productos = new Productos { FechaRegistro = DateTime.Now };
+            showAddedModal = true;
         }
     }
 
@@ -374,94 +392,68 @@
         var creado = await productosService.Guardar(productoSeleccionado);
         if (creado)
         {
-            showModalDetails = false;
-            showConfirmationUpdateModal = true;
+            showDetailsModal = false;
+            showUpdatedModal = true;
             ListaProductos = await productosService.Listar(p => p.Eliminado == false);
         }
     }
 
     private async Task Eliminar()
     {
-        showModalDetails = false;
-        showWarningModal = true;
+        showDetailsModal = false;
+        showDeleteConfirmationModal = true;
     }
 
     private void GetProducto(Productos p)
     {
         productoSeleccionado = p;
-        showModalDetails = true;
+        showDetailsModal = true;
     }
 
+    private string textoBusqueda = "";
 
     public async Task Buscar(ChangeEventArgs e)
     {
-        var valor = e.Value?.ToString();
-        if (!string.IsNullOrWhiteSpace(valor))
+        textoBusqueda = e.Value?.ToString() ?? "";
+        await AplicarFiltros();
+    }
+
+    public async Task AplicarFiltros()
+    {
+        var basePorFecha = await productosService.Listar(p =>
+            p.Eliminado == false &&
+            p.FechaRegistro.Date >= FechaInicial.Date &&
+            p.FechaRegistro.Date <= FechaFinal.Date);
+        if (!string.IsNullOrWhiteSpace(textoBusqueda))
         {
-
             if (Filtro == "Nombre")
-                ListaProductos = await productosService.Listar(p => p.Nombre.ToLower().Contains(valor.ToLower()));
-
-            else if (Filtro == "Categoria")
-                ListaProductos = await productosService.Listar(p => p.Categorias.Nombre.ToLower().Contains(valor.ToLower()) && p.Eliminado == false);
-
-            else if (Filtro == "Proveedor")
-                ListaProductos = await productosService.Listar(p => p.Proveedores.NombreEmpresa.ToLower().Contains(valor.ToLower()) && p.Eliminado == false);
-
-            else if (Filtro == "PrecioVenta")
             {
-                if (decimal.TryParse(valor, out decimal PriceVenta))
-                {
-                    ListaProductos = await productosService.Listar(p => p.PrecioVenta == PriceVenta && p.Eliminado == false);
-                }
-                else
-                    ListaProductos = await productosService.Listar(p => p.Eliminado == false);
+                ListaProductos = basePorFecha.Where(p => p.Nombre != null && p.Nombre.Contains(textoBusqueda, StringComparison.OrdinalIgnoreCase)).ToList();
             }
-
-            else if (Filtro == "PrecioCompra")
-            {
-                if (decimal.TryParse(valor, out decimal PriceCompra))
-                {
-                    ListaProductos = await productosService.Listar(p => p.PrecioCompra == PriceCompra && p.Eliminado == false);
-                }
-                else
-                    ListaProductos = await productosService.Listar(p => p.Eliminado == false);
-            }
-
-            else if (Filtro == "CantidadInventario")
-            {
-                if (int.TryParse(valor, out int CantidadInventario))
-                {
-                    ListaProductos = await productosService.Listar(p => p.CantidadInventario == CantidadInventario && p.Eliminado == false);
-                }
-                else
-                    ListaProductos = await productosService.Listar(p => p.Eliminado == false);
-            }
-
             else if (Filtro == "CodigoProducto")
             {
-                if (int.TryParse(valor, out int CodigoProducto))
-                {
-                    ListaProductos = await productosService.Listar(p => p.CodigoProducto == CodigoProducto && p.Eliminado == false);
-                }
-                else
-                    ListaProductos = await productosService.Listar(p => p.Eliminado == false);
+                if (int.TryParse(textoBusqueda, out int Codigo))
+                    ListaProductos = basePorFecha.Where(p => p.CodigoProducto == Codigo).ToList();
             }
-
-            else if (Filtro == "StockMinimo")
+            else if (Filtro == "Categoria")
             {
-                if (int.TryParse(valor, out int StockMinimo))
-                {
-                    ListaProductos = await productosService.Listar(p => p.StockMinimo == StockMinimo && p.Eliminado == false);
-                }
-                else
-                    ListaProductos = await productosService.Listar(p => p.Eliminado == false);
+                ListaProductos = basePorFecha.Where(p => p.Categorias?.Nombre != null &&
+                    p.Categorias.Nombre.Contains(textoBusqueda, StringComparison.OrdinalIgnoreCase)).ToList();
             }
-        
+            else if (Filtro == "Proveedor")
+            {
+                ListaProductos = basePorFecha.Where(p => p.Proveedores?.NombreEmpresa != null &&
+                    p.Proveedores.NombreEmpresa.Contains(textoBusqueda, StringComparison.OrdinalIgnoreCase)).ToList();
+            }
+            else if (Filtro == "Estado") 
+            {
+                ListaProductos = basePorFecha.Where(p => p.EstadosProductos.ToString()
+                    .Contains(textoBusqueda, StringComparison.OrdinalIgnoreCase)).ToList();
+            }
         }
         else
         {
-            ListaProductos = await productosService.Listar(p => p.Eliminado == false);
+            ListaProductos = basePorFecha.ToList();
         }
     }
 

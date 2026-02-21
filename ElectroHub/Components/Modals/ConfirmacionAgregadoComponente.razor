@@ -2,7 +2,7 @@
 <div class="modal-overlay @(Mostrar ? "show" : "")"></div>
 <div class="modal-container @(Mostrar ? "show" : "")">
     <div class="modal-header">
-        <img src="/CheckedIcon.svg" alt="" />
+        <img src="/ProductosSVG/CheckedIcon.svg" alt="" />
     </div>
     <hr/>
     <div class="modal-body" @onclick:stopPropagation="true">
@@ -21,13 +21,16 @@
     [Parameter] public string NombreProducto { get; set; } = string.Empty;
 
     [Parameter] public bool Mostrar { get; set; }
-    
+
     [Parameter] public EventCallback<bool> MostrarChanged { get; set; }
-    
+
+    [Parameter] public EventCallback LimpiarObjeto { get; set; }
+
 
     public async Task Cerrar()
     {
         Mostrar = false;
         await MostrarChanged.InvokeAsync(false);
+        await LimpiarObjeto.InvokeAsync();
     }
 }
