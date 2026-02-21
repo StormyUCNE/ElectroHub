@@ -1,12 +1,12 @@
 ﻿<div class="modal-overlay @(Mostrar ? "show" : "")" @onclick="Cerrar"></div>
 <div class="modal-container @(Mostrar ? "show" : "")">
     <div class="modal-header">
-        <img src="/DetalleIcon.svg" alt="" />
+        <img src="/ProductosSVG/DetalleIcon.svg" alt="" />
         <h4>@Titulo</h4>
         <img class="cerrar-icon"
              @onclick="Cerrar"
              @onclick:stopPropagation="true"
-             src="/Cerrar.svg"
+             src="/ProductosSVG/Cerrar.svg"
              alt="" />
     </div>
 

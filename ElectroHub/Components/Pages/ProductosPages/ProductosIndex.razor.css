@@ -1,7 +1,7 @@
-﻿.container {
+﻿.product-container {
+    padding: 30px 30px 5px 30px;
     min-height: 100vh;
     backdrop-filter: blur(10px);
-    padding: 2rem 1rem 2rem 1rem;
 }
 nav > span {
     font-size: 4vw;
@@ -12,11 +12,22 @@ hr{
     margin-bottom: 20px;
     border: 2px white solid;
 }
-.inputs-container{
+.filter-container {
     display: flex;
-    justify-content: space-around;
-    gap: 30px;
-    cursor:pointer;
+    justify-content: left;
+    align-items: flex-start;
+    max-width: 100%;
+    gap: 10px;
+}
+
+.input-container{
+    display: grid;
+    grid-template-columns: repeat(2, 1fr);
+    gap: 20px;
+    flex: 0.9;
+}
+.date-group {
+    display: contents;
 }
 .modal-add > svg {
     border: 2px white solid;
@@ -27,6 +38,7 @@ hr{
     border: 2px pink solid;
     border-radius: 100%;
     transition: all 0.2s ease-in-out;
+    cursor:pointer;
 }
 .modal-add{
     position:relative;
@@ -71,15 +83,12 @@ li:hover{
     background-color: rgb(180, 100, 242);
     transition: all 0.2s ease-in-out;
     border-radius:10px;
+    cursor:pointer;
 }
 
 
 
-.select-container, .input-container {
-    width: 40%;
-    border: none;
-    padding: 1px 10px 1px 10px;
-}
+
 
 option{
     color: black;
@@ -121,8 +130,10 @@ button {
     border: 2px pink solid;
     border-radius: 10px;
     padding: 3px 6px 3px 6px;
+
 }
-.input-container-item > input, select{
+.input-container-item > input,
+.input-container-item > select {
     height: 90%;
     border-radius: 0;
     border:none;
@@ -130,7 +141,8 @@ button {
     background-color:transparent;
     color:white;
 }
-.input-container-item > input:focus, select:focus {
+.input-container-item > input:focus,
+.input-container-item > select:focus {
     outline: none !important;
     box-shadow: none !important;
     background-color:transparent;
@@ -178,15 +190,17 @@ button {
     background-color: #7B2E2E;
 }
 
+.table-containaer{
+    display:flex;
+    flex-direction:column;
+    justify-content:center;
+    gap: 20px;
+}
 .pagination {
-    position: absolute;
-    bottom: 5%;
-    left: 0;
-    right: 0;
-    margin: auto;
     display: flex;
     justify-content: center;
     gap: 100px;
+    color:white;
 }
 .pagination > img{
     width:20px;
@@ -194,12 +208,21 @@ button {
 }
 
 
-@media (max-width: 700px) {
-    .inputs-container {
-        flex-direction: column;
+@media (max-width: 768px) {
+
+    .input-container {
+        grid-template-columns: 1fr;
+        width:100%;
+        flex:1;
+    }
+    .filter-container {
+        gap: 0px;
+    }
+    .date-group {
+        display: grid;
+        grid-template-columns: repeat(2, 1fr);
         gap: 10px;
     }
-
     nav > span {
         font-size: 10vw;
     }
@@ -208,10 +231,7 @@ button {
         display: none;
     }
 
-    .select-container, .input-container {
-        width: 100%;
-        padding: 10px;
-    }
+
 
     nav {
         display: flex;
@@ -284,17 +304,37 @@ select option {
     background: #AA56D7;
 }
 
-.select-container, .input-container {
-    width: 100%;
-    position: relative;
+.select-container,
+.form-field {
+    position: relative; 
     border-radius: 30px;
-    padding: 2px; 
-    background: transparent;
-    display: inline-block;
+}
+.form-field input[type="date"]::-webkit-calendar-picker-indicator {
+    opacity: 0;
+    cursor: pointer;
+    position:absolute;
+    right:12px;
+}
+.form-field input[type="date"] {
+    background-image: url("/ProductosSVG/Calendar.svg");
+    background-repeat: no-repeat;
+    background-position: right 12px center;
+    background-size: 18px;
+    padding-right: 40px;
+}
+.form-field input[type="text"] {
+    background-image: url("/ProductosSVG/Search.svg");
+    background-repeat: no-repeat;
+    background-position: right 12px center;
+    background-size: 18px;
+    padding-right: 40px;
 }
 
+
+
+
     /* El pseudo-elemento que crea el borde gradiente */
-    .select-container::before, .input-container::before {
+    .select-container::before, .form-field::before {
         content: "";
         position: absolute;
         inset: 0;
@@ -310,19 +350,27 @@ select option {
     }
 
     /* Estilo para el input/select real dentro del contenedor */
-    .select-container select, .input-container input {
-        width: 100%;
-        background: rgba(255, 255, 255, 0.05); /* Fondo opaco sutil como la cabecera */
-        border: none;
-        outline: none;
-        border-radius: 30px;
-        padding: 8px 15px;
-        color: white;
-    }
+.select-container select, .form-field input {
+    width: 100%;
+    background: rgba(255, 255, 255, 0.05); /* Fondo opaco sutil como la cabecera */
+    border: none;
+    outline: none;
+    border-radius: 30px;
+    padding: 8px 15px;
+    color: white;
+}
 
     /* Quitar la flecha por defecto del select si quieres algo más limpio */
     .select-container select {
         appearance: none;
         -webkit-appearance: none;
+        -moz-appearance: none;
+        background-image: url("/ProductosSVG/Arrow-Botton.svg");
+        background-repeat: no-repeat;
+        background-position: right 12px center;
+        background-size: 30px;
+        padding: 8px 40px 8px 12px;
+        height: 40px;
+        box-sizing: border-box;
         cursor: pointer;
     }
