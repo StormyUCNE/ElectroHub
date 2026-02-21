@@ -19,11 +19,13 @@ public class InventarioService(IDbContextFactory<ApplicationDbContext> DbFactory
         await using var contexto = await DbFactory.CreateDbContextAsync();
         // Incluimos Producto y luego la Categoria de ese producto
         return await contexto.InventarioMovimientos
-            .Include(m => m.Producto)
-            .ThenInclude(p => p!.Categorias)
-            .Where(criterio)
-            .OrderByDescending(m => m.FechaMovimiento) // Los más recientes primero
-            .AsNoTracking()
-            .ToListAsync();
+        .Include(m => m.Producto)
+            .ThenInclude(p => p!.Categorias) // Carga la categoría del producto
+        .Include(m => m.Producto)
+            .ThenInclude(p => p!.Proveedores) // <--- ESTA ES LA LÍNEA QUE FALTABA
+        .Where(criterio)
+        .OrderByDescending(m => m.FechaMovimiento)
+        .AsNoTracking()
+        .ToListAsync();
     }
 }

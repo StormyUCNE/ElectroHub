@@ -59,7 +59,7 @@
                         <td>@mov.Usuario</td>
                         <td>@mov.StockResultante</td>
                         <td>
-                            <button class="btn-detalles">ⓘ DETALLES</button>
+                            <button class="btn-detalles" @onclick="() => VerDetalles(mov)">ⓘ DETALLES</button>
                         </td>
                     </tr>
                 }
@@ -68,16 +68,65 @@
     </div>
 
     <div class="pagination">
-        <img src="/NavigationFlechas.svg" alt="Prev"
-             @onclick="PaginaAnterior"
-             class="@(paginaActual == 1 ? "opacity-25" : "opacity-100")" />
-        
+        <img src="/NavigationFlechas.svg" alt="Prev" @onclick="PaginaAnterior" class="@(paginaActual == 1 ? "opacity-25" : "opacity-100")" style="cursor: pointer;" />
         <span style="color: white; font-weight: bold;">@paginaActual de @TotalPaginas</span>
-        
-        <img src="/RigthNav.svg" alt="Next"
-             @onclick="PaginaSiguiente"
-             class="@(paginaActual >= TotalPaginas ? "opacity-25" : "opacity-100")" />
+        <img src="/RigthNav.svg" alt="Next" @onclick="PaginaSiguiente" class="@(paginaActual >= TotalPaginas ? "opacity-25" : "opacity-100")" style="cursor: pointer;" />
     </div>
+
+    @* --- MODAL DE DETALLES --- *@
+    <DetalleComponente @bind-Mostrar="showModalDetails" Titulo="@($"DETALLES: {movimientoSeleccionado?.Producto?.Nombre}")">
+        <section class="edit-form-container">
+            <div class="d-flex justify-content-end mb-2">
+                <span class="badge-@(movimientoSeleccionado?.TipoMovimiento?.ToLower())" style="font-size: 1rem; padding: 5px 15px;">
+                    @movimientoSeleccionado?.TipoMovimiento?.ToUpper()
+                </span>
+            </div>
+
+            <div class="row text-center mb-4" style="color: white; font-weight: bold; font-size: 0.9rem;">
+                <div class="col-4">
+                    <div style="border: 2px solid #00F2FF; border-radius: 50%; width: 15px; height: 15px; display: inline-block; vertical-align: middle;"></div>
+                    <span class="ms-1">Anterior: @(movimientoSeleccionado?.StockResultante - movimientoSeleccionado?.Cantidad)</span>
+                </div>
+                <div class="col-4">
+                    <div style="border: 2px solid #00F2FF; border-radius: 50%; width: 15px; height: 15px; display: inline-block; vertical-align: middle;"></div>
+                    <span class="ms-1">Cant: @movimientoSeleccionado?.Cantidad</span>
+                </div>
+                <div class="col-4">
+                    <div style="border: 2px solid #00F2FF; border-radius: 50%; width: 15px; height: 15px; display: inline-block; vertical-align: middle;"></div>
+                    <span class="ms-1">Final: @movimientoSeleccionado?.StockResultante</span>
+                </div>
+            </div>
+
+            <div class="row">
+                <div class="col-md-5 border-end border-secondary">
+                    <h6 class="text-white fw-bold mb-3" style="font-size: 0.85rem; letter-spacing: 1px;">INFORMACIÓN PRODUCTO</h6>
+                    <div class="text-white-50 small">
+                        <p class="mb-1"><strong class="text-white">PRODUCTO:</strong> @movimientoSeleccionado?.Producto?.Nombre</p>
+                        <p class="mb-1"><strong class="text-white">SKU:</strong> @movimientoSeleccionado?.ProductoId</p>
+                        <p class="mb-1"><strong class="text-white">CATEGORÍA:</strong> @movimientoSeleccionado?.Producto?.Categorias?.Nombre?.ToUpper()</p>
+                        <p class="mb-1"><strong class="text-white">PROVEEDOR:</strong> @movimientoSeleccionado?.Producto?.Proveedores?.NombreEmpresa?.ToUpper()</p>
+                    </div>
+                </div>
+
+                <div class="col-md-7 ps-4">
+                    <h6 class="text-white fw-bold mb-3" style="font-size: 0.85rem; letter-spacing: 1px;">DETALLES DEL MOVIMIENTO</h6>
+                    <div class="text-white-50 small">
+                        <p class="mb-2"><strong class="text-white">OPERADOR:</strong> @movimientoSeleccionado?.Usuario?.ToUpper()</p>
+                        <p class="mb-2"><strong class="text-white">Nro. de Referencia:</strong> REF: #FAC-@movimientoSeleccionado?.MovimientoId</p>
+                        <p class="mb-2"><strong class="text-white">FECHA:</strong> @movimientoSeleccionado?.FechaMovimiento.ToString("dd/MM/yy HH:mm")</p>
+                        <p class="mb-2"><strong class="text-white">UBICACIÓN:</strong> ALMACÉN CENTRAL</p>
+                    </div>
+                </div>
+            </div>
+
+            <div class="d-flex justify-content-center mt-4">
+                <button class="btn" @onclick="() => showModalDetails = false"
+                        style="background: #5D5FEF; color: white; border-radius: 20px; padding: 5px 50px; font-weight: bold; font-size: 0.9rem;">
+                    CERRAR
+                </button>
+            </div>
+        </section>
+    </DetalleComponente>
 </div>
 
 @code {
@@ -85,27 +134,27 @@
     private string FiltroTipoMovimiento { get; set; } = string.Empty;
     private int paginaActual = 1;
     private int registrosPorPagina = 8;
+    private bool showModalDetails = false;
+    private InventarioMovimientos? movimientoSeleccionado;
 
     public List<InventarioMovimientos> ListaMovimientos = new();
     public List<InventarioMovimientos> ListaFiltrada = new();
 
-    protected override async Task OnInitializedAsync()
+    protected override async Task OnInitializedAsync() => await RefrescarLista();
+
+    private void VerDetalles(InventarioMovimientos mov)
     {
-        await RefrescarLista();
+        movimientoSeleccionado = mov;
+        showModalDetails = true;
     }
 
     private async Task RefrescarLista()
     {
-        // Cargar lista base
         ListaMovimientos = await inventarioService.Listar(m => true);
-        
-        // Aplicar filtros adicionales de UI
         ListaFiltrada = ListaMovimientos;
-        
         if (!string.IsNullOrEmpty(FiltroTipoMovimiento))
             ListaFiltrada = ListaFiltrada.Where(m => m.TipoMovimiento == FiltroTipoMovimiento).ToList();
-
-        paginaActual = 1; // Siempre resetear al filtrar
+        paginaActual = 1;
     }
 
     private int TotalPaginas => (int)Math.Ceiling((double)ListaFiltrada.Count / registrosPorPagina) == 0 ? 1 : (int)Math.Ceiling((double)ListaFiltrada.Count / registrosPorPagina);
@@ -116,8 +165,7 @@
     public async Task Buscar(ChangeEventArgs e)
     {
         var valor = e.Value?.ToString()?.ToLower();
-        if (string.IsNullOrEmpty(valor))
-            await RefrescarLista();
+        if (string.IsNullOrEmpty(valor)) await RefrescarLista();
         else
         {
             ListaFiltrada = ListaMovimientos.Where(m => m.Producto!.Nombre.ToLower().Contains(valor)).ToList();
@@ -126,12 +174,6 @@
     }
 
     private async Task FiltrarPorFecha() => await RefrescarLista();
-
     private void PaginaAnterior() { if (paginaActual > 1) paginaActual--; }
-    
-    private void PaginaSiguiente()
-    {
-        if (paginaActual < TotalPaginas)
-            paginaActual++;
-    }
+    private void PaginaSiguiente() { if (paginaActual < TotalPaginas) paginaActual++; }
 }
