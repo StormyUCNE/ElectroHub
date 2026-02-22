@@ -2,11 +2,11 @@
 <div class="modal-overlay @(Mostrar ? "show" : "")"></div>
 <div class="modal-container @(Mostrar ? "show" : "")">
     <div class="modal-header">
-        <img src="/ProductosSVG/CheckedIcon.svg" alt="" />
+        <img src="/ProductosSVG/ErrorIcon.svg" alt="" />
     </div>
     <hr/>
     <div class="modal-body" @onclick:stopPropagation="true">
-        <p>@Asunto <span>@Nombre</span> se añadió correctamente.</p>
+        <p>Error, @Asunto</p>
     </div>
     <div>
         <button @onclick="Cerrar">Aceptar</button>
@@ -16,9 +16,6 @@
 
 
 @code {
-    [Parameter] public string Text { get; set; } = string.Empty;
-
-    [Parameter] public string Nombre { get; set; } = string.Empty;
 
     [Parameter] public string Asunto { get; set; } = string.Empty;
 
@@ -26,13 +23,10 @@
 
     [Parameter] public EventCallback<bool> MostrarChanged { get; set; }
 
-    [Parameter] public EventCallback LimpiarObjeto { get; set; }
-
 
     public async Task Cerrar()
     {
         Mostrar = false;
         await MostrarChanged.InvokeAsync(false);
-        await LimpiarObjeto.InvokeAsync();
     }
 }

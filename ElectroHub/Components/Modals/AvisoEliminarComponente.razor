@@ -1,9 +1,9 @@
-﻿@inject ProductosService productosService
+﻿
 <div class="modal-overlay @(Mostrar ? "show" : "")"></div>
 <div class="modal-container @(Mostrar ? "show" : "")">
     <div class="modal-header">
         <img src="/ProductosSVG/WarningIcon.svg" alt="" />
-        <h5>Eliminación de Producto</h5>
+        <h5>Eliminación de @Titulo</h5>
         <img class="cerrar-icon"
              @onclick="Cerrar"
              @onclick:stopPropagation="true"
@@ -12,10 +12,10 @@
     </div>
     <hr />
     <div class="modal-body" @onclick:stopPropagation="true">
-        <p>Al confirmar esta acción, se eliminará el producto <span>@Productos?.Nombre</span>  </p>
+        <p>Al confirmar esta acción, se eliminará @Asunto <span>@Nombre</span>  </p>
     </div>
     <div>
-        <button @onclick="Eliminar">Eliminar</button>
+        @ChildContent
     </div>
 </div>
 
@@ -24,13 +24,17 @@
 @code {
     public List<Productos> ListaProductos = new List<Productos>();
 
-    [Parameter] public Productos? Productos { get; set; }
+    [Parameter] public string? Nombre { get; set; }
+
+    [Parameter] public string? Titulo { get; set; }
+
+    [Parameter] public string Asunto { get; set; } = string.Empty;
 
     [Parameter] public bool Mostrar { get; set; }
 
     [Parameter] public EventCallback<bool> MostrarChanged { get; set; }
 
-    [Parameter] public EventCallback OnProductoEliminado { get; set; }
+    [Parameter] public RenderFragment? ChildContent { get; set; }
 
 
     public async Task Cerrar()
@@ -39,14 +43,4 @@
         await MostrarChanged.InvokeAsync(false);
     }
 
-    private async Task Eliminar()
-    {
-        var eliminado = await productosService.Eliminar(Productos.ProductoId);
-        if (eliminado)
-        {
-            await OnProductoEliminado.InvokeAsync();
-            await Cerrar();
-            
-        }
-    }
 }

@@ -1,11 +1,12 @@
 ﻿@page "/Productos/Index"
+@using ElectroHub.Components.Account.Pages
+@using Microsoft.AspNetCore.Components.Sections
 @rendermode InteractiveServer
 @inject CategoriasService categoriasService
 @inject ProveedoresService proveedoresService
 @inject ProductosService productosService
 
 <PageTitle>Productos</PageTitle>
-
 <div class="product-container" @onclick="()=> showAddModal = false">
     <nav>
         <span>Productos</span>
@@ -14,7 +15,7 @@
             <div class="modal-add-options @(showAddModal ? "show" : "")" @onclick:stopPropagation="true">
                 <ul>
                     <li @onclick="() => { showRegisterModal = true; showAddModal = false; }">Registra Productos</li>
-                    <li>Administrar Categorías</li>
+                    <li @onclick="() => { showCategoryAdmModal = true; showAddModal = false; }">Administrar Categorías</li>
                 </ul>
             </div>
         </div>
@@ -56,7 +57,7 @@
             <div class="modal-add-options @(showAddModal ? "show" : "")">
                 <ul>
                     <li @onclick="() => {showRegisterModal = true; showAddModal = false;}">Registra Productos</li>
-                    <li>Administrar Categorías</li>
+                    <li @onclick="() => { showCategoryAdmModal = true; showAddModal = false; }">Administrar Categorías</li>
                 </ul>
             </div>
         </div>
@@ -100,256 +101,115 @@
     <RegistroComponente @bind-Mostrar="showRegisterModal" Titulo="Registro Productos" OnCerrar="LimpiarCampos">
         <EditForm Model="Productos" OnValidSubmit="Guardar">
             <DataAnnotationsValidator />
-            <section class="edit-form-container">
-                <div class="scroll-inputs">
-                    @* CODIGO *@
-                    <div class="input-container-item">
-                        <label>Código:</label>
-                        <input type="number" @bind="Productos.CodigoProducto" class="form-control" />
-                    </div>
-                    <ValidationMessage For="() => Productos.CodigoProducto" />
-
-                    @* NOMBRE *@
-                    <div class="input-container-item">
-                        <label>Nombre:</label>
-                        <input type="text" @bind="Productos.Nombre" class="form-control" />
-                    </div>
-                    <ValidationMessage For="() => Productos.Nombre" />
-
-                    @* DESCRIPCION *@
-                    <div class="input-container-item">
-                        <label>Descripción:</label>
-                        <input type="text" @bind="Productos.Descripcion" class="form-control" />
-                    </div>
-                    <ValidationMessage For="() => Productos.Descripcion" />
-
-                    @* CATEGORIA (Corregido: Sin ValueExpression) *@
-                    <div class="input-container-item">
-                        <label>Categoría:</label>
-                        <select @bind="Productos.CategoriaId" class="form-control">
-                            <option value="0">Seleccione una Categoría</option>
-                            @foreach (var c in ListaCategorias)
-                            {
-                                <option value="@c.CategoriaId">@c.Nombre</option>
-                            }
-                        </select>
-                    </div>
-                    <ValidationMessage For="() => Productos.CategoriaId" />
-
-                    @* PRECIO COMPRA *@
-                    <div class="input-container-item">
-                        <label>Precio Compra:</label>
-                        <input type="number" @bind="Productos.PrecioCompra" class="form-control" />
-                    </div>
-                    <ValidationMessage For="() => Productos.PrecioCompra" />
-
-                    @* PRECIO VENTA *@
-                    <div class="input-container-item">
-                        <label>Precio Venta:</label>
-                        <input type="number" @bind="Productos.PrecioVenta" class="form-control" />
-                    </div>
-                    <ValidationMessage For="() => Productos.PrecioVenta" />
-
-                    @* CANTIDAD *@
-                    <div class="input-container-item">
-                        <label>Cantidad:</label>
-                        <input type="number" @bind="Productos.CantidadInventario" class="form-control" />
-                    </div>
-                    <ValidationMessage For="() => Productos.CantidadInventario" />
-
-                    @* STOCK MINIMO *@
-                    <div class="input-container-item">
-                        <label>Stock Mínimo:</label>
-                        <input type="number" @bind="Productos.StockMinimo" class="form-control" />
-                    </div>
-                    <ValidationMessage For="() => Productos.StockMinimo" />
-
-                    <div class="input-container-item">
-                        <label>Proveedor:</label>
-                        <select @bind="Productos.ProveedorId" class="form-control">
-                            <option value="0">Seleccione un Proveedor</option>
-                            @foreach (var p in ListaProveedore)
-                            {
-                                <option value="@p.ProveedorId">@p.NombreEmpresa</option>
-                            }
-                        </select>
-                    </div>
-                    <ValidationMessage For="() => Productos.ProveedorId" />
-
-                    @* ESTADO (Corregido: Sin ValueExpression) *@
-                    <div class="input-container-item">
-                        <label>Estado:</label>
-                        <select @bind="Productos.EstadosProductos" class="form-control">
-                            <option value="0">Seleccione un Estado</option>
-                            @foreach (var e in Enum.GetValues<Estados>())
-                            {
-                                <option value="@e">@e</option>
-                            }
-                        </select>
-                    </div>
-                    <ValidationMessage For="() => Productos.EstadosProductos" />
-
-                    @* FECHA *@
-                    <div class="input-container-item">
-                        <label>Fecha:</label>
-                        <input type="date" @bind="Productos.FechaRegistro" class="form-control" />
-                    </div>
-                    <ValidationMessage For="() => Productos.FechaRegistro" />
-                </div>
-                <button type="submit">Guardar</button>
-            </section>
+            @FormularioProducto
+            <button type="submit">Guardar</button>
         </EditForm>
     </RegistroComponente>
 
     @*Detalle Producto*@
     <DetalleComponente @bind-Mostrar="showDetailsModal" Titulo="Detalle Productos">
-        <EditForm Model="productoSeleccionado" OnValidSubmit="Modificar">
+        <EditForm Model="Productos" OnValidSubmit="Modificar">
             <DataAnnotationsValidator />
-            <section class="edit-form-container">
-                <div class="scroll-inputs">
-                    @* CODIGO *@
-                    <div class="input-container-item">
-                        <label>Código:</label>
-                        <input type="number" @bind="productoSeleccionado.CodigoProducto" class="form-control" />
-                    </div>
-                    <ValidationMessage For="() => productoSeleccionado.CodigoProducto" />
-
-                    @* NOMBRE *@
-                    <div class="input-container-item">
-                        <label>Nombre:</label>
-                        <input type="text" @bind="productoSeleccionado.Nombre" class="form-control" />
-                    </div>
-                    <ValidationMessage For="() => productoSeleccionado.Nombre" />
-
-                    @* DESCRIPCION *@
-                    <div class="input-container-item">
-                        <label>Descripción:</label>
-                        <input type="text" @bind="productoSeleccionado.Descripcion" class="form-control" />
-                    </div>
-                    <ValidationMessage For="() => productoSeleccionado.Descripcion" />
-
-                    @* CATEGORIA (Corregido: Sin ValueExpression) *@
-                    <div class="input-container-item">
-                        <label>Categoría:</label>
-                        <select @bind="productoSeleccionado.CategoriaId" class="form-control">
-                            <option value="0">Seleccione una Categoría</option>
-                            @foreach (var c in ListaCategorias)
-                            {
-                                <option value="@c.CategoriaId">@c.Nombre</option>
-                            }
-                        </select>
-                    </div>
-                    <ValidationMessage For="() => productoSeleccionado.CategoriaId" />
-
-                    @* PRECIO COMPRA *@
-                    <div class="input-container-item">
-                        <label>Precio Compra:</label>
-                        <input type="number" @bind="productoSeleccionado.PrecioCompra" class="form-control" />
-                    </div>
-                    <ValidationMessage For="() => productoSeleccionado.PrecioCompra" />
-
-                    @* PRECIO VENTA *@
-                    <div class="input-container-item">
-                        <label>Precio Venta:</label>
-                        <input type="number" @bind="productoSeleccionado.PrecioVenta" class="form-control" />
-                    </div>
-                    <ValidationMessage For="() => productoSeleccionado.PrecioVenta" />
-
-                    @* CANTIDAD *@
-                    <div class="input-container-item">
-                        <label>Cantidad:</label>
-                        <input type="number" @bind="productoSeleccionado.CantidadInventario" class="form-control" />
-                    </div>
-                    <ValidationMessage For="() => productoSeleccionado.CantidadInventario" />
-
-                    @* STOCK MINIMO *@
-                    <div class="input-container-item">
-                        <label>Stock Mínimo:</label>
-                        <input type="number" @bind="productoSeleccionado.StockMinimo" class="form-control" />
-                    </div>
-                    <ValidationMessage For="() => productoSeleccionado.StockMinimo" />
-
-                    <div class="input-container-item">
-                        <label>Proveedor:</label>
-                        <select @bind="productoSeleccionado.ProveedorId" class="form-control">
-                            <option value="0">Seleccione un Proveedor</option>
-                            @foreach (var p in ListaProveedore)
-                            {
-                                <option value="@p.ProveedorId">@p.NombreEmpresa</option>
-                            }
-                        </select>
-                    </div>
-                    <ValidationMessage For="() => productoSeleccionado.ProveedorId" />
-
-                    @* ESTADO (Corregido: Sin ValueExpression) *@
-                    <div class="input-container-item">
-                        <label>Estado:</label>
-                        <select @bind="productoSeleccionado.EstadosProductos" class="form-control">
-                            <option value="0">Seleccione un Estado</option>
-                            @foreach (var e in Enum.GetValues<Estados>())
-                            {
-                                <option value="@e">@e</option>
-                            }
-                        </select>
-                    </div>
-                    <ValidationMessage For="() => productoSeleccionado.EstadosProductos" />
-
-                    @* FECHA *@
-                    <div class="input-container-item">
-                        <label>Fecha:</label>
-                        <input type="date" @bind="productoSeleccionado.FechaRegistro" class="form-control" />
-                    </div>
-                    <ValidationMessage For="() => productoSeleccionado.FechaRegistro" />
-                </div>
-                <div class="button-container">
-                    <button type="submit">Guardar</button>
-                    <button type="button" @onclick="Eliminar">Eliminar</button>
-                </div>
-            </section>
+            @FormularioProducto
+            <div class="button-container">
+                <button type="submit">Guardar</button>
+                <button type="button" @onclick="() => showDeleteConfirmationModal = true">Eliminar</button>
+            </div>
         </EditForm>
     </DetalleComponente>
 
-    <ConfirmacionAgregadoComponente @bind-Mostrar="showAddedModal" NombreProducto="@Productos.Nombre" LimpiarObjeto="LimpiarCampos" />
-    <ConfirmacionModificadoComponente @bind-Mostrar="showUpdatedModal" NombreProducto="@productoSeleccionado.Nombre" />
-    <AvisoEliminarComponente @bind-Mostrar="showDeleteConfirmationModal" Productos="@productoSeleccionado" OnProductoEliminado="RefrescarLista" />
+    @*Aministracion de Categorias*@
+    <DetalleComponente @bind-Mostrar="showCategoryAdmModal" Titulo="Administración Categoría">
+        <div>
+            <section>
+                <div class="form-field">
+                    <input type="text" placeholder="Buscar Categoría..." @oninput="BuscarCategoria"/>
+                </div>
+            </section>
+            <section class="scroll-inputs">
+                <div class="button-add-category" @onclick:stopPropagation="true">
+                    <svg @onclick="()=> {showAddCategoryModal = true; showCategoryAdmModal = false;}" xmlns="http://www.w3.org/2000/svg" height="35px" viewBox="0 -960 960 960" width="35px" fill="#AA56D7"><path d="M450-120v-330H120v-60h330v-330h60v330h330v60H510v330h-60Z" /></svg>
+                </div>
+                @foreach(var c in ListaCategorias)
+                {
+                    <div class="category-item">
+                        <span>Nombre:</span>
+                        <input @bind="@c.Nombre" disabled/>
+                        <div class="category-icon-container">
+                            <img @onclick="()=>GetCategoria(c)"  src="/ProductosSVG/InfoIcon.svg" alt="Ver Categoria" />
+                            <img @onclick="() => GetCategoriaEliminar(c)" src="/ProductosSVG/Basurero.svg" alt="Eliminar Categoria" />
+                        </div>
+                    </div>
+                }
+                
+            </section>
+        </div>
+    </DetalleComponente>
+
+    <RegistroComponente Titulo="Registro Categoría" @bind-Mostrar="showAddCategoryModal">
+        <EditForm Model="Categorias" OnValidSubmit="GuardarCategorias">
+            <DataAnnotationsValidator />
+            @FormularioCategoria
+        </EditForm>
+    </RegistroComponente>
+
+    <DetalleComponente Titulo="Detalle Categoría" @bind-Mostrar="showCategoryDetailsModal">
+        <EditForm Model="Categorias" OnValidSubmit="ModificarCategoria">
+            <DataAnnotationsValidator />
+            @FormularioCategoria
+        </EditForm>
+    </DetalleComponente>
+
+    <ConfirmacionAgregadoComponente @bind-Mostrar="showCategoryAddedModal" Asunto="La Categoría" Nombre="@Categorias.Nombre" LimpiarObjeto="LimpiarCampos" />
+    <ConfirmacionAgregadoComponente @bind-Mostrar="showProductAddedModal" Asunto="El Producto" Nombre="@Productos.Nombre" LimpiarObjeto="LimpiarCampos" />
+    <ConfirmacionModificadoComponente @bind-Mostrar="showProductUpdatedConfirmationModal" Asunto="El Producto"  Nombre="@Productos.Nombre" LimpiarObjeto="LimpiarCampos" />
+    <ConfirmacionModificadoComponente @bind-Mostrar="showCategoryUpdatedModal" Asunto="La Categoría" Nombre="@Categorias.Nombre" LimpiarObjeto="LimpiarCampos" />
+    <AvisoEliminarComponente @bind-Mostrar="showDeleteConfirmationModal" Titulo="Producto" Nombre="@Productos.Nombre" Asunto="El Producto" >
+        <button @onclick="EliminarProducto">Eliminar</button>
+    </AvisoEliminarComponente>
+    <AvisoEliminarComponente @bind-Mostrar="showDeleteCategoryConfirmationModal" Titulo="Categoría" Nombre="@Categorias.Nombre" Asunto="La Categoría">
+        <button @onclick="EliminarCategoria">Eliminar</button>
+    </AvisoEliminarComponente>
+    <ErrorNotificacionComponente @bind-Mostrar="showErrorModal" Asunto="No puede Eliminar Categorías en Uso por Productos."/>
 </div>
 
 @code {
-        // Modal para Crear
+    // Modal para Crear
     private bool showAddModal = false;
 
-    // Modal para Registrar un Producto
-    private bool showRegisterModal = false;
+    // Modales para los Producto
+    private bool showRegisterModal = false, 
+    showDetailsModal = false,
+    showProductAddedModal = false, 
+    showProductUpdatedConfirmationModal = false,
+    showDeleteConfirmationModal = false;
+  
+    //Modales para las Categorias
+    private bool showCategoryAddedModal = false,
+    showCategoryUpdatedModal = false,
+    showDeleteCategoryConfirmationModal = false,
+    showCategoryAdmModal = false,
+    showAddCategoryModal = false,
+    showCategoryDetailsModal = false;
 
-    //Modal para Mostrar Detalles del Producto
-    private bool showDetailsModal = false;
-
-    //Modal para confirmar el registro del Producto
-    private bool showAddedModal = false;
-
-    //Modal para confirmar la modificación del Producto 
-    private bool showUpdatedModal = false;
-
-    //Modal para confirmar la eliminación del Producto
-    private bool showDeleteConfirmationModal = false;
+    //Modal de Error
+    private bool showErrorModal = false;
 
     //Filtro para el rango de Fechas
-    private DateTime FechaInicial { get; set; } = DateTime.Today;
-    private DateTime FechaFinal { get; set; } = DateTime.Today.Date.AddDays(1);
+    private DateTime? FechaInicial { get; set; }
+    private DateTime? FechaFinal { get; set; }
 
     //Objetos y Listas
     public Productos Productos { get; set; } = new Productos { FechaRegistro = DateTime.Now };
-    public Productos productoSeleccionado { get; set; } = new Productos();
+    public Categorias Categorias { get; set; } = new Categorias { FechaRegistro = DateTime.Now };
 
     public List<Categorias> ListaCategorias = new List<Categorias>();
     public List<Proveedores> ListaProveedore = new List<Proveedores>();
     public List<Productos> ListaProductos = new List<Productos>();
-    public List<Productos> ListaProductosFiltrada = new List<Productos>();
-
-    private void alternateModal() { showAddModal = !showAddModal; }
 
     //Filtro
     private string Filtro { get; set; } = string.Empty;
+    private string textoBusqueda = "";
 
     //Pagination Valores
     private int paginaActual = 1;
@@ -363,6 +223,8 @@
             .Skip((paginaActual - 1) * registrosPorPagina)
             .Take(registrosPorPagina);
 
+    //Funciones
+    private void alternateModal() { showAddModal = !showAddModal; }
 
     protected override async Task OnInitializedAsync()
     {
@@ -370,7 +232,11 @@
         ListaProveedore = await proveedoresService.Listar(p => p.Eliminado == false);
         ListaProductos = await productosService.Listar(p => p.Eliminado == false);
     }
-    private async Task LimpiarCampos(){ Productos = new Productos { FechaRegistro = DateTime.Now };}
+
+    private async Task LimpiarCampos(){ 
+        Productos = new Productos { FechaRegistro = DateTime.Now };
+        Categorias = new Categorias { FechaRegistro = DateTime.Now };
+    }
 
     private async Task RefrescarLista(){ListaProductos = await productosService.Listar(p => p.Eliminado == false);}
 
@@ -381,36 +247,93 @@
         {
             showRegisterModal = false;
             ListaProductos = await productosService.Listar(p => p.Eliminado == false);
-            showAddedModal = true;
+            showProductAddedModal = true;
+        }
+    }
+
+    private async Task GuardarCategorias()
+    {
+        var creado = await categoriasService.Guardar(Categorias);
+        if (creado)
+        {
+            showAddCategoryModal = false;
+            ListaCategorias = await categoriasService.Listar(c => c.Eliminado == false);
+            showCategoryAddedModal = true;
         }
     }
 
     private async Task Modificar()
     {
-        productoSeleccionado.Categorias = null;
-        productoSeleccionado.Proveedores = null;
-        var creado = await productosService.Guardar(productoSeleccionado);
+        Productos.Categorias = null;
+        Productos.Proveedores = null;
+        var creado = await productosService.Guardar(Productos);
         if (creado)
         {
             showDetailsModal = false;
-            showUpdatedModal = true;
+            showProductUpdatedConfirmationModal = true;
             ListaProductos = await productosService.Listar(p => p.Eliminado == false);
         }
     }
 
-    private async Task Eliminar()
+    private async Task ModificarCategoria()
     {
-        showDetailsModal = false;
-        showDeleteConfirmationModal = true;
+        var creado = await categoriasService.Guardar(Categorias);
+        if (creado)
+        {
+            showCategoryDetailsModal = false;
+            ListaCategorias = await categoriasService.Listar(c => c.Eliminado == false);
+            ListaProductos = await productosService.Listar(p => p.Eliminado == false);
+            showCategoryUpdatedModal = true;
+        }
+    }
+
+    private async Task EliminarProducto()
+    {
+        var eliminado = await productosService.Eliminar(Productos.ProductoId);
+        if(eliminado)
+        {
+            ListaProductos = await productosService.Listar(p => p.Eliminado == false);
+            showDeleteConfirmationModal = false;
+            showDetailsModal = false;
+            Productos = new Productos();
+        }
+    }
+
+    private void GetCategoriaEliminar(Categorias c){
+        Categorias = c;
+        showDeleteCategoryConfirmationModal = true;
+    }
+
+    private async Task EliminarCategoria()
+    {
+        var eliminado = await categoriasService.Eliminar(Categorias.CategoriaId);
+        if (eliminado)
+        {
+            ListaCategorias = await categoriasService.Listar(c => c.Eliminado == false);
+            ListaProductos = await productosService.Listar(p => p.Eliminado == false);
+            showDeleteCategoryConfirmationModal = false;
+            Categorias = new Categorias();
+        }
+        else
+        {
+            showDeleteCategoryConfirmationModal = false;
+            showErrorModal = true;
+            Categorias = new Categorias();
+        }
     }
 
     private void GetProducto(Productos p)
     {
-        productoSeleccionado = p;
+        Productos = p;
         showDetailsModal = true;
     }
 
-    private string textoBusqueda = "";
+    private void GetCategoria(Categorias c)
+    {
+        Categorias = c;
+        showCategoryDetailsModal = true; 
+        showCategoryAdmModal = false;
+    }
 
     public async Task Buscar(ChangeEventArgs e)
     {
@@ -420,41 +343,48 @@
 
     public async Task AplicarFiltros()
     {
-        var basePorFecha = await productosService.Listar(p =>
-            p.Eliminado == false &&
-            p.FechaRegistro.Date >= FechaInicial.Date &&
-            p.FechaRegistro.Date <= FechaFinal.Date);
+        List<Productos> listadoFiltrado = await productosService.Listar(p => p.Eliminado == false && p.ProductoId > 0);
+
+        if (FechaInicial.HasValue && FechaFinal.HasValue)
+            listadoFiltrado = listadoFiltrado.Where(p => p.FechaRegistro >= FechaInicial && p.FechaRegistro <= FechaFinal).ToList();
+
         if (!string.IsNullOrWhiteSpace(textoBusqueda))
         {
             if (Filtro == "Nombre")
             {
-                ListaProductos = basePorFecha.Where(p => p.Nombre != null && p.Nombre.Contains(textoBusqueda, StringComparison.OrdinalIgnoreCase)).ToList();
+                listadoFiltrado = listadoFiltrado.Where(p => p.Nombre != null && p.Nombre.Contains(textoBusqueda, StringComparison.OrdinalIgnoreCase)).ToList();
             }
             else if (Filtro == "CodigoProducto")
             {
                 if (int.TryParse(textoBusqueda, out int Codigo))
-                    ListaProductos = basePorFecha.Where(p => p.CodigoProducto == Codigo).ToList();
+                    listadoFiltrado = listadoFiltrado.Where(p => p.CodigoProducto == Codigo).ToList();
             }
             else if (Filtro == "Categoria")
             {
-                ListaProductos = basePorFecha.Where(p => p.Categorias?.Nombre != null &&
+                listadoFiltrado = listadoFiltrado.Where(p => p.Categorias?.Nombre != null &&
                     p.Categorias.Nombre.Contains(textoBusqueda, StringComparison.OrdinalIgnoreCase)).ToList();
             }
             else if (Filtro == "Proveedor")
             {
-                ListaProductos = basePorFecha.Where(p => p.Proveedores?.NombreEmpresa != null &&
+                listadoFiltrado = listadoFiltrado.Where(p => p.Proveedores?.NombreEmpresa != null &&
                     p.Proveedores.NombreEmpresa.Contains(textoBusqueda, StringComparison.OrdinalIgnoreCase)).ToList();
             }
             else if (Filtro == "Estado") 
             {
-                ListaProductos = basePorFecha.Where(p => p.EstadosProductos.ToString()
+                listadoFiltrado = listadoFiltrado.Where(p => p.EstadosProductos.ToString()
                     .Contains(textoBusqueda, StringComparison.OrdinalIgnoreCase)).ToList();
             }
         }
+        ListaProductos = listadoFiltrado;
+    }
+
+    private async Task BuscarCategoria(ChangeEventArgs e)
+    {
+        var valor = e?.Value?.ToString();
+        if (!string.IsNullOrWhiteSpace(valor))
+            ListaCategorias = await categoriasService.Listar(c => c.Eliminado == false && c.Nombre.ToString().Contains(valor.ToString()));
         else
-        {
-            ListaProductos = basePorFecha.ToList();
-        }
+            ListaCategorias = await categoriasService.Listar(c => c.Eliminado == false);
     }
 
     private void PaginaAnterior()
@@ -468,4 +398,132 @@
         if (paginaActual < TotalPaginas)
             paginaActual++;
     }
+
+    private RenderFragment FormularioProducto => __builder =>
+    {
+        <section class="edit-form-container">
+            <div class="scroll-inputs">
+                <div class="input-container-item">
+                    <label>Código:</label>
+                    <input type="number" @bind="Productos.CodigoProducto" class="form-control" />
+                </div>
+                <ValidationMessage For="() => Productos.CodigoProducto" />
+
+                <div class="input-container-item">
+                    <label>Nombre:</label>
+                    <input type="text" @bind="Productos.Nombre" class="form-control" />
+                </div>
+                <ValidationMessage For="() => Productos.Nombre" />
+            
+                @* DESCRIPCION *@
+                <div class="input-container-item">
+                    <label>Descripción:</label>
+                    <input type="text" @bind="Productos.Descripcion" class="form-control" />
+                </div>
+                <ValidationMessage For="() => Productos.Descripcion" />
+
+                @* CATEGORIA (Corregido: Sin ValueExpression) *@
+                <div class="input-container-item">
+                    <label>Categoría:</label>
+                    <select @bind="Productos.CategoriaId" class="form-control">
+                        <option value="0">Seleccione una Categoría</option>
+                        @foreach (var c in ListaCategorias)
+                        {
+                            <option value="@c.CategoriaId">@c.Nombre</option>
+                        }
+                    </select>
+                </div>
+                <ValidationMessage For="() => Productos.CategoriaId" />
+
+                @* PRECIO COMPRA *@
+                <div class="input-container-item">
+                    <label>Precio Compra:</label>
+                    <input type="number" @bind="Productos.PrecioCompra" class="form-control" />
+                </div>
+                <ValidationMessage For="() => Productos.PrecioCompra" />
+
+                @* PRECIO VENTA *@
+                <div class="input-container-item">
+                    <label>Precio Venta:</label>
+                    <input type="number" @bind="Productos.PrecioVenta" class="form-control" />
+                </div>
+                <ValidationMessage For="() => Productos.PrecioVenta" />
+
+                @* CANTIDAD *@
+                <div class="input-container-item">
+                    <label>Cantidad:</label>
+                    <input type="number" @bind="Productos.CantidadInventario" class="form-control" />
+                </div>
+                <ValidationMessage For="() => Productos.CantidadInventario" />
+
+                @* STOCK MINIMO *@
+                <div class="input-container-item">
+                    <label>Stock Mínimo:</label>
+                    <input type="number" @bind="Productos.StockMinimo" class="form-control" />
+                </div>
+                <ValidationMessage For="() => Productos.StockMinimo" />
+
+                <div class="input-container-item">
+                    <label>Proveedor:</label>
+                    <select @bind="Productos.ProveedorId" class="form-control">
+                        <option value="0">Seleccione un Proveedor</option>
+                        @foreach (var p in ListaProveedore)
+                        {
+                            <option value="@p.ProveedorId">@p.NombreEmpresa</option>
+                        }
+                    </select>
+                </div>
+                <ValidationMessage For="() => Productos.ProveedorId" />
+
+                @* ESTADO (Corregido: Sin ValueExpression) *@
+                <div class="input-container-item">
+                    <label>Estado:</label>
+                    <select @bind="Productos.EstadosProductos" class="form-control">
+                        <option value="0">Seleccione un Estado</option>
+                        @foreach (var e in Enum.GetValues<Estados>())
+                        {
+                            <option value="@e">@e</option>
+                        }
+                    </select>
+                </div>
+                <ValidationMessage For="() => Productos.EstadosProductos" />
+
+                @* FECHA *@
+                <div class="input-container-item">
+                    <label>Fecha:</label>
+                    <input type="date" @bind="Productos.FechaRegistro" class="form-control" />
+                </div>
+                <ValidationMessage For="() => Productos.FechaRegistro" />
+            </div>
+        </section>
+    };
+
+    private RenderFragment FormularioCategoria => __builder =>
+    {
+        <section class="category-form-container">
+            <div class="form-inputs">
+                @* NOMBRE *@
+                <div class="input-container-item">
+                    <label>Nombre:</label>
+                    <input type="text" @bind="Categorias.Nombre" class="form-control" />
+                </div>
+                <ValidationMessage For="() => Categorias.Nombre" />
+
+                @* DESCRIPCION *@
+                <div class="input-container-item">
+                    <label>Descripción:</label>
+                    <input type="text" @bind="Categorias.Descripcion" class="form-control" />
+                </div>
+                <ValidationMessage For="() => Categorias.Descripcion" />
+
+                @* FECHA *@
+                <div class="input-container-item">
+                    <label>Fecha:</label>
+                    <input type="date" @bind="Categorias.FechaRegistro" class="form-control" />
+                </div>
+                <ValidationMessage For="() => Categorias.FechaRegistro" />
+            </div>
+            <button type="submit">Guardar</button>
+        </section>
+    };
 }
