@@ -8,8 +8,6 @@ public class CategoriasService(IDbContextFactory<ApplicationDbContext> DbFactory
 {
     public async Task<bool> Guardar(Categorias categoria)
     {
-        if (await Existe(categoria.CategoriaId))
-            return false;
         if (!await Existe(categoria.CategoriaId))
             return await Insertar(categoria);
         else
@@ -40,8 +38,13 @@ public class CategoriasService(IDbContextFactory<ApplicationDbContext> DbFactory
     public async Task<bool> Eliminar(int categoriaId)
     {
         await using var contexto = await DbFactory.CreateDbContextAsync();
-        contexto.Categorias?.AsNoTracking().Where(c => c.CategoriaId == categoriaId).ExecuteUpdateAsync(c => c.SetProperty(p => p.Eliminado, true));
-        return await contexto.SaveChangesAsync() > 0;
+
+        var numeroCategoriasAsociadas = await contexto.Productos.CountAsync(p => p.CategoriaId == categoriaId && p.Eliminado == false);
+        if (numeroCategoriasAsociadas > 0) return false;
+        var filasAfectadas = await contexto.Categorias
+        .Where(c => c.CategoriaId == categoriaId)
+        .ExecuteUpdateAsync(c => c.SetProperty(p => p.Eliminado, true));
+        return filasAfectadas > 0;
     }
     public async Task<List<Categorias>> Listar(Expression<Func<Categorias, bool>> criterio)
     {

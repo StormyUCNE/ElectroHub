@@ -17,6 +17,7 @@
 }
 
 .modal-container {
+    transition: all 0.4s ease-in-out;
     position: fixed;
     top: 0;
     bottom: 0;
@@ -36,12 +37,11 @@
     color: white;
     padding: 20px;
     transform: translateY(-30px);
-    opacity: 0;
+    opacity: 0%;
     z-index: -1;
-    transition: all 0.4s ease-in-out;
 }
 
-    .modal-container.show {
+.modal-container.show {
         transition: all 0.4s ease-in-out;
         position: fixed;
         top: 0;
