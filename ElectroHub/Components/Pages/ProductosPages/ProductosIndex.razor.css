@@ -113,24 +113,90 @@ tbody, tr, td {
     padding: 10px;
     text-align: center;
 }
-button {
+.btn-container-details {
+    display:flex;
+    gap:5px;
+    justify-content: center;
     border-radius: 10px;
     background-color: #AA56D7;
+    max-width: auto;
     padding: 5px 10px 5px 10px;
     border: none;
     color: white;
-    
+    transition: 0.3s ease-in-out;
+    cursor:pointer;
 }
-.input-container-item{
+.register-container{
     display: flex;
-    justify-content:space-between;
+    flex-direction: column;
+    justify-content:center;
     align-items:center;
-    gap: 20px;
+    gap:10px;
+}
+.btn-container-details:hover {
+    background-color: #5683D7;
+    transition: 0.3s ease-in-out;
+}
+.register-save-container {
+    background-color: #5683D7;
+    padding: 5px 15px 5px 15px;
+    border-radius: 10px;
+    display: flex;
+    gap: 5px;
+    justify-content: center;
+    align-items: center;
+    transition: 0.3s ease-in-out;
+    cursor: pointer;
+}
+.register-save-container:hover {
+    background-color: #AA56D7;
+    transition: 0.3s ease-in-out;
+}
+.register-save-container > img {
+    width: 20px;
+    height: 20px;
+}
+.register-save-container > button{
+    padding:0;
+    border:none;
     background-color:transparent;
+    color: white;
+}
+.register-delete-container {
+    background-color: #7B2E2E;
+    padding: 5px 15px 5px 15px;
+    border-radius: 10px;
+    display: flex;
+    gap: 5px;
+    justify-content: center;
+    align-items: center;
+    transition: 0.3s ease-in-out;
+    cursor: pointer;
+}
+
+    .register-delete-container:hover {
+        background-color: #AA56D7;
+        transition: 0.3s ease-in-out;
+    }
+    .register-delete-container > img {
+        width: 15px;
+        height: 15px;
+    }
+    .register-delete-container > button {
+        padding: 0;
+        border: none;
+        background-color: transparent;
+        color: white;
+    }
+.input-container-item {
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+    gap: 20px;
+    background-color: transparent;
     border: 2px pink solid;
     border-radius: 10px;
     padding: 3px 6px 3px 6px;
-
 }
 .input-container-item > input,
 .input-container-item > select {
@@ -167,7 +233,7 @@ button {
     top:0;
     left:0;
     right:0;
-    gap:50px;
+    gap:30px;
 }
 .form-inputs {
     background-color: transparent;
@@ -201,24 +267,29 @@ button {
     gap:20px;
     padding: 10px;
 }
-.button-container button:first-child {
-    background-color: #5683D7;
-}
-.button-container button:last-child {
-    background-color: #7B2E2E;
-}
 
-.table-containaer{
-    display:flex;
-    flex-direction:column;
-    justify-content:center;
+.table-section {
+    overflow-y: auto;
+}
+.table-containaer {
+    display: flex;
+    flex-direction: column;
+    justify-content: center;
     gap: 20px;
 }
+.pagination-container{
+    position:relative;
+    display:flex;
+    justify-content:center;
+    margin-top:10px;
+}
 .pagination {
+    position: fixed;
     display: flex;
     justify-content: center;
-    gap: 100px;
-    color:white;
+    align-items:center;
+    gap: 50px;
+    color: white;
 }
 .pagination > img{
     width:20px;
@@ -259,15 +330,24 @@ button {
     cursor:pointer;
 }
 
-@media (max-width: 768px) {
+@media (max-width: 700px) {
 
+    .product-container {
+        padding: 7px;
+        min-height: 100vh;
+        backdrop-filter: blur(10px);
+        overflow-y: auto;
+    }
     .input-container {
         grid-template-columns: 1fr;
         width: 100%;
         flex: 1;
+        box-sizing: border-box;
     }
 
     .filter-container {
+        flex-direction: column;
+        width: 100%;
         gap: 0px;
     }
 
@@ -285,8 +365,6 @@ button {
         display: none;
     }
 
-
-
     nav {
         display: flex;
         justify-content: space-between;
@@ -297,25 +375,29 @@ button {
     .modal-add-mobile {
         display: block;
     }
+    .modal-add-mobile > svg {
+        border: 2px white solid;
+        border-radius: 100%;
+        transition: all 0.2s ease-in-out;
+    }
 
     thead, th {
         border: 1px black solid;
         padding: 10px;
         text-align: center;
-        background-color: steelblue;
-        font-size: 10px;
+        font-size: 15px;
     }
 
     tbody, tr, td {
         border: 1px black solid;
         padding: 10px;
         text-align: center;
-        font-size: 10px;
+        font-size: 13px;
     }
 
     option {
         width: 30px;
-        ;
+        
     }
 }
 
@@ -375,14 +457,14 @@ select option {
     background-repeat: no-repeat;
     background-position: right 12px center;
     background-size: 18px;
-    padding-right: 40px;
+    padding-right: 0px;
 }
 .form-field input[type="text"] {
     background-image: url("/ProductosSVG/Search.svg");
     background-repeat: no-repeat;
     background-position: right 12px center;
     background-size: 18px;
-    padding-right: 40px;
+    padding-right: 0px;
 }
 
 

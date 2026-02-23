@@ -5,13 +5,14 @@
 @inject CategoriasService categoriasService
 @inject ProveedoresService proveedoresService
 @inject ProductosService productosService
+@inject IJSRuntime JS
 
 <PageTitle>Productos</PageTitle>
 <div class="product-container" @onclick="()=> showAddModal = false">
     <nav>
         <span>Productos</span>
         <div class="modal-add-mobile" @onclick:stopPropagation="true">
-            <svg @onclick="alternateModal" xmlns="http://www.w3.org/2000/svg" height="48px" viewBox="0 -960 960 960" width="48px" fill="#FFFFFF"><path d="M450-120v-330H120v-60h330v-330h60v330h330v60H510v330h-60Z" /></svg>
+            <svg @onclick="alternateModal" xmlns="http://www.w3.org/2000/svg" height="48px" viewBox="0 -960 960 960" width="48px" fill="#AA56D7"><path d="M450-120v-330H120v-60h330v-330h60v330h330v60H510v330h-60Z" /></svg>
             <div class="modal-add-options @(showAddModal ? "show" : "")" @onclick:stopPropagation="true">
                 <ul>
                     <li @onclick="() => { showRegisterModal = true; showAddModal = false; }">Registra Productos</li>
@@ -64,45 +65,61 @@
     </section>
 
     @*Tabla*@
-    <div class="table-responsive table-containaer">
-        <table class="gradient-border-transparent">
-            <thead>
-                <tr>
-                    <th>Nombre</th>
-                    <th>Stock Mímino</th>
-                    <th>Proveedor</th>
-                    <th>Categoría</th>
-                    <th>Opción</th>
-                </tr>
-            </thead>
-            <tbody>
-                @foreach (var p in ProductosPaginados)
-                {
+    <section class="table-section">
+        <div class="table-responsive table-containaer">
+            <table class="gradient-border-transparent">
+                <thead>
                     <tr>
-                        <td>@p.Nombre</td>
-                        <td>@p.StockMinimo</td>
-                        <td>@p.Proveedores?.NombreEmpresa</td>
-                        <td>@p.Categorias?.Nombre</td>
-                        <td>
-                            <button @onclick="() => GetProducto(p)">Ver Detalles</button>
-                        </td>
+                        <th>Nombre</th>
+                        <th>Stock Mímino</th>
+                        <th>Proveedor</th>
+                        <th>Categoría</th>
+                        <th>Opción</th>
                     </tr>
-                }
-            </tbody>
-        </table>
-        <div class="pagination">
-            <img src="/ProductosSVG/NavigationFlechas.svg" alt="Prev" @onclick="PaginaAnterior" disabled="@(paginaActual == 1)" class="@(paginaActual == 1 ? "opacity-25" : "opacity-100")" />
-            <span>@paginaActual | @TotalPaginas</span>
-            <img src="/ProductosSVG/RigthNav.svg" alt="Next" @onclick="PaginaSiguiente" disabled="@(paginaActual == TotalPaginas)" class="@(paginaActual == TotalPaginas ? "opacity-25" : "opacity-100")" />
+                </thead>
+                <tbody>
+                    @foreach (var p in ProductosPaginados)
+                    {
+                        <tr>
+                            <td>@p.Nombre</td>
+                            <td>@p.StockMinimo</td>
+                            <td>@p.Proveedores?.NombreEmpresa</td>
+                            <td>@p.Categorias?.Nombre</td>
+                            <td>
+                                <div class="btn-container-details">
+                                    <img src="/ProductosSVG/InfoIcon.svg" alt="Ver Detalle" />
+                                    <span @onclick="() => GetProducto(p)">Ver Detalles</span>
+                                </div>
+                            </td>
+                        </tr>
+                    }
+                </tbody>
+            </table>
         </div>
-    </div>
+        <div class="pagination-container">
+            <div class="pagination">
+                <img src="/ProductosSVG/NavigationFlechas.svg" alt="Prev" @onclick="PaginaAnterior" disabled="@(paginaActual == 1)" class="@(paginaActual == 1 ? "opacity-25" : "opacity-100")" />
+                <span>@paginaActual | @TotalPaginas</span>
+                <img src="/ProductosSVG/RigthNav.svg" alt="Next" @onclick="PaginaSiguiente" disabled="@(paginaActual == TotalPaginas)" class="@(paginaActual == TotalPaginas ? "opacity-25" : "opacity-100")" />
+            </div>
+        </div>
+    </section>
+    
+        
+        
+
 
     @*Registro para Crear Producto*@
     <RegistroComponente @bind-Mostrar="showRegisterModal" Titulo="Registro Productos" OnCerrar="LimpiarCampos">
         <EditForm Model="Productos" OnValidSubmit="Guardar">
             <DataAnnotationsValidator />
-            @FormularioProducto
-            <button type="submit">Guardar</button>
+            <div class="register-container">
+                @FormularioProducto
+                <div class="register-save-container">
+                    <img src="/ProductosSVG/Save.svg" alt="Ver Detalle" />
+                    <button type="submit">Guardar</button>
+                </div>
+            </div>
         </EditForm>
     </RegistroComponente>
 
@@ -112,8 +129,15 @@
             <DataAnnotationsValidator />
             @FormularioProducto
             <div class="button-container">
-                <button type="submit">Guardar</button>
-                <button type="button" @onclick="() => showDeleteConfirmationModal = true">Eliminar</button>
+                <div class="register-save-container">
+                    <img src="/ProductosSVG/Save.svg" alt="Guardar" />
+                    <button type="submit">Guardar</button>
+                </div>
+                <div class="register-delete-container">
+                    <img src="/ProductosSVG/Basurero.svg" alt="Eliminar" />
+                    <button type="button" @onclick="() => showDeleteConfirmationModal = true">Eliminar</button>
+                </div>
+                
             </div>
         </EditForm>
     </DetalleComponente>
@@ -165,10 +189,16 @@
     <ConfirmacionModificadoComponente @bind-Mostrar="showProductUpdatedConfirmationModal" Asunto="El Producto"  Nombre="@Productos.Nombre" LimpiarObjeto="LimpiarCampos" />
     <ConfirmacionModificadoComponente @bind-Mostrar="showCategoryUpdatedModal" Asunto="La Categoría" Nombre="@Categorias.Nombre" LimpiarObjeto="LimpiarCampos" />
     <AvisoEliminarComponente @bind-Mostrar="showDeleteConfirmationModal" Titulo="Producto" Nombre="@Productos.Nombre" Asunto="El Producto" >
-        <button @onclick="EliminarProducto">Eliminar</button>
+        <div class="register-delete-container">
+            <img src="/ProductosSVG/Basurero.svg" alt="Eliminar" />
+            <button @onclick="EliminarProducto">Eliminar</button>
+        </div>
     </AvisoEliminarComponente>
     <AvisoEliminarComponente @bind-Mostrar="showDeleteCategoryConfirmationModal" Titulo="Categoría" Nombre="@Categorias.Nombre" Asunto="La Categoría">
-        <button @onclick="EliminarCategoria">Eliminar</button>
+        <div class="register-delete-container">
+            <img src="/ProductosSVG/Basurero.svg" alt="Eliminar" />
+            <button @onclick="EliminarCategoria">Eliminar</button>
+        </div>
     </AvisoEliminarComponente>
     <ErrorNotificacionComponente @bind-Mostrar="showErrorModal" Asunto="No puede Eliminar Categorías en Uso por Productos."/>
 </div>
@@ -183,7 +213,7 @@
     showProductAddedModal = false, 
     showProductUpdatedConfirmationModal = false,
     showDeleteConfirmationModal = false;
-  
+
     //Modales para las Categorias
     private bool showCategoryAddedModal = false,
     showCategoryUpdatedModal = false,
@@ -231,6 +261,33 @@
         ListaCategorias = await categoriasService.Listar(c => c.Eliminado == false);
         ListaProveedore = await proveedoresService.Listar(p => p.Eliminado == false);
         ListaProductos = await productosService.Listar(p => p.Eliminado == false);
+    }
+
+    protected override async Task OnAfterRenderAsync(bool firstRender)
+    {
+        if (firstRender)
+        {
+            int width = await JS.InvokeAsync<int>("getWindowWidth");
+            int height = await JS.InvokeAsync<int>("getWindowHeight");
+           
+            int espacioFijo = 220;
+            int altoDisponible = height - espacioFijo;
+
+            int altoPorFila = 72;
+            int filas = altoDisponible / altoPorFila;
+
+            if (width < 576)
+                registrosPorPagina = Math.Clamp(filas, 4, 7);
+            else if (width < 768)
+                registrosPorPagina = Math.Clamp(filas, 6, 9);
+            else if (width < 992)
+                registrosPorPagina = Math.Clamp(filas, 8, 12);
+            else if (width < 1200)
+                registrosPorPagina = Math.Clamp(filas, 4, 18);
+            else
+                registrosPorPagina = Math.Clamp(filas, 5, 25);
+            StateHasChanged();
+        }
     }
 
     private async Task LimpiarCampos(){ 
@@ -503,27 +560,37 @@
         <section class="category-form-container">
             <div class="form-inputs">
                 @* NOMBRE *@
-                <div class="input-container-item">
-                    <label>Nombre:</label>
-                    <input type="text" @bind="Categorias.Nombre" class="form-control" />
+                <div>
+                    <div class="input-container-item">
+                        <label>Nombre:</label>
+                        <input type="text" @bind="Categorias.Nombre" class="form-control" />
+                    </div>
+                    <ValidationMessage For="() => Categorias.Nombre" />
                 </div>
-                <ValidationMessage For="() => Categorias.Nombre" />
 
                 @* DESCRIPCION *@
-                <div class="input-container-item">
+                <div>
+                    <div class="input-container-item">
                     <label>Descripción:</label>
                     <input type="text" @bind="Categorias.Descripcion" class="form-control" />
                 </div>
                 <ValidationMessage For="() => Categorias.Descripcion" />
+                </div>
+                
 
                 @* FECHA *@
-                <div class="input-container-item">
-                    <label>Fecha:</label>
-                    <input type="date" @bind="Categorias.FechaRegistro" class="form-control" />
+                <div>
+                    <div class="input-container-item">
+                        <label>Fecha:</label>
+                        <input type="date" @bind="Categorias.FechaRegistro" class="form-control" />
+                    </div>
+                    <ValidationMessage For="() => Categorias.FechaRegistro" />
                 </div>
-                <ValidationMessage For="() => Categorias.FechaRegistro" />
             </div>
-            <button type="submit">Guardar</button>
+            <div class="register-save-container">
+                    <img src="/ProductosSVG/Save.svg" alt="Ver Detalle" />
+                    <button type="submit">Guardar</button>
+            </div> 
         </section>
     };
 }

@@ -55,3 +55,28 @@ h1:focus {
 .form-floating > .form-control-plaintext:focus::placeholder, .form-floating > .form-control:focus::placeholder {
     text-align: start;
 }
+
+
+.accept-container {
+    background-color: #5683D7;
+    padding: 10px 15px 10px 15px;
+    border-radius: 10px;
+    display: flex;
+    gap: 5px;
+    justify-content: center;
+    align-items: center;
+    transition: 0.3s ease-in-out;
+    cursor: pointer;
+}
+
+    .accept-container:hover {
+        background-color: #AA56D7;
+        transition: 0.3s ease-in-out;
+    }
+
+    .accept-container > button {
+        padding: 0;
+        border: none;
+        background-color: transparent;
+        color: white;
+    }
