@@ -101,6 +101,7 @@ option{
 table {
     width: 100%;
     color: white;
+    overflow:hidden;
 }
 thead, th {
     border: 1px black solid;
