@@ -27,7 +27,7 @@ public class ProductosService(IDbContextFactory<ApplicationDbContext> DbFactory)
 
         // 1. Agregamos y guardamos el producto primero
         contexto.Productos.Add(producto);
-        await contexto.SaveChangesAsync(); // Ahora 'producto.ProductoId' ya tiene su valor real de la DB
+        await contexto.SaveChangesAsync(); 
 
         
         var movimiento = new InventarioMovimientos
