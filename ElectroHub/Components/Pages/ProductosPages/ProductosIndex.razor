@@ -86,9 +86,9 @@
                             <td>@p.Proveedores?.NombreEmpresa</td>
                             <td>@p.Categorias?.Nombre</td>
                             <td>
-                                <div class="btn-container-details">
+                                <div class="btn-container-details" @onclick="() => GetProducto(p)">
                                     <img src="/ProductosSVG/InfoIcon.svg" alt="Ver Detalle" />
-                                    <span @onclick="() => GetProducto(p)">Ver Detalles</span>
+                                    <span>Ver Detalles</span>
                                 </div>
                             </td>
                         </tr>
@@ -111,10 +111,10 @@
 
     @*Registro para Crear Producto*@
     <RegistroComponente @bind-Mostrar="showRegisterModal" Titulo="Registro Productos" OnCerrar="LimpiarCampos">
-        <EditForm Model="Productos" OnValidSubmit="Guardar">
+        <EditForm Model="NuevoProducto" OnValidSubmit="Guardar">
             <DataAnnotationsValidator />
             <div class="register-container">
-                @FormularioProducto
+                @FormularioProducto(NuevoProducto)
                 <div class="register-save-container">
                     <img src="/ProductosSVG/Save.svg" alt="Ver Detalle" />
                     <button type="submit">Guardar</button>
@@ -125,9 +125,9 @@
 
     @*Detalle Producto*@
     <DetalleComponente @bind-Mostrar="showDetailsModal" Titulo="Detalle Productos">
-        <EditForm Model="Productos" OnValidSubmit="Modificar">
+        <EditForm Model="ProductoEditar" OnValidSubmit="Modificar">
             <DataAnnotationsValidator />
-            @FormularioProducto
+            @FormularioProducto(ProductoEditar)
             <div class="button-container">
                 <div class="register-save-container">
                     <img src="/ProductosSVG/Save.svg" alt="Guardar" />
@@ -171,30 +171,30 @@
     </DetalleComponente>
 
     <RegistroComponente Titulo="Registro Categoría" @bind-Mostrar="showAddCategoryModal">
-        <EditForm Model="Categorias" OnValidSubmit="GuardarCategorias">
+        <EditForm Model="NuevaCategoria" OnValidSubmit="GuardarCategorias">
             <DataAnnotationsValidator />
-            @FormularioCategoria
+            @FormularioCategoria(NuevaCategoria)
         </EditForm>
     </RegistroComponente>
 
     <DetalleComponente Titulo="Detalle Categoría" @bind-Mostrar="showCategoryDetailsModal">
-        <EditForm Model="Categorias" OnValidSubmit="ModificarCategoria">
+        <EditForm Model="CategoriaEditar" OnValidSubmit="ModificarCategoria">
             <DataAnnotationsValidator />
-            @FormularioCategoria
+            @FormularioCategoria(CategoriaEditar)
         </EditForm>
     </DetalleComponente>
 
-    <ConfirmacionAgregadoComponente @bind-Mostrar="showCategoryAddedModal" Asunto="La Categoría" Nombre="@Categorias.Nombre" LimpiarObjeto="LimpiarCampos" />
-    <ConfirmacionAgregadoComponente @bind-Mostrar="showProductAddedModal" Asunto="El Producto" Nombre="@Productos.Nombre" LimpiarObjeto="LimpiarCampos" />
-    <ConfirmacionModificadoComponente @bind-Mostrar="showProductUpdatedConfirmationModal" Asunto="El Producto"  Nombre="@Productos.Nombre" LimpiarObjeto="LimpiarCampos" />
-    <ConfirmacionModificadoComponente @bind-Mostrar="showCategoryUpdatedModal" Asunto="La Categoría" Nombre="@Categorias.Nombre" LimpiarObjeto="LimpiarCampos" />
-    <AvisoEliminarComponente @bind-Mostrar="showDeleteConfirmationModal" Titulo="Producto" Nombre="@Productos.Nombre" Asunto="El Producto" >
+    <ConfirmacionAgregadoComponente @bind-Mostrar="showCategoryAddedModal" Asunto="La Categoría" Nombre="@NuevaCategoria.Nombre" LimpiarObjeto="LimpiarCampos" />
+    <ConfirmacionAgregadoComponente @bind-Mostrar="showProductAddedModal" Asunto="El Producto" Nombre="@NuevoProducto.Nombre" LimpiarObjeto="LimpiarCampos" />
+    <ConfirmacionModificadoComponente @bind-Mostrar="showProductUpdatedConfirmationModal" Asunto="El Producto"  Nombre="@ProductoEditar.Nombre" LimpiarObjeto="LimpiarCampos" />
+    <ConfirmacionModificadoComponente @bind-Mostrar="showCategoryUpdatedModal" Asunto="La Categoría" Nombre="@CategoriaEditar.Nombre" LimpiarObjeto="LimpiarCampos" />
+    <AvisoEliminarComponente @bind-Mostrar="showDeleteConfirmationModal" Titulo="Producto" Nombre="@ProductoEditar.Nombre" Asunto="El Producto" >
         <div class="register-delete-container">
             <img src="/ProductosSVG/Basurero.svg" alt="Eliminar" />
             <button @onclick="EliminarProducto">Eliminar</button>
         </div>
     </AvisoEliminarComponente>
-    <AvisoEliminarComponente @bind-Mostrar="showDeleteCategoryConfirmationModal" Titulo="Categoría" Nombre="@Categorias.Nombre" Asunto="La Categoría">
+    <AvisoEliminarComponente @bind-Mostrar="showDeleteCategoryConfirmationModal" Titulo="Categoría" Nombre="@CategoriaEditar.Nombre" Asunto="La Categoría">
         <div class="register-delete-container">
             <img src="/ProductosSVG/Basurero.svg" alt="Eliminar" />
             <button @onclick="EliminarCategoria">Eliminar</button>
@@ -230,8 +230,13 @@
     private DateTime? FechaFinal { get; set; }
 
     //Objetos y Listas
-    public Productos Productos { get; set; } = new Productos { FechaRegistro = DateTime.Now };
-    public Categorias Categorias { get; set; } = new Categorias { FechaRegistro = DateTime.Now };
+    // PRODUCTOS
+    private Productos NuevoProducto { get; set; } = new Productos { FechaRegistro = DateTime.Now };
+    private Productos ProductoEditar { get; set; } = new Productos();
+
+    // CATEGORIAS
+    private Categorias NuevaCategoria { get; set; } = new Categorias { FechaRegistro = DateTime.Now };
+    private Categorias CategoriaEditar { get; set; } = new Categorias();
 
     public List<Categorias> ListaCategorias = new List<Categorias>();
     public List<Proveedores> ListaProveedore = new List<Proveedores>();
@@ -291,18 +296,22 @@
     }
 
     private async Task LimpiarCampos(){ 
-        Productos = new Productos { FechaRegistro = DateTime.Now };
-        Categorias = new Categorias { FechaRegistro = DateTime.Now };
+        NuevoProducto = new Productos { FechaRegistro = DateTime.Now };
+        ProductoEditar = new Productos { FechaRegistro = DateTime.Now };
+        NuevaCategoria = new Categorias { FechaRegistro = DateTime.Now };
+        CategoriaEditar = new Categorias { FechaRegistro = DateTime.Now };
     }
 
     private async Task RefrescarLista(){ListaProductos = await productosService.Listar(p => p.Eliminado == false);}
 
     private async Task Guardar()
     {
-        var creado = await productosService.Guardar(Productos);
+        var creado = await productosService.Guardar(NuevoProducto);
+
         if (creado)
         {
             showRegisterModal = false;
+            NuevoProducto = new Productos { FechaRegistro = DateTime.Now };
             ListaProductos = await productosService.Listar(p => p.Eliminado == false);
             showProductAddedModal = true;
         }
@@ -310,10 +319,12 @@
 
     private async Task GuardarCategorias()
     {
-        var creado = await categoriasService.Guardar(Categorias);
+        var creado = await categoriasService.Guardar(NuevaCategoria);
+
         if (creado)
         {
             showAddCategoryModal = false;
+            NuevaCategoria = new Categorias { FechaRegistro = DateTime.Now };
             ListaCategorias = await categoriasService.Listar(c => c.Eliminado == false);
             showCategoryAddedModal = true;
         }
@@ -321,10 +332,8 @@
 
     private async Task Modificar()
     {
-        Productos.Categorias = null;
-        Productos.Proveedores = null;
-        var creado = await productosService.Guardar(Productos);
-        if (creado)
+        var actualizado = await productosService.Guardar(ProductoEditar);
+        if (actualizado)
         {
             showDetailsModal = false;
             showProductUpdatedConfirmationModal = true;
@@ -334,7 +343,7 @@
 
     private async Task ModificarCategoria()
     {
-        var creado = await categoriasService.Guardar(Categorias);
+        var creado = await categoriasService.Guardar(CategoriaEditar);
         if (creado)
         {
             showCategoryDetailsModal = false;
@@ -346,49 +355,72 @@
 
     private async Task EliminarProducto()
     {
-        var eliminado = await productosService.Eliminar(Productos.ProductoId);
+        var eliminado = await productosService.Eliminar(ProductoEditar.ProductoId);
         if(eliminado)
         {
             ListaProductos = await productosService.Listar(p => p.Eliminado == false);
             showDeleteConfirmationModal = false;
             showDetailsModal = false;
-            Productos = new Productos();
+            ProductoEditar = new Productos();
         }
     }
 
     private void GetCategoriaEliminar(Categorias c){
-        Categorias = c;
+        CategoriaEditar = c;
         showDeleteCategoryConfirmationModal = true;
     }
 
     private async Task EliminarCategoria()
     {
-        var eliminado = await categoriasService.Eliminar(Categorias.CategoriaId);
+        var eliminado = await categoriasService.Eliminar(CategoriaEditar.CategoriaId);
+
         if (eliminado)
         {
             ListaCategorias = await categoriasService.Listar(c => c.Eliminado == false);
             ListaProductos = await productosService.Listar(p => p.Eliminado == false);
             showDeleteCategoryConfirmationModal = false;
-            Categorias = new Categorias();
+            CategoriaEditar = new Categorias();
         }
         else
         {
             showDeleteCategoryConfirmationModal = false;
             showErrorModal = true;
-            Categorias = new Categorias();
+            CategoriaEditar = new Categorias();
         }
     }
 
     private void GetProducto(Productos p)
     {
-        Productos = p;
+        ProductoEditar = new Productos
+        {
+            ProductoId = p.ProductoId,
+            CodigoProducto = p.CodigoProducto,
+            Nombre = p.Nombre,
+            Descripcion = p.Descripcion,
+            CategoriaId = p.CategoriaId,
+            PrecioCompra = p.PrecioCompra,
+            PrecioVenta = p.PrecioVenta,
+            CantidadInventario = p.CantidadInventario,
+            StockMinimo = p.StockMinimo,
+            ProveedorId = p.ProveedorId,
+            EstadosProductos = p.EstadosProductos,
+            FechaRegistro = p.FechaRegistro
+        };
+
         showDetailsModal = true;
     }
 
     private void GetCategoria(Categorias c)
     {
-        Categorias = c;
-        showCategoryDetailsModal = true; 
+        CategoriaEditar = new Categorias
+        {
+            CategoriaId = c.CategoriaId,
+            Nombre = c.Nombre,
+            Descripcion = c.Descripcion,
+            FechaRegistro = c.FechaRegistro
+        };
+
+        showCategoryDetailsModal = true;
         showCategoryAdmModal = false;
     }
 
@@ -456,141 +488,124 @@
             paginaActual++;
     }
 
-    private RenderFragment FormularioProducto => __builder =>
+    private RenderFragment FormularioProducto(Productos productos) => __builder =>
     {
         <section class="edit-form-container">
             <div class="scroll-inputs">
+
                 <div class="input-container-item">
                     <label>Código:</label>
-                    <input type="number" @bind="Productos.CodigoProducto" class="form-control" />
+                    <input type="number" @bind="productos.CodigoProducto" class="form-control" />
                 </div>
-                <ValidationMessage For="() => Productos.CodigoProducto" />
 
                 <div class="input-container-item">
                     <label>Nombre:</label>
-                    <input type="text" @bind="Productos.Nombre" class="form-control" />
+                    <input type="text" @bind="productos.Nombre" class="form-control" />
                 </div>
-                <ValidationMessage For="() => Productos.Nombre" />
-            
-                @* DESCRIPCION *@
+
                 <div class="input-container-item">
                     <label>Descripción:</label>
-                    <input type="text" @bind="Productos.Descripcion" class="form-control" />
+                    <input type="text" @bind="productos.Descripcion" class="form-control" />
                 </div>
-                <ValidationMessage For="() => Productos.Descripcion" />
 
-                @* CATEGORIA (Corregido: Sin ValueExpression) *@
                 <div class="input-container-item">
                     <label>Categoría:</label>
-                    <select @bind="Productos.CategoriaId" class="form-control">
-                        <option value="0">Seleccione una Categoría</option>
+                    <select @bind="productos.CategoriaId" class="form-control">
+                        <option value="0">Seleccione</option>
                         @foreach (var c in ListaCategorias)
                         {
                             <option value="@c.CategoriaId">@c.Nombre</option>
                         }
                     </select>
                 </div>
-                <ValidationMessage For="() => Productos.CategoriaId" />
 
-                @* PRECIO COMPRA *@
                 <div class="input-container-item">
                     <label>Precio Compra:</label>
-                    <input type="number" @bind="Productos.PrecioCompra" class="form-control" />
+                    <input type="number" @bind="productos.PrecioCompra" class="form-control" />
                 </div>
-                <ValidationMessage For="() => Productos.PrecioCompra" />
 
-                @* PRECIO VENTA *@
                 <div class="input-container-item">
                     <label>Precio Venta:</label>
-                    <input type="number" @bind="Productos.PrecioVenta" class="form-control" />
+                    <input type="number" @bind="productos.PrecioVenta" class="form-control" />
                 </div>
-                <ValidationMessage For="() => Productos.PrecioVenta" />
 
-                @* CANTIDAD *@
                 <div class="input-container-item">
                     <label>Cantidad:</label>
-                    <input type="number" @bind="Productos.CantidadInventario" class="form-control" />
+                    <input type="number" @bind="productos.CantidadInventario" class="form-control" />
                 </div>
-                <ValidationMessage For="() => Productos.CantidadInventario" />
 
-                @* STOCK MINIMO *@
                 <div class="input-container-item">
                     <label>Stock Mínimo:</label>
-                    <input type="number" @bind="Productos.StockMinimo" class="form-control" />
+                    <input type="number" @bind="productos.StockMinimo" class="form-control" />
                 </div>
-                <ValidationMessage For="() => Productos.StockMinimo" />
 
                 <div class="input-container-item">
                     <label>Proveedor:</label>
-                    <select @bind="Productos.ProveedorId" class="form-control">
-                        <option value="0">Seleccione un Proveedor</option>
+                    <select @bind="productos.ProveedorId" class="form-control">
+                        <option value="0">Seleccione</option>
                         @foreach (var p in ListaProveedore)
                         {
                             <option value="@p.ProveedorId">@p.NombreEmpresa</option>
                         }
                     </select>
                 </div>
-                <ValidationMessage For="() => Productos.ProveedorId" />
 
-                @* ESTADO (Corregido: Sin ValueExpression) *@
                 <div class="input-container-item">
                     <label>Estado:</label>
-                    <select @bind="Productos.EstadosProductos" class="form-control">
-                        <option value="0">Seleccione un Estado</option>
+                    <select @bind="productos.EstadosProductos" class="form-control">
+                        <option value="0">Seleccione</option>
                         @foreach (var e in Enum.GetValues<Estados>())
                         {
                             <option value="@e">@e</option>
                         }
                     </select>
                 </div>
-                <ValidationMessage For="() => Productos.EstadosProductos" />
 
-                @* FECHA *@
                 <div class="input-container-item">
                     <label>Fecha:</label>
-                    <input type="date" @bind="Productos.FechaRegistro" class="form-control" />
+                    <input type="date" @bind="productos.FechaRegistro" class="form-control" />
                 </div>
-                <ValidationMessage For="() => Productos.FechaRegistro" />
+
             </div>
         </section>
     };
-
-    private RenderFragment FormularioCategoria => __builder =>
+    
+    private RenderFragment FormularioCategoria(Categorias categorias) => __builder =>
     {
         <section class="category-form-container">
             <div class="form-inputs">
-                @* NOMBRE *@
+
                 <div>
                     <div class="input-container-item">
                         <label>Nombre:</label>
-                        <input type="text" @bind="Categorias.Nombre" class="form-control" />
+                        <input type="text" @bind="categorias.Nombre" class="form-control" />
                     </div>
-                    <ValidationMessage For="() => Categorias.Nombre" />
+                    <ValidationMessage For="() => categorias.Nombre" />
                 </div>
 
-                @* DESCRIPCION *@
                 <div>
                     <div class="input-container-item">
-                    <label>Descripción:</label>
-                    <input type="text" @bind="Categorias.Descripcion" class="form-control" />
+                        <label>Descripción:</label>
+                        <input type="text" @bind="categorias.Descripcion" class="form-control" />
+                    </div>
+                    <ValidationMessage For="() => categorias.Descripcion" />
                 </div>
-                <ValidationMessage For="() => Categorias.Descripcion" />
-                </div>
-                
 
-                @* FECHA *@
                 <div>
                     <div class="input-container-item">
                         <label>Fecha:</label>
-                        <input type="date" @bind="Categorias.FechaRegistro" class="form-control" />
+                        <input type="date" @bind="categorias.FechaRegistro" class="form-control" />
                     </div>
-                    <ValidationMessage For="() => Categorias.FechaRegistro" />
+                    <ValidationMessage For="() => categorias.FechaRegistro" />
                 </div>
+
             </div>
+
             <div class="register-save-container">
-                    <img src="/ProductosSVG/Save.svg" alt="Ver Detalle" />
-                    <button type="submit">Guardar</button>
-            </div> 
+                <img src="/ProductosSVG/Save.svg" />
+                <button type="submit">Guardar</button>
+            </div>
+
         </section>
     };
 }
