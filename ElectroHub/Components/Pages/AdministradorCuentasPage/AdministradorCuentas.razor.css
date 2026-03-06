@@ -1,0 +1,132 @@
+﻿.cuentas-container {
+    padding: 30px 30px 5px 30px;
+    min-height: 100vh;
+    backdrop-filter: blur(10px);
+}
+nav > span {
+    font-size: 4vw;
+    color: #5683D7;
+}
+hr {
+    margin: 0;
+    margin-bottom: 20px;
+    border: 2px white solid;
+}
+.filter-container {
+    display: flex;
+    justify-content: left;
+    align-items: flex-start;
+    max-width: 100%;
+    gap: 10px;
+}
+.input-container {
+    display: grid;
+    grid-template-columns: repeat(2, 1fr);
+    gap: 20px;
+    flex: 0.9;
+}
+.table-responsive {
+    margin-top: 20px;
+    overflow-x: auto;
+    border: none;
+}
+
+table {
+    width: 100%;
+    color: white;
+    overflow: hidden;
+}
+
+thead, th {
+    border: 1px black solid;
+    padding: 10px;
+    text-align: center;
+    background-color: rgba(255, 255, 255, 0.1);
+}
+
+tbody, tr, td {
+    border: 1px black solid;
+    padding: 10px;
+    text-align: center;
+}
+.pagination-container{
+    position:relative;
+    display:flex;
+    justify-content:center;
+    margin-top:10px;
+}
+.pagination {
+    position: fixed;
+    display: flex;
+    justify-content: center;
+    align-items:center;
+    gap: 50px;
+    color: white;
+}
+.pagination > img{
+    width:20px;
+    cursor:pointer;
+}
+.form-field {
+    position: relative;
+    border-radius: 30px;
+}
+.form-field input[type="text"] {
+    background-image: url("/ProductosSVG/Search.svg");
+    background-repeat: no-repeat;
+    background-position: right 12px center;
+    background-size: 18px;
+    padding-right: 0px;
+}
+.gradient-border-transparent {
+    --border-width: 3px;
+    --radius: 20px;
+    position: relative;
+    color: white; /* O el color de tu texto */
+    border-radius: var(--radius);
+    background: transparent; /* Aquí está tu transparencia */
+    /* Para que el contenido no toque los bordes */
+    padding: var(--border-width);
+}
+
+    .gradient-border-transparent::before {
+        content: "";
+        position: absolute;
+        inset: 0;
+        border-radius: var(--radius);
+        padding: var(--border-width); /* Grosor del borde */
+        /* El gradiente que quieres */
+        background: linear-gradient(to right, #AA56D7, #D7AA56);
+        /* La magia del recorte (Masking) */
+        -webkit-mask: linear-gradient(#fff 0 0) content-box, linear-gradient(#fff 0 0);
+        -webkit-mask-composite: xor;
+        mask-composite: exclude;
+        pointer-events: none;
+    }
+
+    .gradient-border-transparent table {
+        width: 100%;
+        border-collapse: collapse;
+        background: transparent; /* Tabla transparente */
+    }
+.form-field::before {
+    content: "";
+    position: absolute;
+    inset: 0;
+    border-radius: 30px;
+    padding: 2px; 
+    background: linear-gradient(to right, #AA56D7, #D7AA56);
+    -webkit-mask: linear-gradient(#fff 0 0) content-box, linear-gradient(#fff 0 0);
+    -webkit-mask-composite: xor;
+    mask-composite: exclude;
+    pointer-events: none;
+}
+.form-field input {
+    width: 100%;
+    background: rgba(255, 255, 255, 0.05);
+    border: none;
+    outline: none;
+    border-radius: 30px;
+    padding: 8px 15px;
+    color: white;
+}

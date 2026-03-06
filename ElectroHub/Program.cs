@@ -44,6 +44,7 @@ builder.Services.AddScoped<ProveedoresService>();
 builder.Services.AddScoped<CategoriasService>();
 builder.Services.AddScoped<ProductosService>();
 builder.Services.AddScoped<InventarioService>();
+builder.Services.AddScoped<AdministradorCuentasService>();
 
 
 var app = builder.Build();
