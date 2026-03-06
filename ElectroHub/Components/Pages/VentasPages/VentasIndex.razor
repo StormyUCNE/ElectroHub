@@ -1,5 +1,7 @@
 ﻿@page "/Ventas/Index";
 
+@inject VentasService ventasService;
+
 <PageTitle>VentasIndex</PageTitle>
 
 <div class="container">
@@ -135,36 +137,19 @@
                 </tr>
             </thead>
             <tbody>
-                <tr>
-                    <td>00001</td>
-                    <td>2026-01-30 08:00:00 AM</td>
-                    <td>$1,483.00</td>
-                    <td>Efectivo</td>
-                    <td>Luis Fonsi</td>
-                    <td>
-                        <a class="boton boton-detalles" href="/Ventas/Detalles">Detalles</a>
-                    </td>
-                </tr>
-                <tr>
-                    <td>00001</td>
-                    <td>2026-01-30 08:00:00 AM</td>
-                    <td>$1,483.00</td>
-                    <td>Efectivo</td>
-                    <td>Luis Fonsi</td>
-                    <td>
-                        <a class="boton boton-detalles" href="/Ventas/Detalles">Detalles</a>
-                    </td>
-                </tr>
-                <tr>
-                    <td>00001</td>
-                    <td>2026-01-30 08:00:00 AM</td>
-                    <td>$1,483.00</td>
-                    <td>Efectivo</td>
-                    <td>Luis Fonsi</td>
-                    <td>
-                        <a class="boton boton-detalles" href="/Ventas/Detalles">Detalles</a>
-                    </td>
-                </tr>
+                @foreach (var venta in ListaVentas)
+                {
+                    <tr>
+                        <td>00001</td>
+                        <td>2026-01-30 08:00:00 AM</td>
+                        <td>$1,483.00</td>
+                        <td>Efectivo</td>
+                        <td>Luis Fonsi</td>
+                        <td>
+                            <a class="boton boton-detalles" href="/Ventas/Detalles">Detalles</a>
+                        </td>
+                    </tr>
+                }
             </tbody>
         </table>
     </div>
@@ -174,5 +159,10 @@
 </div>
 
 @code {
+    public List<Ventas> ListaVentas { get; set; } = new List<Ventas>();
 
+    protected override async Task OnInitializedAsync()
+    {
+        ListaVentas = await ventasService.Listar(v => v.VentaId > 0);
+    }
 }

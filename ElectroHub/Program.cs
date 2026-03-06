@@ -25,7 +25,8 @@ builder.Services.AddAuthentication(options =>
 
 var connectionString = builder.Configuration.GetConnectionString("DefaultConnection") ?? throw new InvalidOperationException("Connection string 'DefaultConnection' not found.");
 builder.Services.AddDbContextFactory<ApplicationDbContext>(options =>
-    options.UseSqlServer(connectionString));
+    options.UseSqlite(connectionString));
+//builder.Services.AddDbContextFactory<ApplicationDbContext>(options => options.UseSqlServer(connectionString));
 builder.Services.AddDatabaseDeveloperPageExceptionFilter();
 
 builder.Services.AddIdentityCore<ApplicationUser>(options =>
@@ -44,7 +45,7 @@ builder.Services.AddScoped<ProveedoresService>();
 builder.Services.AddScoped<CategoriasService>();
 builder.Services.AddScoped<ProductosService>();
 builder.Services.AddScoped<InventarioService>();
-
+builder.Services.AddScoped<VentasService>();
 
 var app = builder.Build();
 

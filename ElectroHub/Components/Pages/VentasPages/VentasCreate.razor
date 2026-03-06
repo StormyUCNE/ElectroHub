@@ -1,5 +1,9 @@
 ﻿@page "/Ventas/Create";
 
+@rendermode InteractiveServer
+@inject VentasService ventasServices;
+@inject ProductosService productosService;
+
 <PageTitle>VentasCreate</PageTitle>
 
 <div class="container">
@@ -13,11 +17,11 @@
                 <div class="img-container">
                     <img class="" src="/VentasSVG/Search.svg" width="30" height="30" />
                 </div>
-                <input class="" type="text" placeholder="Agregar producto..." />
+                <input type="number" placeholder="Agregar producto..." @bind-value="CodigoProducto" />
             </div>
         </div>
         <div class="col-3">
-            <button class="boton boton-agregar">Agregar producto</button>
+            <button class="boton boton-agregar" type="button" @onclick="AgregarDetalle">Agregar producto</button>
         </div>
     </div>
 
@@ -37,72 +41,35 @@
                 </tr>
             </thead>
             <tbody>
-                <tr>
-                    <td>00001</td>
-                    <td>Pantalla OLED 120Hz 8K con pasola incluida</td>
-                    <td>Electrodomestico</td>
-                    <td>
-                        <div class="input-container input-cantidad">
-                            <input type="text" value="1" />
-                        </div>
-                    </td>
-                    <td>$2,500.00</td>
-                    <td>$139.90</td>
-                    <td>$2,639.90</td>
-                    <td>
-                        <svg xmlns="http://www.w3.org/2000/svg" height="48px" viewBox="0 -960 960 960" width="48px" fill="#D00707"><path d="M261-120q-24.75 0-42.37-17.63Q201-155.25 201-180v-570h-41v-60h188v-30h264v30h188v60h-41v570q0 24-18 42t-42 18H261Zm438-630H261v570h438v-570ZM367-266h60v-399h-60v399Zm166 0h60v-399h-60v399ZM261-750v570-570Z" /></svg>
-                    </td>
-                </tr>
-                <tr>
-                    <td>00001</td>
-                    <td>Pantalla OLED 120Hz 8K con pasola incluida</td>
-                    <td>Electrodomestico</td>
-                    <td>
-                        <div class="input-container input-cantidad">
-                            <input type="text" value="1" />
-                        </div>
-                    </td>
-                    <td>$2,500.00</td>
-                    <td>$139.90</td>
-                    <td>$2,639.90</td>
-                    <td>
-                        <svg xmlns="http://www.w3.org/2000/svg" height="48px" viewBox="0 -960 960 960" width="48px" fill="#D00707"><path d="M261-120q-24.75 0-42.37-17.63Q201-155.25 201-180v-570h-41v-60h188v-30h264v30h188v60h-41v570q0 24-18 42t-42 18H261Zm438-630H261v570h438v-570ZM367-266h60v-399h-60v399Zm166 0h60v-399h-60v399ZM261-750v570-570Z" /></svg>
-                    </td>
-                </tr>
-                <tr>
-                    <td>00001</td>
-                    <td>Pantalla OLED 120Hz 8K con pasola incluida</td>
-                    <td>Electrodomestico</td>
-                    <td>
-                        <div class="input-container input-cantidad">
-                            <input type="text" value="1" />
-                        </div>
-                    </td>
-                    <td>$2,500.00</td>
-                    <td>$139.90</td>
-                    <td>$2,639.90</td>
-                    <td>
-                        <svg xmlns="http://www.w3.org/2000/svg" height="48px" viewBox="0 -960 960 960" width="48px" fill="#D00707"><path d="M261-120q-24.75 0-42.37-17.63Q201-155.25 201-180v-570h-41v-60h188v-30h264v30h188v60h-41v570q0 24-18 42t-42 18H261Zm438-630H261v570h438v-570ZM367-266h60v-399h-60v399Zm166 0h60v-399h-60v399ZM261-750v570-570Z" /></svg>
-                    </td>
-                </tr>
-                <tr>
-                    <td>00001</td>
-                    <td>Pantalla OLED 120Hz 8K con pasola incluida</td>
-                    <td>Electrodomestico</td>
-                    <td>
-                        <div class="input-container input-cantidad">
-                            <input type="text" value="1" />
-                        </div>
-                    </td>
-                    <td>$2,500.00</td>
-                    <td>$139.90</td>
-                    <td>$2,639.90</td>
-                    <td>
-                        <svg xmlns="http://www.w3.org/2000/svg" height="48px" viewBox="0 -960 960 960" width="48px" fill="#D00707"><path d="M261-120q-24.75 0-42.37-17.63Q201-155.25 201-180v-570h-41v-60h188v-30h264v30h188v60h-41v570q0 24-18 42t-42 18H261Zm438-630H261v570h438v-570ZM367-266h60v-399h-60v399Zm166 0h60v-399h-60v399ZM261-750v570-570Z" /></svg>
-                    </td>
-                </tr>
+                @foreach (var detalle in ListaDetallesVenta)
+                {
+                    <tr>
+                        <td>@detalle.ProductoId</td>
+                        <td>@detalle.Descripcion</td>
+                        <td>@detalle.Categoria.Nombre</td>
+                        <td>
+                            <div class="input-container input-cantidad">
+                                <input type="text" @bind-value="detalle.Cantidad" />
+                            </div>
+                        </td>
+                        <td>$@detalle.Precio</td>
+                        <td>$@detalle.Itbis</td>
+                        <td>$@detalle.Subtotal</td>
+                        <td>
+                            <a @onclick="() => EliminarDetalle(detalle)">
+                                <svg  xmlns="http://www.w3.org/2000/svg" height="48px" viewBox="0 -960 960 960" width="48px" fill="#D00707"><path d="M261-120q-24.75 0-42.37-17.63Q201-155.25 201-180v-570h-41v-60h188v-30h264v30h188v60h-41v570q0 24-18 42t-42 18H261Zm438-630H261v570h438v-570ZM367-266h60v-399h-60v399Zm166 0h60v-399h-60v399ZM261-750v570-570Z" /></svg>
+                            </a>
+                        </td>
+                    </tr>
+                }
             </tbody>
         </table>
+        @if (!ListaDetallesVenta.Any())
+        {
+            <div class="text-center p-3">
+                <p class="text-white">No hay productos agregados a la venta</p>
+            </div>
+        }
     </div>
 
     <div class="neon-card neon-box-style mt-3">
@@ -114,14 +81,14 @@
                 <label class="subtitulo-detalle">Fecha:</label>
             </div>
             <div class="col-3">
-                <label class="texto-detalle">2026-01-30 08:00:00 AM</label>
+                <label class="texto-detalle">@Venta.Fecha</label>
             </div>
 
             <div class="col-3">
                 <label class="subtitulo-detalle">Subtotal:</label>
             </div>
             <div class="col-3">
-                <label class="texto-detalle">$1,355.00</label>
+                <label class="texto-detalle">$@Venta.Subtotal.ToString("N2")</label>
             </div>
         </div>
 
@@ -137,7 +104,7 @@
                 <label class="subtitulo-detalle">Desc. Aplicado:</label>
             </div>
             <div class="col-3">
-                <label class="texto-detalle">$0.00</label>
+                <label class="texto-detalle">$@Venta.DescuentoAplicado.ToString("N2")</label>
             </div>
         </div>
 
@@ -151,14 +118,14 @@
                     <div class="img-container">
                         <img class="" src="/VentasSVG/Discount.svg" width="20" height="20" />
                     </div>
-                    <input type="number" value="0.0"/>
+                    <input type="number" @bind-value="@Venta.Descuento" min="0" max="100" step="0.01" />
                 </div>
             </div>
             <div class="col-3">
                 <label class="subtitulo-detalle">ITBIS:</label>
             </div>
             <div class="col-3">
-                <label class="texto-detalle">$138.00</label>
+                <label class="texto-detalle">$@Venta.Itbis.ToString("N2")</label>
             </div>
         </div>
 
@@ -172,11 +139,11 @@
                     <div class="img-container">
                         <img class="" src="/VentasSVG/PaymentMethod.svg" width="20" height="20" />
                     </div>
-                    <select>
-                        <option>Efectivo</option>
-                        <option>Tarjeta de d&eacute;bito</option>
-                        <option>Tarjeta de cr&eacute;dito</option>
-                        <option>Cheque</option>
+                    <select @bind="@Venta.MetodoPago">
+                        <option value="@MetodosPago.Efectivo">Efectivo</option>
+                        <option value="@MetodosPago.Tarjeta_Debito">Tarjeta de d&eacute;bito</option>
+                        <option value="@MetodosPago.Tarjeta_Credito">Tarjeta de cr&eacute;dito</option>
+                        <option value="@MetodosPago.Cheque">Cheque</option>
                     </select>
                 </div>
             </div>
@@ -184,7 +151,7 @@
                 <label class="subtitulo-detalle total">Total:</label>
             </div>
             <div class="col-3">
-                <label class="texto-detalle total">$1,493.00</label>
+                <label class="texto-detalle total">$@Venta.Total.ToString("N2")</label>
             </div>
         </div>
 
@@ -198,14 +165,14 @@
                     <div class="img-container">
                         <img class="" src="/VentasSVG/MoneyBag.svg" width="20" height="20" />
                     </div>
-                    <input type="number" value="0.00"/>
+                    <input type="number" @bind-value="Venta.MontoRecibido" />
                 </div>
             </div>
             <div class="col-3">
                 <label class="subtitulo-detalle">Vuelto:</label>
             </div>
             <div class="col-3">
-                <label class="texto-detalle">$507.00</label>
+                <label class="texto-detalle">$@Venta.Vuelto.ToString("N2")</label>
             </div>
         </div>
     </div>
@@ -224,5 +191,68 @@
 </div>
 
 @code {
+    public Ventas Venta { get; set; } = new Ventas();
+    public List<DetallesVentas> ListaDetallesVenta { get; set; } = new List<DetallesVentas>();
+    public int? CodigoProducto { get; set; }
 
+    protected override async Task OnInitializedAsync()
+    {
+        Venta.DetallesVentas = ListaDetallesVenta;
+    }
+
+    public async Task AgregarDetalle()
+    {
+        if (CodigoProducto.HasValue && CodigoProducto.Value > 0)
+        {
+            Console.WriteLine("\n" + CodigoProducto + "\n");
+            var producto = await productosService.Buscar(CodigoProducto.Value);
+
+            if (producto == null || producto.Eliminado)
+            {
+                Console.WriteLine("\nProducto no existe o eliminado\n");
+                return;
+            }
+
+            var detalleExistente = ListaDetallesVenta.FirstOrDefault(d => d.ProductoId == CodigoProducto);
+
+            if (detalleExistente != null)
+            {
+                // Si ya existe, aumentar la cantidad
+                detalleExistente.Cantidad++;
+
+                // Actualizar subtotal del detalle
+                detalleExistente.Subtotal = detalleExistente.Precio * detalleExistente.Cantidad;
+            }
+            else
+            {
+                // Crear nuevo detalle usando el método del service
+                var nuevoDetalle = await ventasServices.CrearDetalleVenta(CodigoProducto.Value, 1);
+
+                // Asignar la categoría correctamente
+                if (producto.Categorias != null)
+                {
+                    nuevoDetalle.Categoria = producto.Categorias;
+                }
+
+                Console.WriteLine("\nDetalle agregado:" + nuevoDetalle.Productos.Nombre + "\n");
+                ListaDetallesVenta.Add(nuevoDetalle);
+            }
+
+            // Actualizar la venta con los nuevos detalles
+            Venta.DetallesVentas = ListaDetallesVenta;
+
+            // Recalcular todos los totales
+            Venta = ventasServices.CalcularTotales(Venta);
+
+            // Limpiar el código después de agregar
+            CodigoProducto = null;
+        }
+    }
+
+    private void EliminarDetalle(DetallesVentas detalle)
+    {
+        ListaDetallesVenta.Remove(detalle);
+        Venta = ventasServices.CalcularTotales(Venta);
+        //Venta.DetallesVentas = ListaDetallesVenta;
+    }
 }
