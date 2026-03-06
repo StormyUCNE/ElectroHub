@@ -8,18 +8,22 @@
 @inject IJSRuntime JS
 
 <PageTitle>Productos</PageTitle>
-<div class="product-container" @onclick="()=> showAddModal = false">
+<div class="product-container" @onclick="() => showAddModal = false">
     <nav>
         <span>Productos</span>
-        <div class="modal-add-mobile" @onclick:stopPropagation="true">
-            <svg @onclick="alternateModal" xmlns="http://www.w3.org/2000/svg" height="48px" viewBox="0 -960 960 960" width="48px" fill="#AA56D7"><path d="M450-120v-330H120v-60h330v-330h60v330h330v60H510v330h-60Z" /></svg>
-            <div class="modal-add-options @(showAddModal ? "show" : "")" @onclick:stopPropagation="true">
-                <ul>
-                    <li @onclick="() => { showRegisterModal = true; showAddModal = false; }">Registra Productos</li>
-                    <li @onclick="() => { showCategoryAdmModal = true; showAddModal = false; }">Administrar Categorías</li>
-                </ul>
-            </div>
-        </div>
+        <AuthorizeView Roles="Admin">
+            <Authorized>
+                <div class="modal-add-mobile" @onclick:stopPropagation="true">
+                    <svg @onclick="alternateModal" xmlns="http://www.w3.org/2000/svg" height="48px" viewBox="0 -960 960 960" width="48px" fill="#AA56D7"><path d="M450-120v-330H120v-60h330v-330h60v330h330v60H510v330h-60Z" /></svg>
+                    <div class="modal-add-options @(showAddModal ? "show" : "")" @onclick:stopPropagation="true">
+                        <ul>
+                            <li @onclick="() => { showRegisterModal = true; showAddModal = false; }">Registra Productos</li>
+                            <li @onclick="() => { showCategoryAdmModal = true; showAddModal = false; }">Administrar Categorías</li>
+                        </ul>
+                    </div>
+                </div>
+            </Authorized>
+        </AuthorizeView>
     </nav>
     <hr />
 
@@ -27,7 +31,7 @@
     <section class="filter-container">
         <section class="input-container">
             <div class="form-field">
-                <input type="text" placeholder="Buscar Producto..." @oninput="Buscar"/>
+                <input type="text" placeholder="Buscar Producto..." @oninput="Buscar" />
             </div>
 
             <div class="select-container">
@@ -44,7 +48,7 @@
             <!-- CONTENEDOR NUEVO -->
             <div class="date-group">
                 <div class="form-field">
-                    <input type="date" @bind="FechaInicial" @bind:after="AplicarFiltros"/>
+                    <input type="date" @bind="FechaInicial" @bind:after="AplicarFiltros" />
                 </div>
                 <div class="form-field">
                     <input type="date" @bind="FechaFinal" @bind:after="AplicarFiltros" />
@@ -52,16 +56,20 @@
             </div>
         </section>
 
-        @*Botón Agregar*@
-        <div class="modal-add" @onclick:stopPropagation="true">
-            <svg @onclick="alternateModal" xmlns="http://www.w3.org/2000/svg" height="48px" viewBox="0 -960 960 960" width="48px" fill="#AA56D7"><path d="M450-120v-330H120v-60h330v-330h60v330h330v60H510v330h-60Z" /></svg>
-            <div class="modal-add-options @(showAddModal ? "show" : "")">
-                <ul>
-                    <li @onclick="() => {showRegisterModal = true; showAddModal = false;}">Registra Productos</li>
-                    <li @onclick="() => { showCategoryAdmModal = true; showAddModal = false; }">Administrar Categorías</li>
-                </ul>
-            </div>
-        </div>
+        <AuthorizeView Roles="Admin">
+            <Authorized>
+                @*Botón Agregar*@
+                <div class="modal-add" @onclick:stopPropagation="true">
+                    <svg @onclick="alternateModal" xmlns="http://www.w3.org/2000/svg" height="48px" viewBox="0 -960 960 960" width="48px" fill="#AA56D7"><path d="M450-120v-330H120v-60h330v-330h60v330h330v60H510v330h-60Z" /></svg>
+                    <div class="modal-add-options @(showAddModal ? "show" : "")">
+                        <ul>
+                            <li @onclick="() => { showRegisterModal = true; showAddModal = false; }">Registra Productos</li>
+                            <li @onclick="() => { showCategoryAdmModal = true; showAddModal = false; }">Administrar Categorías</li>
+                        </ul>
+                    </div>
+                </div>
+            </Authorized>
+        </AuthorizeView>
     </section>
 
     @*Tabla*@
@@ -128,17 +136,20 @@
         <EditForm Model="ProductoEditar" OnValidSubmit="Modificar">
             <DataAnnotationsValidator />
             @FormularioProducto(ProductoEditar)
-            <div class="button-container">
-                <div class="register-save-container">
-                    <img src="/ProductosSVG/Save.svg" alt="Guardar" />
-                    <button type="submit">Guardar</button>
-                </div>
-                <div class="register-delete-container">
-                    <img src="/ProductosSVG/Basurero.svg" alt="Eliminar" />
-                    <button type="button" @onclick="() => showDeleteConfirmationModal = true">Eliminar</button>
-                </div>
-                
-            </div>
+            <AuthorizeView Roles="Admin">
+                <Authorized Context="authContext">
+                    <div class="button-container">
+                        <div class="register-save-container">
+                            <img src="/ProductosSVG/Save.svg" alt="Guardar" />
+                            <button type="submit">Guardar</button>
+                        </div>
+                        <div class="register-delete-container">
+                            <img src="/ProductosSVG/Basurero.svg" alt="Eliminar" />
+                            <button type="button" @onclick="() => showDeleteConfirmationModal = true">Eliminar</button>
+                        </div>
+                    </div>
+                </Authorized>
+            </AuthorizeView>
         </EditForm>
     </DetalleComponente>
 
@@ -147,20 +158,20 @@
         <div>
             <section>
                 <div class="form-field">
-                    <input type="text" placeholder="Buscar Categoría..." @oninput="BuscarCategoria"/>
+                    <input type="text" placeholder="Buscar Categoría..." @oninput="BuscarCategoria" />
                 </div>
             </section>
             <section class="scroll-inputs">
                 <div class="button-add-category" @onclick:stopPropagation="true">
-                    <svg @onclick="()=> {showAddCategoryModal = true; showCategoryAdmModal = false;}" xmlns="http://www.w3.org/2000/svg" height="35px" viewBox="0 -960 960 960" width="35px" fill="#AA56D7"><path d="M450-120v-330H120v-60h330v-330h60v330h330v60H510v330h-60Z" /></svg>
+                    <svg @onclick="() => { showAddCategoryModal = true; showCategoryAdmModal = false; }" xmlns="http://www.w3.org/2000/svg" height="35px" viewBox="0 -960 960 960" width="35px" fill="#AA56D7"><path d="M450-120v-330H120v-60h330v-330h60v330h330v60H510v330h-60Z" /></svg>
                 </div>
-                @foreach(var c in ListaCategorias)
+                @foreach (var c in ListaCategorias)
                 {
                     <div class="category-item">
                         <span>Nombre:</span>
-                        <input @bind="@c.Nombre" disabled/>
+                        <input @bind="@c.Nombre" disabled />
                         <div class="category-icon-container">
-                            <img @onclick="()=>GetCategoria(c)"  src="/ProductosSVG/InfoIcon.svg" alt="Ver Categoria" />
+                            <img @onclick="() => GetCategoria(c)" src="/ProductosSVG/InfoIcon.svg" alt="Ver Categoria" />
                             <img @onclick="() => GetCategoriaEliminar(c)" src="/ProductosSVG/Basurero.svg" alt="Eliminar Categoria" />
                         </div>
                     </div>
@@ -186,9 +197,9 @@
 
     <ConfirmacionAgregadoComponente @bind-Mostrar="showCategoryAddedModal" Asunto="La Categoría" Nombre="@NuevaCategoria.Nombre" LimpiarObjeto="LimpiarCampos" />
     <ConfirmacionAgregadoComponente @bind-Mostrar="showProductAddedModal" Asunto="El Producto" Nombre="@NuevoProducto.Nombre" LimpiarObjeto="LimpiarCampos" />
-    <ConfirmacionModificadoComponente @bind-Mostrar="showProductUpdatedConfirmationModal" Asunto="El Producto"  Nombre="@ProductoEditar.Nombre" LimpiarObjeto="LimpiarCampos" />
+    <ConfirmacionModificadoComponente @bind-Mostrar="showProductUpdatedConfirmationModal" Asunto="El Producto" Nombre="@ProductoEditar.Nombre" LimpiarObjeto="LimpiarCampos" />
     <ConfirmacionModificadoComponente @bind-Mostrar="showCategoryUpdatedModal" Asunto="La Categoría" Nombre="@CategoriaEditar.Nombre" LimpiarObjeto="LimpiarCampos" />
-    <AvisoEliminarComponente @bind-Mostrar="showDeleteConfirmationModal" Titulo="Producto" Nombre="@ProductoEditar.Nombre" Asunto="El Producto" >
+    <AvisoEliminarComponente @bind-Mostrar="showDeleteConfirmationModal" Titulo="Producto" Nombre="@ProductoEditar.Nombre" Asunto="El Producto">
         <div class="register-delete-container">
             <img src="/ProductosSVG/Basurero.svg" alt="Eliminar" />
             <button @onclick="EliminarProducto">Eliminar</button>
@@ -200,7 +211,7 @@
             <button @onclick="EliminarCategoria">Eliminar</button>
         </div>
     </AvisoEliminarComponente>
-    <ErrorNotificacionComponente @bind-Mostrar="showErrorModal" Asunto="No puede Eliminar Categorías en Uso por Productos."/>
+    <ErrorNotificacionComponente @bind-Mostrar="showErrorModal" Asunto="No puede Eliminar Categorías en Uso por Productos." />
 </div>
 
 @code {
@@ -208,9 +219,9 @@
     private bool showAddModal = false;
 
     // Modales para los Producto
-    private bool showRegisterModal = false, 
+    private bool showRegisterModal = false,
     showDetailsModal = false,
-    showProductAddedModal = false, 
+    showProductAddedModal = false,
     showProductUpdatedConfirmationModal = false,
     showDeleteConfirmationModal = false;
 
@@ -295,14 +306,15 @@
         }
     }
 
-    private async Task LimpiarCampos(){ 
+    private async Task LimpiarCampos()
+    {
         NuevoProducto = new Productos { FechaRegistro = DateTime.Now };
         ProductoEditar = new Productos { FechaRegistro = DateTime.Now };
         NuevaCategoria = new Categorias { FechaRegistro = DateTime.Now };
         CategoriaEditar = new Categorias { FechaRegistro = DateTime.Now };
     }
 
-    private async Task RefrescarLista(){ListaProductos = await productosService.Listar(p => p.Eliminado == false);}
+    private async Task RefrescarLista() { ListaProductos = await productosService.Listar(p => p.Eliminado == false); }
 
     private async Task Guardar()
     {
@@ -356,7 +368,7 @@
     private async Task EliminarProducto()
     {
         var eliminado = await productosService.Eliminar(ProductoEditar.ProductoId);
-        if(eliminado)
+        if (eliminado)
         {
             ListaProductos = await productosService.Listar(p => p.Eliminado == false);
             showDeleteConfirmationModal = false;
@@ -365,7 +377,8 @@
         }
     }
 
-    private void GetCategoriaEliminar(Categorias c){
+    private void GetCategoriaEliminar(Categorias c)
+    {
         CategoriaEditar = c;
         showDeleteCategoryConfirmationModal = true;
     }
@@ -458,7 +471,7 @@
                 listadoFiltrado = listadoFiltrado.Where(p => p.Proveedores?.NombreEmpresa != null &&
                     p.Proveedores.NombreEmpresa.Contains(textoBusqueda, StringComparison.OrdinalIgnoreCase)).ToList();
             }
-            else if (Filtro == "Estado") 
+            else if (Filtro == "Estado")
             {
                 listadoFiltrado = listadoFiltrado.Where(p => p.EstadosProductos.ToString()
                     .Contains(textoBusqueda, StringComparison.OrdinalIgnoreCase)).ToList();
