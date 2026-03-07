@@ -1,6 +1,7 @@
 ﻿@page "/Productos/Index"
 @using ElectroHub.Components.Account.Pages
 @using Microsoft.AspNetCore.Components.Sections
+@inject NavigationManager navigationManager
 @rendermode InteractiveServer
 @inject CategoriasService categoriasService
 @inject ProveedoresService proveedoresService
@@ -18,7 +19,7 @@
                     <div class="modal-add-options @(showAddModal ? "show" : "")" @onclick:stopPropagation="true">
                         <ul>
                             <li @onclick="() => { showRegisterModal = true; showAddModal = false; }">Registra Productos</li>
-                            <li @onclick="() => { showCategoryAdmModal = true; showAddModal = false; }">Administrar Categorías</li>
+                            <li @onclick="IrACategorias">Administrar Categorías</li>
                         </ul>
                     </div>
                 </div>
@@ -64,7 +65,7 @@
                     <div class="modal-add-options @(showAddModal ? "show" : "")">
                         <ul>
                             <li @onclick="() => { showRegisterModal = true; showAddModal = false; }">Registra Productos</li>
-                            <li @onclick="() => { showCategoryAdmModal = true; showAddModal = false; }">Administrar Categorías</li>
+                            <li @onclick="IrACategorias">Administrar Categorías</li>
                         </ul>
                     </div>
                 </div>
@@ -94,7 +95,7 @@
                             <td>@p.Proveedores?.NombreEmpresa</td>
                             <td>@p.Categorias?.Nombre</td>
                             <td>
-                                <div class="btn-container-details" @onclick="() => GetProducto(p)">
+                                <div class="btn-container-details" @onclick="() => ObtenerProducto(p)">
                                     <img src="/ProductosSVG/InfoIcon.svg" alt="Ver Detalle" />
                                     <span>Ver Detalles</span>
                                 </div>
@@ -112,10 +113,6 @@
             </div>
         </div>
     </section>
-    
-        
-        
-
 
     @*Registro para Crear Producto*@
     <RegistroComponente @bind-Mostrar="showRegisterModal" Titulo="Registro Productos" OnCerrar="LimpiarCampos">
@@ -153,62 +150,12 @@
         </EditForm>
     </DetalleComponente>
 
-    @*Aministracion de Categorias*@
-    <DetalleComponente @bind-Mostrar="showCategoryAdmModal" Titulo="Administración Categoría">
-        <div>
-            <section>
-                <div class="form-field">
-                    <input type="text" placeholder="Buscar Categoría..." @oninput="BuscarCategoria" />
-                </div>
-            </section>
-            <section class="scroll-inputs">
-                <div class="button-add-category" @onclick:stopPropagation="true">
-                    <svg @onclick="() => { showAddCategoryModal = true; showCategoryAdmModal = false; }" xmlns="http://www.w3.org/2000/svg" height="35px" viewBox="0 -960 960 960" width="35px" fill="#AA56D7"><path d="M450-120v-330H120v-60h330v-330h60v330h330v60H510v330h-60Z" /></svg>
-                </div>
-                @foreach (var c in ListaCategorias)
-                {
-                    <div class="category-item">
-                        <span>Nombre:</span>
-                        <input @bind="@c.Nombre" disabled />
-                        <div class="category-icon-container">
-                            <img @onclick="() => GetCategoria(c)" src="/ProductosSVG/InfoIcon.svg" alt="Ver Categoria" />
-                            <img @onclick="() => GetCategoriaEliminar(c)" src="/ProductosSVG/Basurero.svg" alt="Eliminar Categoria" />
-                        </div>
-                    </div>
-                }
-                
-            </section>
-        </div>
-    </DetalleComponente>
-
-    <RegistroComponente Titulo="Registro Categoría" @bind-Mostrar="showAddCategoryModal">
-        <EditForm Model="NuevaCategoria" OnValidSubmit="GuardarCategorias">
-            <DataAnnotationsValidator />
-            @FormularioCategoria(NuevaCategoria)
-        </EditForm>
-    </RegistroComponente>
-
-    <DetalleComponente Titulo="Detalle Categoría" @bind-Mostrar="showCategoryDetailsModal">
-        <EditForm Model="CategoriaEditar" OnValidSubmit="ModificarCategoria">
-            <DataAnnotationsValidator />
-            @FormularioCategoria(CategoriaEditar)
-        </EditForm>
-    </DetalleComponente>
-
-    <ConfirmacionAgregadoComponente @bind-Mostrar="showCategoryAddedModal" Asunto="La Categoría" Nombre="@NuevaCategoria.Nombre" LimpiarObjeto="LimpiarCampos" />
     <ConfirmacionAgregadoComponente @bind-Mostrar="showProductAddedModal" Asunto="El Producto" Nombre="@NuevoProducto.Nombre" LimpiarObjeto="LimpiarCampos" />
     <ConfirmacionModificadoComponente @bind-Mostrar="showProductUpdatedConfirmationModal" Asunto="El Producto" Nombre="@ProductoEditar.Nombre" LimpiarObjeto="LimpiarCampos" />
-    <ConfirmacionModificadoComponente @bind-Mostrar="showCategoryUpdatedModal" Asunto="La Categoría" Nombre="@CategoriaEditar.Nombre" LimpiarObjeto="LimpiarCampos" />
     <AvisoEliminarComponente @bind-Mostrar="showDeleteConfirmationModal" Titulo="Producto" Nombre="@ProductoEditar.Nombre" Asunto="El Producto">
         <div class="register-delete-container">
             <img src="/ProductosSVG/Basurero.svg" alt="Eliminar" />
             <button @onclick="EliminarProducto">Eliminar</button>
-        </div>
-    </AvisoEliminarComponente>
-    <AvisoEliminarComponente @bind-Mostrar="showDeleteCategoryConfirmationModal" Titulo="Categoría" Nombre="@CategoriaEditar.Nombre" Asunto="La Categoría">
-        <div class="register-delete-container">
-            <img src="/ProductosSVG/Basurero.svg" alt="Eliminar" />
-            <button @onclick="EliminarCategoria">Eliminar</button>
         </div>
     </AvisoEliminarComponente>
     <ErrorNotificacionComponente @bind-Mostrar="showErrorModal" Asunto="No puede Eliminar Categorías en Uso por Productos." />
@@ -225,14 +172,6 @@
     showProductUpdatedConfirmationModal = false,
     showDeleteConfirmationModal = false;
 
-    //Modales para las Categorias
-    private bool showCategoryAddedModal = false,
-    showCategoryUpdatedModal = false,
-    showDeleteCategoryConfirmationModal = false,
-    showCategoryAdmModal = false,
-    showAddCategoryModal = false,
-    showCategoryDetailsModal = false;
-
     //Modal de Error
     private bool showErrorModal = false;
 
@@ -244,10 +183,6 @@
     // PRODUCTOS
     private Productos NuevoProducto { get; set; } = new Productos { FechaRegistro = DateTime.Now };
     private Productos ProductoEditar { get; set; } = new Productos();
-
-    // CATEGORIAS
-    private Categorias NuevaCategoria { get; set; } = new Categorias { FechaRegistro = DateTime.Now };
-    private Categorias CategoriaEditar { get; set; } = new Categorias();
 
     public List<Categorias> ListaCategorias = new List<Categorias>();
     public List<Proveedores> ListaProveedore = new List<Proveedores>();
@@ -285,7 +220,7 @@
         {
             int width = await JS.InvokeAsync<int>("getWindowWidth");
             int height = await JS.InvokeAsync<int>("getWindowHeight");
-           
+
             int espacioFijo = 220;
             int altoDisponible = height - espacioFijo;
 
@@ -310,8 +245,11 @@
     {
         NuevoProducto = new Productos { FechaRegistro = DateTime.Now };
         ProductoEditar = new Productos { FechaRegistro = DateTime.Now };
-        NuevaCategoria = new Categorias { FechaRegistro = DateTime.Now };
-        CategoriaEditar = new Categorias { FechaRegistro = DateTime.Now };
+    }
+
+    private void IrACategorias()
+    {
+        navigationManager.NavigateTo("/Categorias");
     }
 
     private async Task RefrescarLista() { ListaProductos = await productosService.Listar(p => p.Eliminado == false); }
@@ -329,19 +267,6 @@
         }
     }
 
-    private async Task GuardarCategorias()
-    {
-        var creado = await categoriasService.Guardar(NuevaCategoria);
-
-        if (creado)
-        {
-            showAddCategoryModal = false;
-            NuevaCategoria = new Categorias { FechaRegistro = DateTime.Now };
-            ListaCategorias = await categoriasService.Listar(c => c.Eliminado == false);
-            showCategoryAddedModal = true;
-        }
-    }
-
     private async Task Modificar()
     {
         var actualizado = await productosService.Guardar(ProductoEditar);
@@ -350,18 +275,6 @@
             showDetailsModal = false;
             showProductUpdatedConfirmationModal = true;
             ListaProductos = await productosService.Listar(p => p.Eliminado == false);
-        }
-    }
-
-    private async Task ModificarCategoria()
-    {
-        var creado = await categoriasService.Guardar(CategoriaEditar);
-        if (creado)
-        {
-            showCategoryDetailsModal = false;
-            ListaCategorias = await categoriasService.Listar(c => c.Eliminado == false);
-            ListaProductos = await productosService.Listar(p => p.Eliminado == false);
-            showCategoryUpdatedModal = true;
         }
     }
 
@@ -377,32 +290,7 @@
         }
     }
 
-    private void GetCategoriaEliminar(Categorias c)
-    {
-        CategoriaEditar = c;
-        showDeleteCategoryConfirmationModal = true;
-    }
-
-    private async Task EliminarCategoria()
-    {
-        var eliminado = await categoriasService.Eliminar(CategoriaEditar.CategoriaId);
-
-        if (eliminado)
-        {
-            ListaCategorias = await categoriasService.Listar(c => c.Eliminado == false);
-            ListaProductos = await productosService.Listar(p => p.Eliminado == false);
-            showDeleteCategoryConfirmationModal = false;
-            CategoriaEditar = new Categorias();
-        }
-        else
-        {
-            showDeleteCategoryConfirmationModal = false;
-            showErrorModal = true;
-            CategoriaEditar = new Categorias();
-        }
-    }
-
-    private void GetProducto(Productos p)
+    private void ObtenerProducto(Productos p)
     {
         ProductoEditar = new Productos
         {
@@ -421,20 +309,6 @@
         };
 
         showDetailsModal = true;
-    }
-
-    private void GetCategoria(Categorias c)
-    {
-        CategoriaEditar = new Categorias
-        {
-            CategoriaId = c.CategoriaId,
-            Nombre = c.Nombre,
-            Descripcion = c.Descripcion,
-            FechaRegistro = c.FechaRegistro
-        };
-
-        showCategoryDetailsModal = true;
-        showCategoryAdmModal = false;
     }
 
     public async Task Buscar(ChangeEventArgs e)
@@ -478,15 +352,6 @@
             }
         }
         ListaProductos = listadoFiltrado;
-    }
-
-    private async Task BuscarCategoria(ChangeEventArgs e)
-    {
-        var valor = e?.Value?.ToString();
-        if (!string.IsNullOrWhiteSpace(valor))
-            ListaCategorias = await categoriasService.Listar(c => c.Eliminado == false && c.Nombre.ToString().Contains(valor.ToString()));
-        else
-            ListaCategorias = await categoriasService.Listar(c => c.Eliminado == false);
     }
 
     private void PaginaAnterior()
@@ -573,52 +438,7 @@
                         }
                     </select>
                 </div>
-
-                <div class="input-container-item">
-                    <label>Fecha:</label>
-                    <input type="date" @bind="productos.FechaRegistro" class="form-control" />
-                </div>
-
             </div>
-        </section>
-    };
-    
-    private RenderFragment FormularioCategoria(Categorias categorias) => __builder =>
-    {
-        <section class="category-form-container">
-            <div class="form-inputs">
-
-                <div>
-                    <div class="input-container-item">
-                        <label>Nombre:</label>
-                        <input type="text" @bind="categorias.Nombre" class="form-control" />
-                    </div>
-                    <ValidationMessage For="() => categorias.Nombre" />
-                </div>
-
-                <div>
-                    <div class="input-container-item">
-                        <label>Descripción:</label>
-                        <input type="text" @bind="categorias.Descripcion" class="form-control" />
-                    </div>
-                    <ValidationMessage For="() => categorias.Descripcion" />
-                </div>
-
-                <div>
-                    <div class="input-container-item">
-                        <label>Fecha:</label>
-                        <input type="date" @bind="categorias.FechaRegistro" class="form-control" />
-                    </div>
-                    <ValidationMessage For="() => categorias.FechaRegistro" />
-                </div>
-
-            </div>
-
-            <div class="register-save-container">
-                <img src="/ProductosSVG/Save.svg" />
-                <button type="submit">Guardar</button>
-            </div>
-
         </section>
     };
 }
