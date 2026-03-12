@@ -127,9 +127,16 @@
         </div>
     </div>
 
-    <div class="text-center pt-3">
-        <a class="boton boton-volver" href="/Ventas/Index">Volver</a>
+    <div class="row justify-content-center pt-3">
+        <div class="col-2 text-center">
+            <a class="boton boton-volver" href="/Ventas/Index">Volver</a>
+        </div>
+        <div class="col-2">
+            <button class="boton boton-eliminar" @onclick="Eliminar">Eliminar</button>
+        </div>
     </div>
+    
+    
 </div>
 
 @code {
@@ -141,5 +148,19 @@
     protected override async Task OnInitializedAsync()
     {
         Venta = await ventasServices.Buscar(VentaId);
+    }
+
+    private async Task Eliminar()
+    {
+        bool eliminado = await ventasServices.Eliminar(VentaId);
+        if (eliminado)
+        {
+            Console.WriteLine("Se ha eliminado la venta correctamente!");
+            navigationManager.NavigateTo("/Ventas/Index");
+        }
+        else
+        {
+            Console.WriteLine("Ha ocurrido un error al eliminar la venta.");
+        }
     }
 }

@@ -37,6 +37,8 @@ hr {
 
 .boton {
     color: white;
+    width: 100%;
+    display: flow;
     border-radius: 10px;
     border: none;
     padding: 5px 0px 5px 0px;
@@ -45,6 +47,13 @@ hr {
 
 .boton-volver {
     background-color: #5683D7;
+    padding: 8px 35px 8px 35px;
+    font-weight: bold;
+    text-decoration: none;
+}
+
+.boton-eliminar {
+    background-color: #D00707;
     padding: 8px 35px 8px 35px;
     font-weight: bold;
     text-decoration: none;
