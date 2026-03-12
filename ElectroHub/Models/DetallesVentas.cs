@@ -22,10 +22,13 @@ public class DetallesVentas
     [ForeignKey(nameof(ProductoId))]
     public Productos? Productos { get; set; }
 
+    public int CategoriaId { get; set; }
+
+    [ForeignKey("CategoriaId")]
+    public Categorias? Categoria { get; set; }
+
     [StringLength(50, MinimumLength = 5, ErrorMessage = "La descripcion debe tener entre 5 y 50 caracteres")]
     public string Descripcion { get; set; } = string.Empty;
-
-    public Categorias? Categoria { get; set; }
 
     [Required(ErrorMessage = "La cantidad del producto es obligatorio")]
     public int Cantidad { get; set; } = 1;

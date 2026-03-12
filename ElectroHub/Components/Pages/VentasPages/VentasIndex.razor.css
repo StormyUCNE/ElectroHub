@@ -174,8 +174,8 @@ select option {
     }
 
         /* Ocultar el icono de calendario/reloj en Chrome, Edge, Safari */
-        .input-container input[type="date"]::-webkit-calendar-picker-indicator,
-        .input-container input[type="time"]::-webkit-calendar-picker-indicator {
+        .input-container input[type="datetime-local"]::-webkit-calendar-picker-indicator,
+        .input-container input[type="datetime-local"]::-webkit-calendar-picker-indicator {
             display: none;
             -webkit-appearance: none;
         }

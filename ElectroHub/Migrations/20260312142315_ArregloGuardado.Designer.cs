@@ -3,6 +3,7 @@ using System;
 using ElectroHub.Data;
 using Microsoft.EntityFrameworkCore;
 using Microsoft.EntityFrameworkCore.Infrastructure;
+using Microsoft.EntityFrameworkCore.Migrations;
 using Microsoft.EntityFrameworkCore.Storage.ValueConversion;
 
 #nullable disable
@@ -10,9 +11,11 @@ using Microsoft.EntityFrameworkCore.Storage.ValueConversion;
 namespace ElectroHub.Migrations
 {
     [DbContext(typeof(ApplicationDbContext))]
-    partial class ApplicationDbContextModelSnapshot : ModelSnapshot
+    [Migration("20260312142315_ArregloGuardado")]
+    partial class ArregloGuardado
     {
-        protected override void BuildModel(ModelBuilder modelBuilder)
+        /// <inheritdoc />
+        protected override void BuildTargetModel(ModelBuilder modelBuilder)
         {
 #pragma warning disable 612, 618
             modelBuilder.HasAnnotation("ProductVersion", "10.0.3");
@@ -118,9 +121,6 @@ namespace ElectroHub.Migrations
                     b.Property<int>("Cantidad")
                         .HasColumnType("INTEGER");
 
-                    b.Property<int>("CategoriaId")
-                        .HasColumnType("INTEGER");
-
                     b.Property<string>("Descripcion")
                         .IsRequired()
                         .HasMaxLength(50)
@@ -145,8 +145,6 @@ namespace ElectroHub.Migrations
                         .HasColumnType("INTEGER");
 
                     b.HasKey("IdDetalle");
-
-                    b.HasIndex("CategoriaId");
 
                     b.HasIndex("ProductoId");
 
@@ -478,12 +476,6 @@ namespace ElectroHub.Migrations
 
             modelBuilder.Entity("ElectroHub.Models.DetallesVentas", b =>
                 {
-                    b.HasOne("ElectroHub.Models.Categorias", "Categoria")
-                        .WithMany()
-                        .HasForeignKey("CategoriaId")
-                        .OnDelete(DeleteBehavior.Cascade)
-                        .IsRequired();
-
                     b.HasOne("ElectroHub.Models.Productos", "Productos")
                         .WithMany()
                         .HasForeignKey("ProductoId")
@@ -495,8 +487,6 @@ namespace ElectroHub.Migrations
                         .HasForeignKey("VentaId")
                         .OnDelete(DeleteBehavior.Cascade)
                         .IsRequired();
-
-                    b.Navigation("Categoria");
 
                     b.Navigation("Productos");
 

@@ -19,7 +19,6 @@ public class Ventas
     [StringLength(50, MinimumLength = 5, ErrorMessage = "El Vendedor debe tener entre 2 y 50 caracteres")]
     public string Vendedor { get; set; } = string.Empty;
 
-    [Required(ErrorMessage = "El descuento es obligatorio")]
     [Range(0, 100, ErrorMessage = "El descuento debe estar entre 0% y 100%")]
     public decimal Descuento { get; set; }
 

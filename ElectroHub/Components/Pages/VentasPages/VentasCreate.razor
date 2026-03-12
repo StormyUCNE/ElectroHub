@@ -3,201 +3,255 @@
 @rendermode InteractiveServer
 @inject VentasService ventasServices;
 @inject ProductosService productosService;
+@inject NavigationManager navigationManager;
+@inject AuthenticationStateProvider authenticationStateProvider;
 
 <PageTitle>VentasCreate</PageTitle>
 
-<div class="container">
-    <label class="titulo">Nueva venta</label>
-    <hr />
+<EditForm Model="Venta" FormName="crearVenta" OnSubmit="Guardar">
+    <DataAnnotationsValidator />
+    <div class="container">
+        <label class="titulo">Nueva venta</label>
+        <hr />
 
-    @* Agregar producto *@
-    <div class="row align-items-center">
-        <div class="col-5">
-            <div class="input-container">
-                <div class="img-container">
-                    <img class="" src="/VentasSVG/Search.svg" width="30" height="30" />
+        @* Agregar producto *@
+        <div class="row align-items-center">
+            <div class="col-5">
+                <div class="input-container">
+                    <div class="img-container">
+                        <img class="" src="/VentasSVG/Search.svg" width="30" height="30" />
+                    </div>
+                    <input type="number" placeholder="Agregar producto..." @bind-value="CodigoProducto" />
                 </div>
-                <input type="number" placeholder="Agregar producto..." @bind-value="CodigoProducto" />
+            </div>
+            <div class="col-3">
+                <button class="boton boton-agregar" type="button" @onclick="AgregarDetalle">Agregar producto</button>
             </div>
         </div>
-        <div class="col-3">
-            <button class="boton boton-agregar" type="button" @onclick="AgregarDetalle">Agregar producto</button>
-        </div>
-    </div>
 
-    @* Tabla de productos *@
-    <div class="table-responsive gradient-border-transparent">
-        <table>
-            <thead>
-                <tr>
-                    <th>C&oacute;digo</th>
-                    <th>Descripci&oacute;n</th>
-                    <th>Categor&iacute;a</th>
-                    <th>Cantidad</th>
-                    <th>Precio</th>
-                    <th>ITBIS</th>
-                    <th>Subtotal</th>
-                    <th>Acciones</th>
-                </tr>
-            </thead>
-            <tbody>
-                @foreach (var detalle in ListaDetallesVenta)
-                {
+        @* Tabla de productos *@
+        <div class="table-responsive gradient-border-transparent">
+            <table>
+                <thead>
                     <tr>
-                        <td>@detalle.ProductoId</td>
-                        <td>@detalle.Descripcion</td>
-                        <td>@detalle.Categoria.Nombre</td>
-                        <td>
-                            <div class="input-container input-cantidad">
-                                <input type="text" @bind-value="detalle.Cantidad" />
-                            </div>
-                        </td>
-                        <td>$@detalle.Precio</td>
-                        <td>$@detalle.Itbis</td>
-                        <td>$@detalle.Subtotal</td>
-                        <td>
-                            <a @onclick="() => EliminarDetalle(detalle)">
-                                <svg  xmlns="http://www.w3.org/2000/svg" height="48px" viewBox="0 -960 960 960" width="48px" fill="#D00707"><path d="M261-120q-24.75 0-42.37-17.63Q201-155.25 201-180v-570h-41v-60h188v-30h264v30h188v60h-41v570q0 24-18 42t-42 18H261Zm438-630H261v570h438v-570ZM367-266h60v-399h-60v399Zm166 0h60v-399h-60v399ZM261-750v570-570Z" /></svg>
-                            </a>
-                        </td>
+                        <th>C&oacute;digo</th>
+                        <th>Descripci&oacute;n</th>
+                        <th>Categor&iacute;a</th>
+                        <th>Cantidad</th>
+                        <th>Precio</th>
+                        <th>ITBIS</th>
+                        <th>Subtotal</th>
+                        <th>Acciones</th>
                     </tr>
-                }
-            </tbody>
-        </table>
-        @if (!ListaDetallesVenta.Any())
-        {
-            <div class="text-center p-3">
-                <p class="text-white">No hay productos agregados a la venta</p>
-            </div>
-        }
-    </div>
-
-    <div class="neon-card neon-box-style mt-3">
-        <label class="titulo">Detalle</label>
-
-        @* Fecha y subtotal *@
-        <div class="row align-items-center pb-3">
-            <div class="col-3">
-                <label class="subtitulo-detalle">Fecha:</label>
-            </div>
-            <div class="col-3">
-                <label class="texto-detalle">@Venta.Fecha</label>
-            </div>
-
-            <div class="col-3">
-                <label class="subtitulo-detalle">Subtotal:</label>
-            </div>
-            <div class="col-3">
-                <label class="texto-detalle">$@Venta.Subtotal.ToString("N2")</label>
-            </div>
+                </thead>
+                <tbody>
+                    @foreach (var detalle in ListaDetallesVenta)
+                    {
+                        <tr>
+                            <td>@detalle.ProductoId</td>
+                            <td>@detalle.Descripcion</td>
+                            <td>@detalle.Categoria.Nombre</td>
+                            <td>
+                                <div class="input-container input-cantidad">
+                                    <input type="text" value="@detalle.Cantidad" @oninput="async (e) => await ActualizarCantidad(e, detalle)" />
+                                </div>
+                            </td>
+                            <td>$@detalle.Precio</td>
+                            <td>$@detalle.Itbis</td>
+                            <td>$@detalle.Subtotal</td>
+                            <td>
+                                <a @onclick="() => EliminarDetalle(detalle)">
+                                    <svg xmlns="http://www.w3.org/2000/svg" height="48px" viewBox="0 -960 960 960" width="48px" fill="#D00707"><path d="M261-120q-24.75 0-42.37-17.63Q201-155.25 201-180v-570h-41v-60h188v-30h264v30h188v60h-41v570q0 24-18 42t-42 18H261Zm438-630H261v570h438v-570ZM367-266h60v-399h-60v399Zm166 0h60v-399h-60v399ZM261-750v570-570Z" /></svg>
+                                </a>
+                            </td>
+                        </tr>
+                    }
+                </tbody>
+            </table>
+            @if (!ListaDetallesVenta.Any())
+            {
+                <div class="text-center p-3">
+                    <p class="text-white">No hay productos agregados a la venta</p>
+                </div>
+            }
         </div>
 
-        @* Vendedor y descuento aplicado *@
-        <div class="row align-items-center pb-3">
-            <div class="col-3">
-                <label class="subtitulo-detalle">Vendedor:</label>
-            </div>
-            <div class="col-3">
-                <label class="texto-detalle">Luis Fonsi</label>
-            </div>
-            <div class="col-3">
-                <label class="subtitulo-detalle">Desc. Aplicado:</label>
-            </div>
-            <div class="col-3">
-                <label class="texto-detalle">$@Venta.DescuentoAplicado.ToString("N2")</label>
-            </div>
-        </div>
+        <div class="neon-card neon-box-style mt-3">
+            <label class="titulo">Detalle</label>
 
-        @* Descuento y ITBIS *@
-        <div class="row align-items-center pb-3">
-            <div class="col-3">
-                <label class="subtitulo-detalle">Descuento:</label>
-            </div>
-            <div class="col-3">
-                <div class="input-container">
-                    <div class="img-container">
-                        <img class="" src="/VentasSVG/Discount.svg" width="20" height="20" />
-                    </div>
-                    <input type="number" @bind-value="@Venta.Descuento" min="0" max="100" step="0.01" />
+            @* Fecha y subtotal *@
+            <div class="row align-items-center pb-3">
+                <div class="col-3">
+                    <label class="subtitulo-detalle">Fecha:</label>
+                </div>
+                <div class="col-3">
+                    <label class="texto-detalle">@Venta.Fecha</label>
+                </div>
+
+                <div class="col-3">
+                    <label class="subtitulo-detalle">Subtotal:</label>
+                </div>
+                <div class="col-3">
+                    <label class="texto-detalle">$@Venta.Subtotal.ToString("N2")</label>
                 </div>
             </div>
-            <div class="col-3">
-                <label class="subtitulo-detalle">ITBIS:</label>
-            </div>
-            <div class="col-3">
-                <label class="texto-detalle">$@Venta.Itbis.ToString("N2")</label>
-            </div>
-        </div>
 
-        @* Metodo de pago y Total *@
-        <div class="row align-items-center pb-3">
-            <div class="col-3">
-                <label class="subtitulo-detalle">M&eacute;todo de pago:</label>
-            </div>
-            <div class="col-3">
-                <div class="select-container">
-                    <div class="img-container">
-                        <img class="" src="/VentasSVG/PaymentMethod.svg" width="20" height="20" />
-                    </div>
-                    <select @bind="@Venta.MetodoPago">
-                        <option value="@MetodosPago.Efectivo">Efectivo</option>
-                        <option value="@MetodosPago.Tarjeta_Debito">Tarjeta de d&eacute;bito</option>
-                        <option value="@MetodosPago.Tarjeta_Credito">Tarjeta de cr&eacute;dito</option>
-                        <option value="@MetodosPago.Cheque">Cheque</option>
-                    </select>
+            @* Vendedor y descuento aplicado *@
+            <div class="row align-items-center pb-3">
+                <div class="col-3">
+                    <label class="subtitulo-detalle">Vendedor:</label>
+                </div>
+                <div class="col-3">
+                    <label class="texto-detalle">@Venta.Vendedor</label>
+                </div>
+                <div class="col-3">
+                    <label class="subtitulo-detalle">Desc. Aplicado:</label>
+                </div>
+                <div class="col-3">
+                    <label class="texto-detalle">$@Venta.DescuentoAplicado.ToString("N2")</label>
                 </div>
             </div>
-            <div class="col-3">
-                <label class="subtitulo-detalle total">Total:</label>
-            </div>
-            <div class="col-3">
-                <label class="texto-detalle total">$@Venta.Total.ToString("N2")</label>
-            </div>
-        </div>
 
-        @* Monto recibido y Vuelto*@
-        <div class="row align-items-center pb-3">
-            <div class="col-3">
-                <label class="subtitulo-detalle">Monto recibido:</label>
-            </div>
-            <div class="col-3">
-                <div class="input-container">
-                    <div class="img-container">
-                        <img class="" src="/VentasSVG/MoneyBag.svg" width="20" height="20" />
+            @* Descuento y ITBIS *@
+            <div class="row align-items-center pb-3">
+                <div class="col-3">
+                    <label class="subtitulo-detalle">Descuento:</label>
+                </div>
+                <div class="col-3">
+                    <div class="input-container">
+                        <div class="img-container">
+                            <img class="" src="/VentasSVG/Discount.svg" width="20" height="20" />
+                        </div>
+                        <input type="number" value="@Venta.Descuento" @oninput="ActualizarDescuento" min="0" max="100" step="0.01" />
+                        <ValidationMessage For="(() => Venta.Descuento)" />
                     </div>
-                    <input type="number" @bind-value="Venta.MontoRecibido" />
+                </div>
+                <div class="col-3">
+                    <label class="subtitulo-detalle">ITBIS:</label>
+                </div>
+                <div class="col-3">
+                    <label class="texto-detalle">$@Venta.Itbis.ToString("N2")</label>
                 </div>
             </div>
-            <div class="col-3">
-                <label class="subtitulo-detalle">Vuelto:</label>
+
+            @* Metodo de pago y Total *@
+            <div class="row align-items-center pb-3">
+                <div class="col-3">
+                    <label class="subtitulo-detalle">M&eacute;todo de pago:</label>
+                </div>
+                <div class="col-3">
+                    <div class="select-container">
+                        <div class="img-container">
+                            <img class="" src="/VentasSVG/PaymentMethod.svg" width="20" height="20" />
+                        </div>
+                        <select @oninput="async (e) => await OnMetodoPagoChange(e)" value="@Venta.MetodoPago">
+                            <option value="">-- Seleccione método de pago --</option>
+                            @foreach (MetodosPago metodo in Enum.GetValues(typeof(MetodosPago)))
+                            {
+                                <option value="@metodo">@metodo</option>
+                            }
+                        </select>
+                        <ValidationMessage For="(() => Venta.MetodoPago)" />
+                    </div>
+                </div>
+                <div class="col-3">
+                    <label class="subtitulo-detalle total">Total:</label>
+                </div>
+                <div class="col-3">
+                    <label class="texto-detalle total">$@Venta.Total.ToString("N2")</label>
+                </div>
             </div>
-            <div class="col-3">
-                <label class="texto-detalle">$@Venta.Vuelto.ToString("N2")</label>
+
+            @if (Venta.MetodoPago.Equals(MetodosPago.Efectivo))
+            {
+                @* Monto recibido y Vuelto*@
+                <div class="row align-items-center pb-3">
+                    <div class="col-3">
+                        <label class="subtitulo-detalle">Monto recibido:</label>
+                    </div>
+                    <div class="col-3">
+                        <div class="input-container">
+                            <div class="img-container">
+                                <img class="" src="/VentasSVG/MoneyBag.svg" width="20" height="20" />
+                            </div>
+                            <input type="number" value="@Venta.MontoRecibido" @oninput="ActualizarMontoRecibido" min="0" />
+                            <ValidationMessage For="(() => Venta.MontoRecibido)" />
+                        </div>
+                    </div>
+                    <div class="col-3">
+                        <label class="subtitulo-detalle">Vuelto:</label>
+                    </div>
+                    <div class="col-3">
+                        <label class="texto-detalle">$@Venta.Vuelto.ToString("N2")</label>
+                    </div>
+                </div>
+            }
+            @if (!Venta.MetodoPago.Equals(MetodosPago.Efectivo))
+            {
+                @* Vuelto *@
+                <div class="row align-items-center pb-3">
+                    <div class="offset-6 col-3">
+                        <label class="subtitulo-detalle">Vuelto:</label>
+                    </div>
+                    <div class="col-3">
+                        <label class="texto-detalle">$@Venta.Vuelto.ToString("N2")</label>
+                    </div>
+                </div>
+            }
+        </div>
+
+        <div class="row justify-content-center pt-3">
+            <div class="col-2">
+                <a class="boton boton-volver" href="/Ventas/Index">Volver</a>
+            </div>
+            <div class="col-2">
+                <button class="boton boton-finalizar" type="submit">Finalizar venta</button>
+            </div>
+            <div class="col-2">
+                <button class="boton boton-limpiar" type="button" @onclick="Limpiar">Limpiar</button>
             </div>
         </div>
     </div>
-
-    <div class="row justify-content-center pt-3">
-        <div class="col-2">
-            <a class="boton boton-volver" href="/Ventas/Index">Volver</a>
-        </div>
-        <div class="col-2">
-            <button class="boton boton-finalizar">Finalizar venta</button>
-        </div>
-        <div class="col-2">
-            <button class="boton boton-limpiar">Limpiar</button>
-        </div>
-    </div>
-</div>
+</EditForm>
 
 @code {
     public Ventas Venta { get; set; } = new Ventas();
     public List<DetallesVentas> ListaDetallesVenta { get; set; } = new List<DetallesVentas>();
     public int? CodigoProducto { get; set; }
 
+    private ClaimsPrincipal? user;
+
     protected override async Task OnInitializedAsync()
     {
+        var authState = await authenticationStateProvider.GetAuthenticationStateAsync();
+        user = authState.User;
+
         Venta.DetallesVentas = ListaDetallesVenta;
+        Venta.Vendedor = user?.FindFirst(ClaimTypes.Name)?.Value;
+    }
+
+    public async Task Guardar()
+    {
+        if (Venta.DetallesVentas.Count == 0)
+        {
+            Console.WriteLine("\nLa venta debe tener al menos un detalle\n");
+            return;
+        }
+        if (Venta.MetodoPago == MetodosPago.Efectivo && Venta.Total > Venta.MontoRecibido)
+        {
+            Console.WriteLine("\nEl monto recibido tiene que ser mayor o igual al Total de venta\n");
+            return;
+        }
+        bool guardado = await ventasServices.Guardar(Venta);
+        if (guardado)
+        {
+            Console.WriteLine("\nLa venta se guardo exitosamente\n");
+            navigationManager.NavigateTo("/Ventas/Index");
+        }
+        else
+        {
+            Console.WriteLine("\nHa ocurrido un error al guardar la venta\n");
+        }
     }
 
     public async Task AgregarDetalle()
@@ -234,7 +288,7 @@
                     nuevoDetalle.Categoria = producto.Categorias;
                 }
 
-                Console.WriteLine("\nDetalle agregado:" + nuevoDetalle.Productos.Nombre + "\n");
+                Console.WriteLine("\nDetalle agregado:" + nuevoDetalle.ProductoId + "\n");
                 ListaDetallesVenta.Add(nuevoDetalle);
             }
 
@@ -249,10 +303,75 @@
         }
     }
 
-    private void EliminarDetalle(DetallesVentas detalle)
+    private async Task EliminarDetalle(DetallesVentas detalle)
     {
         ListaDetallesVenta.Remove(detalle);
         Venta = ventasServices.CalcularTotales(Venta);
         //Venta.DetallesVentas = ListaDetallesVenta;
+    }
+
+    private async Task Limpiar()
+    {
+        Venta.DetallesVentas.Clear();
+        Venta.Descuento = 0;
+        Venta.MetodoPago = MetodosPago.Efectivo;
+        Venta.MontoRecibido = 0;
+        await CalcularTotales();
+    }
+
+    private async Task CalcularTotales()
+    {
+        Venta = ventasServices.CalcularTotales(Venta);
+    }
+    private async Task ActualizarMontoRecibido(ChangeEventArgs e)
+    {
+        string stringValue = e.Value?.ToString() ?? "0";
+        if (!string.IsNullOrEmpty(stringValue))
+        {
+            Venta.MontoRecibido = decimal.Parse(stringValue);
+        }
+        else
+        {
+            Venta.MontoRecibido = 0;
+        }
+        await CalcularTotales();
+    }
+    private async Task ActualizarCantidad(ChangeEventArgs e, DetallesVentas detalle)
+    {
+        string stringValue = e.Value?.ToString() ?? "0";
+        if (!string.IsNullOrEmpty(stringValue))
+        {
+            detalle.Cantidad = int.Parse(stringValue);
+        }
+        else
+        {
+            detalle.Cantidad = 0;
+        }
+        await CalcularTotales();
+    }
+    private async Task ActualizarDescuento(ChangeEventArgs e)
+    {
+        string stringValue = e.Value?.ToString() ?? "0";
+        if (!string.IsNullOrEmpty(stringValue))
+        {
+            Venta.Descuento = decimal.Parse(stringValue);
+        }
+        else
+        {
+            Venta.Descuento = 0;
+        }
+        await CalcularTotales();
+    }
+    private async Task OnMetodoPagoChange(ChangeEventArgs e)
+    {
+        if (Enum.TryParse<MetodosPago>(e.Value?.ToString(), out MetodosPago metodo))
+        {
+            Venta.MetodoPago = metodo;
+            if (!Venta.MetodoPago.Equals(MetodosPago.Efectivo))
+            {
+                Venta.MontoRecibido = 0;
+            }
+            await CalcularTotales();
+        }
     }
 }

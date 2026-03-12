@@ -24,23 +24,47 @@ public class VentasService(IDbContextFactory<ApplicationDbContext> DbFactory)
     private async Task<bool> Insertar(Ventas venta)
     {
         await using var contexto = await DbFactory.CreateDbContextAsync();
-        // Agregamos la venta al contexto
-        contexto.Ventas.Add(venta);
-        // Guardamos para que se genere el ID de la venta
-        var resultado = await contexto.SaveChangesAsync() > 0;
-        return resultado;
+
+        // Crear una NUEVA venta sin las entidades de navegación
+        var ventaNueva = new Ventas
+        {
+            Fecha = venta.Fecha,
+            MetodoPago = venta.MetodoPago,
+            Vendedor = venta.Vendedor,
+            MontoRecibido = venta.MontoRecibido,
+            Descuento = venta.Descuento,
+            Subtotal = venta.Subtotal,
+            Itbis = venta.Itbis,
+            Total = venta.Total,
+            DescuentoAplicado = venta.DescuentoAplicado,
+            Vuelto = venta.Vuelto,
+            Eliminado = venta.Eliminado
+        };
+
+        // Agregar detalles SIN las entidades de navegación
+        foreach (var detalle in venta.DetallesVentas)
+        {
+            ventaNueva.DetallesVentas.Add(new DetallesVentas
+            {
+                ProductoId = detalle.ProductoId,
+                CategoriaId = detalle.CategoriaId,
+                Descripcion = detalle.Descripcion,
+                Cantidad = detalle.Cantidad,
+                Precio = detalle.Precio,
+                Itbis = detalle.Itbis,
+                Subtotal = detalle.Subtotal,
+                Eliminado = detalle.Eliminado
+            });
+        }
+
+        contexto.Ventas.Add(ventaNueva);
+
+        return await contexto.SaveChangesAsync() > 0;
     }
 
     private async Task<bool> Modificar(Ventas venta)
     {
         await using var contexto = await DbFactory.CreateDbContextAsync();
-
-        // Para modificaciones de ventas, generalmente no se permite modificar
-        // detalles ya que son transacciones cerradas. Podrías manejar devoluciones
-        // como notas de crédito o ventas negativas.
-
-        // Aquí simplemente actualizamos los campos de la venta que pueden cambiar
-        // como método de pago, pero no los detalles ni el total
         var ventaExistente = await contexto.Ventas
             .Include(v => v.DetallesVentas)
             .FirstOrDefaultAsync(v => v.VentaId == venta.VentaId);
@@ -67,6 +91,8 @@ public class VentasService(IDbContextFactory<ApplicationDbContext> DbFactory)
             .Include(v => v.DetallesVentas)
                 .ThenInclude(d => d.Productos)
                     .ThenInclude(p => p.Proveedores)
+            .Include(v => v.DetallesVentas)
+                .ThenInclude(d => d.Categoria)
             .FirstOrDefaultAsync(v => v.VentaId == ventaId && !v.Eliminado);
     }
 
@@ -109,7 +135,7 @@ public class VentasService(IDbContextFactory<ApplicationDbContext> DbFactory)
         venta.Total = venta.Subtotal - venta.DescuentoAplicado + venta.Itbis;
 
         // Calcular vuelto
-        if (venta.MontoRecibido != 0)
+        if (venta.MontoRecibido > venta.Total)
         {
             venta.Vuelto = venta.MontoRecibido - venta.Total;
         }
@@ -127,6 +153,7 @@ public class VentasService(IDbContextFactory<ApplicationDbContext> DbFactory)
 
         var producto = await contexto.Productos
             .Include(p => p.Categorias)
+            .AsNoTracking()
             .FirstOrDefaultAsync(p => p.ProductoId == productoId);
 
         if (producto == null)
@@ -137,16 +164,22 @@ public class VentasService(IDbContextFactory<ApplicationDbContext> DbFactory)
         decimal precioConItbis = producto.PrecioVenta.Value * (1 + itbisPorcentaje / 100);
         decimal itbis = producto.PrecioVenta.Value * (itbisPorcentaje / 100);
 
-        return new DetallesVentas
+        DetallesVentas detalle = new DetallesVentas
         {
-            ProductoId = productoId,
-            Productos = producto,
+            ProductoId = producto.ProductoId,
+            CategoriaId = producto.CategoriaId,
+
             Descripcion = producto.Descripcion,
-            Categoria = producto.Categorias,
             Cantidad = cantidad,
             Precio = producto.PrecioVenta.Value,
             Itbis = itbis,
             Subtotal = producto.PrecioVenta.Value * cantidad
         };
+
+        // Solo para navegacion
+        detalle.Productos = producto;
+        detalle.Categoria = producto.Categorias;
+
+        return detalle;
     }
 }

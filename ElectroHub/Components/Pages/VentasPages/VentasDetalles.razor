@@ -1,4 +1,9 @@
-﻿@page "/Ventas/Detalles";
+﻿@page "/Ventas/Detalles/{VentaId:int}";
+
+@rendermode InteractiveServer
+@inject VentasService ventasServices;
+@inject ProductosService productosService;
+@inject NavigationManager navigationManager;
 
 <PageTitle>VentasDetalles</PageTitle>
 
@@ -12,34 +17,27 @@
             <thead>
                 <tr>
                     <th>C&oacute;digo</th>
-                    <th>Fecha</th>
-                    <th>Total venta</th>
-                    <th>M&eacute;todo de pago</th>
-                    <th>Vendedor</th>
+                    <th>Descripci&oacute;n</th>
+                    <th>Categor&iacute;a</th>
+                    <th>Cantidad</th>
+                    <th>Precio</th>
+                    <th>ITBIS</th>
+                    <th>Subtotal</th>
                 </tr>
             </thead>
             <tbody>
-                <tr>
-                    <td>00001</td>
-                    <td>2026-01-30 08:00:00 AM</td>
-                    <td>$1,483.00</td>
-                    <td>Efectivo</td>
-                    <td>Luis Fonsi</td>
-                </tr>
-                <tr>
-                    <td>00001</td>
-                    <td>2026-01-30 08:00:00 AM</td>
-                    <td>$1,483.00</td>
-                    <td>Efectivo</td>
-                    <td>Luis Fonsi</td>
-                </tr>
-                <tr>
-                    <td>00001</td>
-                    <td>2026-01-30 08:00:00 AM</td>
-                    <td>$1,483.00</td>
-                    <td>Efectivo</td>
-                    <td>Luis Fonsi</td>
-                </tr>
+                @foreach (var detalle in Venta.DetallesVentas)
+                {
+                    <tr>
+                        <td>@detalle.ProductoId</td>
+                        <td>@detalle.Descripcion</td>
+                        <td>@detalle.Categoria.Nombre</td>
+                        <td>@detalle.Cantidad</td>
+                        <td>$@detalle.Precio</td>
+                        <td>$@detalle.Itbis</td>
+                        <td>$@detalle.Subtotal</td>
+                    </tr>
+                }
             </tbody>
         </table>
     </div>
@@ -53,14 +51,14 @@
                 <label class="subtitulo-detalle">Fecha:</label>
             </div>
             <div class="col-3">
-                <label class="texto-detalle">2026-01-30 08:00:00 AM</label>
+                <label class="texto-detalle">@Venta.Fecha</label>
             </div>
 
             <div class="col-3">
                 <label class="subtitulo-detalle">Subtotal:</label>
             </div>
             <div class="col-3">
-                <label class="texto-detalle">$1,355.00</label>
+                <label class="texto-detalle">$@Venta.Subtotal.ToString("N2")</label>
             </div>
         </div>
 
@@ -70,13 +68,13 @@
                 <label class="subtitulo-detalle">Vendedor:</label>
             </div>
             <div class="col-3">
-                <label class="texto-detalle">Luis Fonsi</label>
+                <label class="texto-detalle">@Venta.Vendedor</label>
             </div>
             <div class="col-3">
                 <label class="subtitulo-detalle">Desc. Aplicado:</label>
             </div>
             <div class="col-3">
-                <label class="texto-detalle">$0.00</label>
+                <label class="texto-detalle">$@Venta.DescuentoAplicado.ToString("N2")</label>
             </div>
         </div>
 
@@ -86,13 +84,13 @@
                 <label class="subtitulo-detalle">Descuento:</label>
             </div>
             <div class="col-3">
-                <label class="texto-detalle">0.0 %</label>
+                <label class="texto-detalle">@Venta.Descuento %</label>
             </div>
             <div class="col-3">
                 <label class="subtitulo-detalle">ITBIS:</label>
             </div>
             <div class="col-3">
-                <label class="texto-detalle">$138.00</label>
+                <label class="texto-detalle">$@Venta.Itbis.ToString("N2")</label>
             </div>
         </div>
 
@@ -102,13 +100,13 @@
                 <label class="subtitulo-detalle">M&eacute;todo de pago:</label>
             </div>
             <div class="col-3">
-                <label class="texto-detalle">Efectivo</label>
+                <label class="texto-detalle">@Venta.MetodoPago</label>
             </div>
             <div class="col-3">
                 <label class="subtitulo-detalle total">Total:</label>
             </div>
             <div class="col-3">
-                <label class="texto-detalle total">$1,493.00</label>
+                <label class="texto-detalle total">$@Venta.Total.ToString("N2")</label>
             </div>
         </div>
 
@@ -118,13 +116,13 @@
                 <label class="subtitulo-detalle">Monto recibido:</label>
             </div>
             <div class="col-3">
-                <label class="texto-detalle">$2,000.00</label>
+                <label class="texto-detalle">$@Venta.MontoRecibido.ToString("N2")</label>
             </div>
             <div class="col-3">
                 <label class="subtitulo-detalle">Vuelto:</label>
             </div>
             <div class="col-3">
-                <label class="texto-detalle">$507.00</label>
+                <label class="texto-detalle">$@Venta.Vuelto.ToString("N2")</label>
             </div>
         </div>
     </div>
@@ -135,5 +133,13 @@
 </div>
 
 @code {
+    [Parameter]
+    public int VentaId { get; set; }
 
+    public Ventas Venta { get; set; } = new Ventas();
+
+    protected override async Task OnInitializedAsync()
+    {
+        Venta = await ventasServices.Buscar(VentaId);
+    }
 }

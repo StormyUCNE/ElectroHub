@@ -22,6 +22,7 @@
 .texto-detalle {
     font-size: 1.6vw;
     color: #FFFFFF;
+    word-break: break-all;
 }
 
 hr {
