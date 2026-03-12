@@ -41,13 +41,12 @@ hr {
     display: flow;
     border-radius: 10px;
     border: none;
-    padding: 5px 0px 5px 0px;
+    padding: 8px 10px 8px 10px;
     font-weight: bold;
 }
 
 .boton-volver {
     background-color: #5683D7;
-    padding: 5px 10px 5px 10px;
     font-weight: bold;
     text-decoration: none;
     text-align: center;
@@ -55,21 +54,18 @@ hr {
 
 .boton-agregar {
     background-color: #5683D7;
-    padding: 5px 10px 5px 10px;
     font-weight: bold;
     text-decoration: none;
 }
 
 .boton-finalizar {
     background-color: #83D756;
-    padding: 5px 10px 5px 10px;
     font-weight: bold;
     text-decoration: none;
 }
 
 .boton-limpiar {
     background-color: #D00707;
-    padding: 5px 10px 5px 10px;
     font-weight: bold;
     text-decoration: none;
 }

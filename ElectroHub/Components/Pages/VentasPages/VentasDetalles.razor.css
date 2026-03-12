@@ -41,20 +41,24 @@ hr {
     display: flow;
     border-radius: 10px;
     border: none;
-    padding: 5px 0px 5px 0px;
+    padding: 8px 35px 8px 35px;
     font-weight: bold;
 }
 
 .boton-volver {
     background-color: #5683D7;
-    padding: 8px 35px 8px 35px;
     font-weight: bold;
     text-decoration: none;
 }
 
 .boton-eliminar {
     background-color: #D00707;
-    padding: 8px 35px 8px 35px;
+    font-weight: bold;
+    text-decoration: none;
+}
+
+.boton-modificar {
+    background-color: #D7AA56;
     font-weight: bold;
     text-decoration: none;
 }
