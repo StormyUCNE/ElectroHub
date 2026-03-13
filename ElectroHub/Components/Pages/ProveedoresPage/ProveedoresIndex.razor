@@ -75,9 +75,10 @@
     </div>
 
     <div class="pagination">
-        <img src="/NavigationFlechas.svg" @onclick="PaginaAnterior"
+        <img src="/ProductosSVG/NavigationFlechas.svg" @onclick="PaginaAnterior"
              class="@(paginaActual == 1 ? "opacity-25" : "opacity-100")" />
-        <img src="/RigthNav.svg" @onclick="PaginaSiguiente"
+        <span>@paginaActual | @TotalPaginas</span>
+        <img src="/ProductosSVG/RigthNav.svg" @onclick="PaginaSiguiente"
              class="@(paginaActual == TotalPaginas ? "opacity-25" : "opacity-100")" />
     </div>
 
@@ -253,9 +254,14 @@
         }
     }
 
-    private void Eliminar()
+    private async Task Eliminar()
     {
-        showModalDetails = false;
+        var eliminado = await proveedoresService.Eliminar(proveedorSeleccionado.ProveedorId);
+        if (eliminado)
+        {
+            ListaProveedores = await proveedoresService.Listar(p => p.Eliminado == false);
+            proveedorSeleccionado = new Proveedores();
+        }
     }
 
     private void GetProveedor(Proveedores p)
@@ -315,3 +321,5 @@
         paginaActual = 1;
     }
 }
+
+

@@ -121,7 +121,7 @@
         if (result.Succeeded)
         {
             Logger.LogInformation("User logged in.");
-            RedirectManager.RedirectTo(ReturnUrl ?? "/Reportes");
+            RedirectManager.RedirectTo(ReturnUrl ?? "/Ventas/Index");
         }
         else if (result.IsLockedOut)
         {

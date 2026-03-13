@@ -6,7 +6,7 @@
 
 <div class="navbar-menu " @onclick="() => isOpenUser = false">
     <div class="logo-container">
-        <a class="navbar-brand" href="/Home"><img src="/ProductosSVG/logo.svg" alt="Logo" /></a>
+        <a class="navbar-brand" href="/Ventas/Index"><img src="/ProductosSVG/logo.svg" alt="Logo" /></a>
     </div>
     <div class="user-container-nav">
         <div>
@@ -44,46 +44,7 @@
 
 <div class="nav-scrollable @(isOpen ? "show" : "")" @onclick="()=> isOpenUser = false">
     <nav class="nav flex-column">
-        <div class="nav-item px-3">
-            <NavLink class="nav-link" href="/Reportes" Match="NavLinkMatch.All" @onclick="() => isOpen = false">
-                <div class="align-content-around">
-                    <svg xmlns="http://www.w3.org/2000/svg" height="24px" viewBox="0 -960 960 960" width="24px" fill="#FFFFFF" style="margin: 0px 5px 0px 0px"><path d="m296-320 122-122 80 80 142-141v63h80v-200H520v80h63l-85 85-80-80-178 179 56 56Zm-96 200q-33 0-56.5-23.5T120-200v-560q0-33 23.5-56.5T200-840h560q33 0 56.5 23.5T840-760v560q0 33-23.5 56.5T760-120H200Zm0-80h560v-560H200v560Zm0-560v560-560Z" /></svg>
-                    <span>Reportes</span>
-                </div>
-            </NavLink>
-        </div>
-        <div class="nav-item px-3">
-            <NavLink class="nav-link" href="/Categorias" Match="NavLinkMatch.All" @onclick="() => isOpen = false">
-                <div class="align-content-around">
-                    <svg xmlns="http://www.w3.org/2000/svg" height="24px" viewBox="0 -960 960 960" width="24px" fill="#FFFFFF" style="margin: 0px 5px 0px 0px"><path d="M480-240 63-467l84-46 333 182 333-182 84 46-417 227Zm0 160L63-307l84-46 333 182 333-182 84 46L480-80Zm0-320L40-640l440-240 40 22v178h327l73 40-440 240Zm0-91 200-109H440v-167L207-640l273 149Zm-40-109Z" /></svg>
-                    <span>Categorías</span>
-                </div>
-            </NavLink>
-        </div>
-        <div class="nav-item px-3"> 
-            <NavLink class="nav-link" href="ProveedoresReal/Index" Match="NavLinkMatch.All" @onclick="() => isOpen = false">
-                <div class="align-content-around">
-                    <svg xmlns="http://www.w3.org/2000/svg" height="24px" viewBox="0 -960 960 960" width="24px" fill="#FFFFFF" style="margin: 0px 5px 0px 0px"><path d="M475-160q4 0 8-2t6-4l328-328q12-12 17.5-27t5.5-30q0-16-5.5-30.5T817-607L647-777q-11-12-25.5-17.5T591-800q-15 0-30 5.5T534-777l-11 11 74 75q15 14 22 32t7 38q0 42-28.5 70.5T527-522q-20 0-38.5-7T456-550l-75-74-175 175q-3 3-4.5 6.5T200-435q0 8 6 14.5t14 6.5q4 0 8-2t6-4l136-136 56 56-135 136q-3 3-4.5 6.5T285-350q0 8 6 14t14 6q4 0 8-2t6-4l136-135 56 56-135 136q-3 2-4.5 6t-1.5 8q0 8 6 14t14 6q4 0 7.5-1.5t6.5-4.5l136-135 56 56-136 136q-3 3-4.5 6.5T454-180q0 8 6.5 14t14.5 6Zm-1 80q-37 0-65.5-24.5T375-166q-34-5-57-28t-28-57q-34-5-56.5-28.5T206-336q-38-5-62-33t-24-66q0-20 7.5-38.5T149-506l232-231 131 131q2 3 6 4.5t8 1.5q9 0 15-5.5t6-14.5q0-4-1.5-8t-4.5-6L398-777q-11-12-25.5-17.5T342-800q-15 0-30 5.5T285-777L144-635q-9 9-15 21t-8 24q-2 12 0 24.5t8 23.5l-58 58q-17-23-25-50.5T40-590q2-28 14-54.5T87-692l141-141q24-23 53.5-35t60.5-12q31 0 60.5 12t52.5 35l11 11 11-11q24-23 53.5-35t60.5-12q31 0 60.5 12t52.5 35l169 169q23 23 35 53t12 61q0 31-12 60.5T873-437L545-110q-14 14-32.5 22T474-80Zm-99-560Z" /></svg>
-                    <span>Proveedores</span>
-                </div>
-            </NavLink>
-        </div>
-        <div class="nav-item px-3">
-            <NavLink class="nav-link" href="Productos/Index" Match="NavLinkMatch.All" @onclick="() => isOpen = false">
-                <div class="align-content-around" ">
-                    <svg xmlns="http://www.w3.org/2000/svg" height="24px" viewBox="0 -960 960 960" width="24px" fill="#FFFFFF" style="margin: 0px 5px 0px 0px"><path d="M444-189v-270L216-591v270l228 132Zm72 0 228-131v-270L516-459v270Zm-72 84L180-258q-17.1-9.88-26.55-26.06Q144-300.23 144-320v-320q0-19.77 9.45-35.94Q162.9-692.12 180-702l264-153q17.13-10 36.07-10Q499-865 516-855l264 153q17.1 9.88 26.55 26.06Q816-659.77 816-640v320q0 19.77-9.45 35.94Q797.1-267.88 780-258L516-105q-17.13 10-36.07 10Q461-95 444-105Zm188-505 83-47-236-135-80 47 233 135Zm-152 88 82-47-237-134-80 46 235 135Z" /></svg>
-                    <span>Productos</span>
-                </div>
-            </NavLink>
-        </div>
-        <div class="nav-item px-3">
-            <NavLink class="nav-link" href="Inventario/Index" Match="NavLinkMatch.All" @onclick="() => isOpen = false">
-                <div class="align-content-around">
-                    <svg xmlns="http://www.w3.org/2000/svg" height="24px" viewBox="0 -960 960 960" width="24px" fill="#FFFFFF" style="margin: 0px 5px 0px 0px"><path d="M480-120 160-280l320-160 320 160-320 160Zm0-178 190-95-190-95-190 95 190 95Zm0-272L160-730l320-160 320 160-320 160Zm0-178 190-95-190-95-190 95 190 95ZM160-505v-63l320 160 320-160v63L480-345 160-505Z" /></svg>
-                    <span>Inventario</span>
-                </div>
-            </NavLink>
-        </div>
+
         <div class="nav-item px-3">
             <NavLink class="nav-link" href="/Ventas/Index" Match="NavLinkMatch.All" @onclick="() => isOpen = false">
                 <div class="align-content-around">
@@ -92,6 +53,61 @@
                 </div>
             </NavLink>
         </div>
+
+        <div class="nav-item px-3">
+            <NavLink class="nav-link" href="/Categorias" Match="NavLinkMatch.All" @onclick="() => isOpen = false">
+                <div class="align-content-around">
+                    <svg xmlns="http://www.w3.org/2000/svg" height="24px" viewBox="0 -960 960 960" width="24px" fill="#FFFFFF" style="margin: 0px 5px 0px 0px"><path d="M480-240 63-467l84-46 333 182 333-182 84 46-417 227Zm0 160L63-307l84-46 333 182 333-182 84 46L480-80Zm0-320L40-640l440-240 40 22v178h327l73 40-440 240Zm0-91 200-109H440v-167L207-640l273 149Zm-40-109Z" /></svg>
+                    <span>Categorías</span>
+                </div>
+            </NavLink>
+        </div>
+
+
+        <div class="nav-item px-3">
+            <NavLink class="nav-link" href="Inventario/Index" Match="NavLinkMatch.All" @onclick="() => isOpen = false">
+                <div class="align-content-around">
+                    <svg xmlns="http://www.w3.org/2000/svg" height="24px" viewBox="0 -960 960 960" width="24px" fill="#FFFFFF" style="margin: 0px 5px 0px 0px"><path d="M480-120 160-280l320-160 320 160-320 160Zm0-178 190-95-190-95-190 95 190 95Zm0-272L160-730l320-160 320 160-320 160Zm0-178 190-95-190-95-190 95 190 95ZM160-505v-63l320 160 320-160v63L480-345 160-505Z" /></svg>
+                    <span>Inventario</span>
+                </div>
+            </NavLink>
+        </div>
+
+
+        <div class="nav-item px-3">
+            <NavLink class="nav-link" href="Productos/Index" Match="NavLinkMatch.All" @onclick="() => isOpen = false">
+                <div class="align-content-around" ">
+                    <svg xmlns="http://www.w3.org/2000/svg" height="24px" viewBox="0 -960 960 960" width="24px" fill="#FFFFFF" style="margin: 0px 5px 0px 0px"><path d="M444-189v-270L216-591v270l228 132Zm72 0 228-131v-270L516-459v270Zm-72 84L180-258q-17.1-9.88-26.55-26.06Q144-300.23 144-320v-320q0-19.77 9.45-35.94Q162.9-692.12 180-702l264-153q17.13-10 36.07-10Q499-865 516-855l264 153q17.1 9.88 26.55 26.06Q816-659.77 816-640v320q0 19.77-9.45 35.94Q797.1-267.88 780-258L516-105q-17.13 10-36.07 10Q461-95 444-105Zm188-505 83-47-236-135-80 47 233 135Zm-152 88 82-47-237-134-80 46 235 135Z" /></svg>
+                    <span>Productos</span>
+                </div>
+            </NavLink>
+        </div>
+
+        <div class="nav-item px-3">
+            <NavLink class="nav-link" href="ProveedoresReal/Index" Match="NavLinkMatch.All" @onclick="() => isOpen = false">
+                <div class="align-content-around">
+                    <svg xmlns="http://www.w3.org/2000/svg" height="24px" viewBox="0 -960 960 960" width="24px" fill="#FFFFFF" style="margin: 0px 5px 0px 0px"><path d="M475-160q4 0 8-2t6-4l328-328q12-12 17.5-27t5.5-30q0-16-5.5-30.5T817-607L647-777q-11-12-25.5-17.5T591-800q-15 0-30 5.5T534-777l-11 11 74 75q15 14 22 32t7 38q0 42-28.5 70.5T527-522q-20 0-38.5-7T456-550l-75-74-175 175q-3 3-4.5 6.5T200-435q0 8 6 14.5t14 6.5q4 0 8-2t6-4l136-136 56 56-135 136q-3 3-4.5 6.5T285-350q0 8 6 14t14 6q4 0 8-2t6-4l136-135 56 56-135 136q-3 2-4.5 6t-1.5 8q0 8 6 14t14 6q4 0 7.5-1.5t6.5-4.5l136-135 56 56-136 136q-3 3-4.5 6.5T454-180q0 8 6.5 14t14.5 6Zm-1 80q-37 0-65.5-24.5T375-166q-34-5-57-28t-28-57q-34-5-56.5-28.5T206-336q-38-5-62-33t-24-66q0-20 7.5-38.5T149-506l232-231 131 131q2 3 6 4.5t8 1.5q9 0 15-5.5t6-14.5q0-4-1.5-8t-4.5-6L398-777q-11-12-25.5-17.5T342-800q-15 0-30 5.5T285-777L144-635q-9 9-15 21t-8 24q-2 12 0 24.5t8 23.5l-58 58q-17-23-25-50.5T40-590q2-28 14-54.5T87-692l141-141q24-23 53.5-35t60.5-12q31 0 60.5 12t52.5 35l11 11 11-11q24-23 53.5-35t60.5-12q31 0 60.5 12t52.5 35l169 169q23 23 35 53t12 61q0 31-12 60.5T873-437L545-110q-14 14-32.5 22T474-80Zm-99-560Z" /></svg>
+                    <span>Proveedores</span>
+                </div>
+            </NavLink>
+        </div>
+
+        <div class="nav-item px-3">
+            <NavLink class="nav-link" href="/Categorias" Match="NavLinkMatch.All" @onclick="() => isOpen = false">
+                <div class="align-content-around">
+                    <svg xmlns="http://www.w3.org/2000/svg" height="24px" viewBox="0 -960 960 960" width="24px" fill="#FFFFFF" style="margin: 0px 5px 0px 0px"><path d="m296-320 122-122 80 80 142-141v63h80v-200H520v80h63l-85 85-80-80-178 179 56 56Zm-96 200q-33 0-56.5-23.5T120-200v-560q0-33 23.5-56.5T200-840h560q33 0 56.5 23.5T840-760v560q0 33-23.5 56.5T760-120H200Zm0-80h560v-560H200v560Zm0-560v560-560Z" /></svg>
+                    <span>Categorías</span>
+                </div>
+            </NavLink>
+        </div>
+
+        
+
+        
+
+
+        
+
         <AuthorizeView Roles="Admin">
             <Authorized>
                 <div class="nav-item px-3">
