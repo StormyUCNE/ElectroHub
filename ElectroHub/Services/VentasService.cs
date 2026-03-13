@@ -66,16 +66,39 @@ public class VentasService(IDbContextFactory<ApplicationDbContext> DbFactory)
     {
         await using var contexto = await DbFactory.CreateDbContextAsync();
         var ventaExistente = await contexto.Ventas
+            .AsNoTracking()
             .Include(v => v.DetallesVentas)
             .FirstOrDefaultAsync(v => v.VentaId == venta.VentaId);
 
         if (ventaExistente == null)
             return false;
 
+        // Eliminar detalles existentes
+        contexto.DetallesVentas.RemoveRange(ventaExistente.DetallesVentas);
+        ventaExistente.DetallesVentas.Clear();
+        foreach (var detalle in venta.DetallesVentas)
+        {
+            ventaExistente.DetallesVentas.Add(new DetallesVentas
+            {
+                ProductoId = detalle.ProductoId,
+                CategoriaId = detalle.CategoriaId,
+                Descripcion = detalle.Descripcion,
+                Cantidad = detalle.Cantidad,
+                Precio = detalle.Precio,
+                Itbis = detalle.Itbis,
+                Subtotal = detalle.Subtotal,
+                Eliminado = detalle.Eliminado
+            });
+        }
+
         // Actualizar solo campos permitidos
         ventaExistente.MetodoPago = venta.MetodoPago;
         ventaExistente.MontoRecibido = venta.MontoRecibido;
-        ventaExistente.Vuelto = venta.MontoRecibido - ventaExistente.Total;
+        ventaExistente.Descuento = venta.Descuento;
+        ventaExistente.Eliminado = venta.Eliminado;
+        ventaExistente.Fecha = venta.Fecha;
+
+        CalcularTotales(ventaExistente);
 
         contexto.Ventas.Update(ventaExistente);
         return await contexto.SaveChangesAsync() > 0;
@@ -93,18 +116,14 @@ public class VentasService(IDbContextFactory<ApplicationDbContext> DbFactory)
                     .ThenInclude(p => p.Proveedores)
             .Include(v => v.DetallesVentas)
                 .ThenInclude(d => d.Categoria)
-            .FirstOrDefaultAsync(v => v.VentaId == ventaId && !v.Eliminado);
+            .FirstOrDefaultAsync(v => v.VentaId == ventaId);
     }
 
     public async Task<bool> Eliminar(int ventaId)
     {
         await using var contexto = await DbFactory.CreateDbContextAsync();
-
-        // Soft delete - marcar como eliminado
-        var filasAfectadas = await contexto.Ventas!
-            .Where(v => v.VentaId == ventaId)
-            .ExecuteUpdateAsync(v =>
-                v.SetProperty(x => x.Eliminado, true));
+        // Soft delete
+        var filasAfectadas = await contexto.Ventas!.Where(v => v.VentaId == ventaId).ExecuteUpdateAsync(v => v.SetProperty(x => x.Eliminado, true));
         return filasAfectadas > 0;
     }
 
@@ -119,19 +138,11 @@ public class VentasService(IDbContextFactory<ApplicationDbContext> DbFactory)
             .ToListAsync();
     }
 
-    // Método adicional para calcular los totales de una venta
     public Ventas CalcularTotales(Ventas venta, decimal itbisPorcentaje = 18)
     {
-        // Calcular subtotal (suma de cantidad * precio de cada detalle)
         venta.Subtotal = venta.DetallesVentas.Sum(d => d.Cantidad * d.Precio);
-
-        // Calcular descuento aplicado
         venta.DescuentoAplicado = venta.Subtotal * (venta.Descuento / 100);
-
-        // Calcular ITBIS sobre el subtotal con descuento
         venta.Itbis = (venta.Subtotal - venta.DescuentoAplicado) * (itbisPorcentaje / 100);
-
-        // Calcular total
         venta.Total = venta.Subtotal - venta.DescuentoAplicado + venta.Itbis;
 
         // Calcular vuelto
