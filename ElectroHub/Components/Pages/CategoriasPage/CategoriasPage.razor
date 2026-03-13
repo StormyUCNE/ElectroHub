@@ -20,7 +20,7 @@
     <section class="filter-container">
         <section class="input-container">
             <div class="form-field">
-                <input type="text" placeholder="Buscar Categoría..." />
+                <input type="text" placeholder="Buscar Categoría..." @oninput="Buscar" />
             </div>
             <div class="date-group">
                 <div class="form-field">
@@ -187,9 +187,6 @@
         </div>
     </div>
 
-    
-
-
     <ConfirmacionAgregadoComponente @bind-Mostrar="showCategoryAddedModal" Asunto="La Categoría" Nombre="@NuevaCategoria.Nombre" LimpiarObjeto="LimpiarCampos" />
     <ConfirmacionModificadoComponente @bind-Mostrar="showCategoryUpdatedModal" Asunto="La Categoría" Nombre="@CategoriaEditar.Nombre" LimpiarObjeto="LimpiarCampos" />
     <AvisoEliminarComponente @bind-Mostrar="showDeleteCategoryConfirmationModal" Titulo="Categoría" Nombre="@CategoriaEditar.Nombre" Asunto="La Categoría">
@@ -340,9 +337,6 @@
         }
     }
 
-
- 
-
     public async Task Buscar(ChangeEventArgs e)
     {
         textoBusqueda = e.Value?.ToString() ?? "";
@@ -352,14 +346,16 @@
     public async Task AplicarFiltros()
     {
         List<Categorias> listadoFiltrado = await categoriasService.Listar(c => c.Eliminado == false && c.CategoriaId > 0);
-
         if (FechaInicial.HasValue && FechaFinal.HasValue)
-            listadoFiltrado = listadoFiltrado.Where(p => p.FechaRegistro >= FechaInicial && p.FechaRegistro <= FechaFinal).ToList();
-
+        {
+            listadoFiltrado = listadoFiltrado.Where(c => c.FechaRegistro >= FechaInicial && c.FechaRegistro <= FechaFinal).ToList();
+        }
         if (!string.IsNullOrWhiteSpace(textoBusqueda))
-            listadoFiltrado = listadoFiltrado.Where(p => p.Nombre != null && p.Nombre.Contains(textoBusqueda, StringComparison.OrdinalIgnoreCase)).ToList();
-        else
-            ListaCategorias = listadoFiltrado;
+        {
+            listadoFiltrado = listadoFiltrado.Where(c => c.Nombre.Contains(textoBusqueda, StringComparison.OrdinalIgnoreCase)).ToList();
+        }
+        ListaCategorias = listadoFiltrado;
+        paginaActual = 1;
     }
 
     private async Task BuscarCategoria(ChangeEventArgs e)
