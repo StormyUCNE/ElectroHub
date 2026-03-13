@@ -20,6 +20,7 @@
                         <ul>
                             <li @onclick="() => { showRegisterModal = true; showAddModal = false; }">Registra Productos</li>
                             <li @onclick="IrACategorias">Administrar Categorías</li>
+                            <li @onclick="IrAProveedores">Administrar Proveedores</li>
                         </ul>
                     </div>
                 </div>
@@ -66,6 +67,7 @@
                         <ul>
                             <li @onclick="() => { showRegisterModal = true; showAddModal = false; }">Registra Productos</li>
                             <li @onclick="IrACategorias">Administrar Categorías</li>
+                            <li @onclick="IrAProveedores">Administrar Proveedores</li>
                         </ul>
                     </div>
                 </div>
@@ -247,10 +249,8 @@
         ProductoEditar = new Productos { FechaRegistro = DateTime.Now };
     }
 
-    private void IrACategorias()
-    {
-        navigationManager.NavigateTo("/Categorias");
-    }
+    private void IrACategorias(){navigationManager.NavigateTo("/Categorias");}
+    private void IrAProveedores() { navigationManager.NavigateTo("/ProveedoresReal/Index"); }
 
     private async Task RefrescarLista() { ListaProductos = await productosService.Listar(p => p.Eliminado == false); }
 

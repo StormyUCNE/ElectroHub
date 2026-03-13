@@ -24,14 +24,16 @@
         <EditForm EditContext="editContext" method="post" OnSubmit="LoginUser" FormName="login">
             <DataAnnotationsValidator />
             <hr />
-            <div class="form-floating mb-3">
-                <InputText @bind-Value="Input.UserName" id="Input.UserName" class="form-control" autocomplete="username webauthn" aria-required="true" placeholder="ej:Juan_Alfonso" />
-                <label for="Input.UserName" class="form-label">Nombre Usuario</label>
+            <div class="mb-3">
+                <div class="form-input">
+                    <input name="Input.UserName" @bind="Input.UserName" id="Input.UserName" @bind:event="oninput" autocomplete="username webauthn" aria-required="true" placeholder="ej:Juan_Alfonso" />
+                </div>
                 <ValidationMessage For="() => Input.UserName" class="text-danger" />
             </div>
-            <div class="form-floating mb-3">
-                <InputText type="password" @bind-Value="Input.Password" id="Input.Password" class="form-control" autocomplete="current-password" aria-required="true" placeholder="password" />
-                <label for="Input.Password" class="form-label">Password</label>
+            <div class="mb-3">
+                <div class="form-password">
+                    <input type="password" name="Input.Password" @bind="Input.Password" id="Input.Password" @bind:event="oninput" autocomplete="current-password" aria-required="true" placeholder="password" />
+                </div>
                 <ValidationMessage For="() => Input.Password" class="text-danger" />
             </div>
             <div class="checkbox mb-3">
