@@ -8,23 +8,110 @@
 }
 
 .register-card {
+    position: relative;
     margin: auto;
     width: 400px;
-    padding: 20px;
+    padding:30px;
     background-color: rgb(255, 255, 255,0.2);
     backdrop-filter: blur(30%);
-    border: 3px white solid;
-    border-radius: 10px;
-    text-align:center;
+    border-radius: 30px;
+    text-align: center;
+    overflow: hidden;
 }
+
+    .register-card::before {
+        content: "";
+        position: absolute;
+        inset: 0;
+        border-radius: 30px;
+        padding: 3px;
+        background: linear-gradient(to right, #AA56D7, #D7AA56);
+        -webkit-mask: linear-gradient(#fff 0 0) content-box, linear-gradient(#fff 0 0);
+        -webkit-mask-composite: xor;
+        mask-composite: exclude;
+        pointer-events: none;
+    }
+
+.form-input {
+    position: relative;
+    background-image: url("/GlobalImages/UserLogin.svg");
+    background-repeat: no-repeat;
+    background-position: right 12px center;
+    background-size: 25px;
+    padding-right: 0px;
+}
+
+    .form-input input {
+        width: 100%;
+        background: rgba(255, 255, 255, 0.05);
+        border: none;
+        outline: none;
+        border-radius: 30px;
+        padding: 13px 15px;
+        color: white;
+    }
+
+        .form-input input::placeholder {
+            color: white;
+        }
+
+    .form-input::before {
+        content: "";
+        position: absolute;
+        inset: 0;
+        border-radius: 30px;
+        padding: 3px;
+        background: linear-gradient(to right, #AA56D7, #D7AA56);
+        -webkit-mask: linear-gradient(#fff 0 0) content-box, linear-gradient(#fff 0 0);
+        -webkit-mask-composite: xor;
+        mask-composite: exclude;
+        pointer-events: none;
+    }
+
+.form-password {
+    position: relative;
+}
+
+    .form-password input {
+        width: 100%;
+        background: rgba(255, 255, 255, 0.05);
+        border: none;
+        outline: none;
+        border-radius: 30px;
+        padding: 13px 15px;
+        color: white;
+    }
+
+        .form-password input::placeholder {
+            color: white;
+        }
+
+    .form-password::before {
+        content: "";
+        position: absolute;
+        inset: 0;
+        border-radius: 30px;
+        padding: 3px;
+        background: linear-gradient(to right, #AA56D7, #D7AA56);
+        -webkit-mask: linear-gradient(#fff 0 0) content-box, linear-gradient(#fff 0 0);
+        -webkit-mask-composite: xor;
+        mask-composite: exclude;
+        pointer-events: none;
+    }
+
 a {
-    color: pink;
+    color: #D7AA56;
 }
 
 hr {
     color: white;
 }
 
-h1, h2 {
+h1 {
+    color: white;
+}
+
+.checkbox {
+    text-align: left;
     color: white;
 }
