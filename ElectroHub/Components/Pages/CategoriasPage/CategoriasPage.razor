@@ -1,15 +1,22 @@
 ﻿@page "/Categorias"
 @rendermode InteractiveServer
 @inject CategoriasService categoriasService
+@inject NavigationManager navigationManager
 @inject IJSRuntime JS
 <PageTitle>Categorías</PageTitle>
-<div class="product-container">
+<div class="product-container" @onclick="() => showAddModal = false">
     <nav>
         <span>Categorías</span>
         <AuthorizeView Roles="Admin">
             <Authorized>
                 <div class="modal-add-mobile" @onclick:stopPropagation="true">
-                    <svg @onclick="() => showAddCategoryModal = true" xmlns="http://www.w3.org/2000/svg" height="48px" viewBox="0 -960 960 960" width="48px" fill="#AA56D7"><path d="M450-120v-330H120v-60h330v-330h60v330h330v60H510v330h-60Z" /></svg>
+                    <svg @onclick="() => showAddModal = true" xmlns="http://www.w3.org/2000/svg" height="48px" viewBox="0 -960 960 960" width="48px" fill="#AA56D7"><path d="M450-120v-330H120v-60h330v-330h60v330h330v60H510v330h-60Z" /></svg>
+                    <div class="modal-add-options @(showAddModal ? "show" : "")" @onclick:stopPropagation="true">
+                        <ul>
+                            <li @onclick="() => { showAddCategoryModal = true; showAddModal = false; }">Registrar Categoría</li>
+                            <li @onclick="IrAEliminados">Categorías Eliminadas</li>
+                        </ul>
+                    </div>
                 </div>
             </Authorized>
         </AuthorizeView>
@@ -36,7 +43,13 @@
             <Authorized>
                 @*Botón Agregar*@
                 <div class="modal-add" @onclick:stopPropagation="true">
-                    <svg @onclick="() => showAddCategoryModal = true" xmlns="http://www.w3.org/2000/svg" height="48px" viewBox="0 -960 960 960" width="48px" fill="#AA56D7"><path d="M450-120v-330H120v-60h330v-330h60v330h330v60H510v330h-60Z" /></svg>
+                    <svg @onclick="() => showAddModal = true" xmlns="http://www.w3.org/2000/svg" height="48px" viewBox="0 -960 960 960" width="48px" fill="#AA56D7"><path d="M450-120v-330H120v-60h330v-330h60v330h330v60H510v330h-60Z" /></svg>
+                    <div class="modal-add-options @(showAddModal ? "show" : "")">
+                        <ul>
+                            <li @onclick="() => { showAddCategoryModal = true; showAddModal = false; }">Registrar Categoría</li>
+                            <li @onclick="IrAEliminados">Categorías Eliminadas</li>
+                        </ul>
+                    </div>
                 </div>
             </Authorized>
         </AuthorizeView>
@@ -50,7 +63,7 @@
                     <tr>
                         <th>Categor&iacute;a</th>
                         <th>Nombre</th>
-                        <th>Descrici&oacute;n</th>
+                        <th>Descripci&oacute;n</th>
                         <th>Fecha Registro</th>
                         <th>Opción</th>
                     </tr>
@@ -188,18 +201,21 @@
     </div>
 
     <ConfirmacionAgregadoComponente @bind-Mostrar="showCategoryAddedModal" Asunto="La Categoría" Nombre="@NuevaCategoria.Nombre" LimpiarObjeto="LimpiarCampos" />
-    <ConfirmacionModificadoComponente @bind-Mostrar="showCategoryUpdatedModal" Asunto="La Categoría" Nombre="@CategoriaEditar.Nombre" LimpiarObjeto="LimpiarCampos" />
+    <ConfirmacionModificadoComponente @bind-Mostrar="showCategoryUpdatedModal" Asunto="La Categoría" Accion="modificó" Nombre="@CategoriaEditar.Nombre" LimpiarObjeto="LimpiarCampos" />
     <AvisoEliminarComponente @bind-Mostrar="showDeleteCategoryConfirmationModal" Titulo="Categoría" Nombre="@CategoriaEditar.Nombre" Asunto="La Categoría">
         <div class="register-delete-container">
             <img src="/ProductosSVG/Basurero.svg" alt="Eliminar" />
             <button @onclick="EliminarCategoria">Eliminar</button>
         </div>
     </AvisoEliminarComponente>
-    <ErrorNotificacionComponente @bind-Mostrar="showErrorModal" Asunto="No puede Eliminar Categorías en Uso por Productos." />
+    <ErrorNotificacionComponente @bind-Mostrar="showErrorModal" Asunto="@mensajeError" LimpiarObjeto="LimpiarCampos"/>
 </div>
 @code {
     // Modal para Crear
     private bool showAddModal = false;
+
+    //Mensaje Error
+    private string mensajeError = string.Empty;
 
     //Modales para las Categorias
     private bool showCategoryAddedModal = false,
@@ -277,21 +293,26 @@
         NuevaCategoria = new Categorias { FechaRegistro = DateTime.Now };
         CategoriaEditar = new Categorias { FechaRegistro = DateTime.Now };
     }
+    private void IrAEliminados() { navigationManager.NavigateTo("/Categorias/Eliminadas"); }
 
     private async Task GuardarCategorias()
     {
+        if (await categoriasService.ExisteDuplicado(NuevaCategoria))
+        {
+            mensajeError = "No se Aceptan categorías duplicadas con el mismo nombre o descripción.";
+            showErrorModal = true;
+            return;
+        }
         var creado = await categoriasService.Guardar(NuevaCategoria);
-
         if (creado)
         {
             showAddCategoryModal = false;
-            NuevaCategoria = new Categorias { FechaRegistro = DateTime.Now };
             ListaCategorias = await categoriasService.Listar(c => c.Eliminado == false);
             showCategoryAddedModal = true;
         }
     }
 
-    private void ObtenerCategoria(Categorias c)
+    private async Task ObtenerCategoria(Categorias c)
     {
         CategoriaEditar = new Categorias
         {
@@ -305,6 +326,12 @@
 
     private async Task ModificarCategoria()
     {
+        if (await categoriasService.ExisteDuplicado(CategoriaEditar))
+        {
+            mensajeError = "No se Aceptan categorías duplicadas con el mismo nombre o descripción.";
+            showErrorModal = true;
+            return;
+        }
         var modificado = await categoriasService.Guardar(CategoriaEditar);
         if (modificado)
         {
@@ -332,7 +359,9 @@
         }
         else
         {
+            showCategoryDetailsModal = false;
             showDeleteCategoryConfirmationModal = false;
+            mensajeError = "No puede Eliminar Categorías en Uso por Productos.";
             showErrorModal = true;
         }
     }
