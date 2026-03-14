@@ -43,6 +43,15 @@ public class ProveedoresService(IDbContextFactory<ApplicationDbContext> DbContex
         return await context.Proveedores.FirstOrDefaultAsync(proveedor => proveedor.ProveedorId == Id);
     }
 
+    public async Task<bool> Recuperar(int proveedorId)
+    {
+        await using var contexto = await DbContextFactory.CreateDbContextAsync();
+        var filasAfectadas = await contexto.Proveedores!
+            .Where(p => p.ProveedorId == proveedorId)
+            .ExecuteUpdateAsync(p =>
+                p.SetProperty(x => x.Eliminado, false));
+        return filasAfectadas > 0;
+    }
     public async Task<bool> Eliminar(int Id)
     {
         await using var context = await DbContextFactory.CreateDbContextAsync();
