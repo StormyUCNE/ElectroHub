@@ -20,6 +20,12 @@ public class ProveedoresService(IDbContextFactory<ApplicationDbContext> DbContex
         await using var context = await DbContextFactory.CreateDbContextAsync();
         return await context.Proveedores.AnyAsync(Proveedor => Proveedor.ProveedorId == Id);
     }
+
+    public async Task<bool> ExisteDuplicado(Proveedores proveedor)
+    {
+        await using var contexto = await DbContextFactory.CreateDbContextAsync();
+        return await contexto.Proveedores.AnyAsync(p => (p.NombreEmpresa.ToLower() == proveedor.NombreEmpresa.ToLower() || p.CorreoElectronico.ToLower() == proveedor.CorreoElectronico.ToLower()) && p.ProveedorId != proveedor.ProveedorId);
+    }
     public async Task<bool> Insertar(Proveedores Proveedor)
     {
         await using var context = await DbContextFactory.CreateDbContextAsync();
