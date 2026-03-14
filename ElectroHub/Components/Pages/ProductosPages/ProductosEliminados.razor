@@ -103,8 +103,6 @@
             </AuthorizeView>
         </EditForm>
     </DetalleComponente>
-
-    
     <ConfirmacionModificadoComponente @bind-Mostrar="showRecoverProductModal" Asunto="El Producto" Nombre="@ProductoRecuperar.Nombre" Accion="recuperó" LimpiarObjeto="LimpiarCampos" />
     <ErrorNotificacionComponente @bind-Mostrar="showErrorModal" Asunto="No se pudo recuperar el Producto, intente nuevamente." />
 </div>
@@ -173,10 +171,7 @@
         }
     }
 
-    private async Task LimpiarCampos()
-    {
-        ProductoRecuperar = new Productos { FechaRegistro = DateTime.Now };
-    }
+    private async Task LimpiarCampos(){ProductoRecuperar = new Productos { FechaRegistro = DateTime.Now };}
 
     private void VolverAProducto() { navigationManager.NavigateTo("/Productos/Index"); }
 
@@ -281,52 +276,52 @@
 
                 <div class="input-container-item">
                     <label>Código:</label>
-                    <input type="number" @bind="productos.CodigoProducto" class="form-control" />
+                    <input type="number" @bind="productos.CodigoProducto" class="form-control" disabled/>
                 </div>
 
                 <div class="input-container-item">
                     <label>Nombre:</label>
-                    <input type="text" @bind="productos.Nombre" class="form-control" />
+                    <input type="text" @bind="productos.Nombre" class="form-control" disabled/>
                 </div>
 
                 <div class="input-container-item">
                     <label>Descripción:</label>
-                    <input type="text" @bind="productos.Descripcion" class="form-control" />
+                    <input type="text" @bind="productos.Descripcion" class="form-control" disabled/>
                 </div>
 
                 <div class="input-container-item">
                     <label>Categoría:</label>
-                    <input type="text" @bind="productos?.Categorias?.Nombre" class="form-control" />
+                    <input type="text" @bind="productos?.Categorias?.Nombre" class="form-control" disabled />
                 </div>
 
                 <div class="input-container-item">
                     <label>Precio Compra:</label>
-                    <input type="number" @bind="productos.PrecioCompra" class="form-control" />
+                    <input type="number" @bind="productos.PrecioCompra" class="form-control" disabled />
                 </div>
 
                 <div class="input-container-item">
                     <label>Precio Venta:</label>
-                    <input type="number" @bind="productos.PrecioVenta" class="form-control" />
+                    <input type="number" @bind="productos.PrecioVenta" class="form-control" disabled />
                 </div>
 
                 <div class="input-container-item">
                     <label>Cantidad:</label>
-                    <input type="number" @bind="productos.CantidadInventario" class="form-control" />
+                    <input type="number" @bind="productos.CantidadInventario" class="form-control" disabled />
                 </div>
 
                 <div class="input-container-item">
                     <label>Stock Mínimo:</label>
-                    <input type="number" @bind="productos.StockMinimo" class="form-control" />
+                    <input type="number" @bind="productos.StockMinimo" class="form-control" disabled />
                 </div>
 
                 <div class="input-container-item">
                     <label>Proveedor:</label>
-                    <input type="text" @bind="productos?.Proveedores?.NombreEmpresa" class="form-control" />
+                    <input type="text" @bind="productos?.Proveedores?.NombreEmpresa" class="form-control" disabled />
                 </div>
 
                 <div class="input-container-item">
                     <label>Estado:</label>
-                    <input type="text" @bind="productos.EstadosProductos" class="form-control" />
+                    <input type="text" @bind="productos.EstadosProductos" class="form-control" disabled />
                 </div>
             </div>
         </section>
