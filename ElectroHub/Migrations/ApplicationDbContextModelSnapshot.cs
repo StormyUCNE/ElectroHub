@@ -17,7 +17,7 @@ namespace ElectroHub.Migrations
         {
 #pragma warning disable 612, 618
             modelBuilder
-                .HasAnnotation("ProductVersion", "10.0.2")
+                .HasAnnotation("ProductVersion", "10.0.3")
                 .HasAnnotation("Relational:MaxIdentifierLength", 128);
 
             SqlServerModelBuilderExtensions.UseIdentityColumns(modelBuilder);
@@ -117,6 +117,54 @@ namespace ElectroHub.Migrations
                     b.ToTable("Categorias");
                 });
 
+            modelBuilder.Entity("ElectroHub.Models.DetallesVentas", b =>
+                {
+                    b.Property<int>("IdDetalle")
+                        .ValueGeneratedOnAdd()
+                        .HasColumnType("int");
+
+                    SqlServerPropertyBuilderExtensions.UseIdentityColumn(b.Property<int>("IdDetalle"));
+
+                    b.Property<int>("Cantidad")
+                        .HasColumnType("int");
+
+                    b.Property<int>("CategoriaId")
+                        .HasColumnType("int");
+
+                    b.Property<string>("Descripcion")
+                        .IsRequired()
+                        .HasMaxLength(50)
+                        .HasColumnType("nvarchar(50)");
+
+                    b.Property<bool>("Eliminado")
+                        .HasColumnType("bit");
+
+                    b.Property<decimal>("Itbis")
+                        .HasColumnType("decimal(18,2)");
+
+                    b.Property<decimal>("Precio")
+                        .HasColumnType("decimal(18,2)");
+
+                    b.Property<int>("ProductoId")
+                        .HasColumnType("int");
+
+                    b.Property<decimal>("Subtotal")
+                        .HasColumnType("decimal(18,2)");
+
+                    b.Property<int>("VentaId")
+                        .HasColumnType("int");
+
+                    b.HasKey("IdDetalle");
+
+                    b.HasIndex("CategoriaId");
+
+                    b.HasIndex("ProductoId");
+
+                    b.HasIndex("VentaId");
+
+                    b.ToTable("DetallesVentas");
+                });
+
             modelBuilder.Entity("ElectroHub.Models.Productos", b =>
                 {
                     b.Property<int>("ProductoId")
@@ -212,6 +260,54 @@ namespace ElectroHub.Migrations
                     b.HasKey("ProveedorId");
 
                     b.ToTable("Proveedores");
+                });
+
+            modelBuilder.Entity("ElectroHub.Models.Ventas", b =>
+                {
+                    b.Property<int>("VentaId")
+                        .ValueGeneratedOnAdd()
+                        .HasColumnType("int");
+
+                    SqlServerPropertyBuilderExtensions.UseIdentityColumn(b.Property<int>("VentaId"));
+
+                    b.Property<decimal>("Descuento")
+                        .HasColumnType("decimal(18,2)");
+
+                    b.Property<decimal>("DescuentoAplicado")
+                        .HasColumnType("decimal(18,2)");
+
+                    b.Property<bool>("Eliminado")
+                        .HasColumnType("bit");
+
+                    b.Property<DateTime>("Fecha")
+                        .HasColumnType("datetime2");
+
+                    b.Property<decimal>("Itbis")
+                        .HasColumnType("decimal(18,2)");
+
+                    b.Property<int>("MetodoPago")
+                        .HasColumnType("int");
+
+                    b.Property<decimal>("MontoRecibido")
+                        .HasColumnType("decimal(18,2)");
+
+                    b.Property<decimal>("Subtotal")
+                        .HasColumnType("decimal(18,2)");
+
+                    b.Property<decimal>("Total")
+                        .HasColumnType("decimal(18,2)");
+
+                    b.Property<string>("Vendedor")
+                        .IsRequired()
+                        .HasMaxLength(50)
+                        .HasColumnType("nvarchar(50)");
+
+                    b.Property<decimal>("Vuelto")
+                        .HasColumnType("decimal(18,2)");
+
+                    b.HasKey("VentaId");
+
+                    b.ToTable("Ventas");
                 });
 
             modelBuilder.Entity("InventarioMovimientos", b =>
@@ -403,6 +499,33 @@ namespace ElectroHub.Migrations
                     b.ToTable("AspNetUserTokens", (string)null);
                 });
 
+            modelBuilder.Entity("ElectroHub.Models.DetallesVentas", b =>
+                {
+                    b.HasOne("ElectroHub.Models.Categorias", "Categoria")
+                        .WithMany()
+                        .HasForeignKey("CategoriaId")
+                        .OnDelete(DeleteBehavior.NoAction)
+                        .IsRequired();
+
+                    b.HasOne("ElectroHub.Models.Productos", "Productos")
+                        .WithMany()
+                        .HasForeignKey("ProductoId")
+                        .OnDelete(DeleteBehavior.NoAction)
+                        .IsRequired();
+
+                    b.HasOne("ElectroHub.Models.Ventas", "Ventas")
+                        .WithMany("DetallesVentas")
+                        .HasForeignKey("VentaId")
+                        .OnDelete(DeleteBehavior.Cascade)
+                        .IsRequired();
+
+                    b.Navigation("Categoria");
+
+                    b.Navigation("Productos");
+
+                    b.Navigation("Ventas");
+                });
+
             modelBuilder.Entity("ElectroHub.Models.Productos", b =>
                 {
                     b.HasOne("ElectroHub.Models.Categorias", "Categorias")
@@ -533,6 +656,11 @@ namespace ElectroHub.Migrations
                         .HasForeignKey("UserId")
                         .OnDelete(DeleteBehavior.Cascade)
                         .IsRequired();
+                });
+
+            modelBuilder.Entity("ElectroHub.Models.Ventas", b =>
+                {
+                    b.Navigation("DetallesVentas");
                 });
 #pragma warning restore 612, 618
         }
