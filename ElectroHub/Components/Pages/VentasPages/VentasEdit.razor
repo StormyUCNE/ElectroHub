@@ -1,4 +1,4 @@
-﻿@page "/Ventas/Create";
+﻿@page "/Ventas/Edit/{VentaId:int}";
 
 @rendermode InteractiveServer
 @inject VentasService ventasServices;
@@ -8,10 +8,10 @@
 
 <PageTitle>VentasCreate</PageTitle>
 
-<EditForm Model="Venta" FormName="crearVenta" OnSubmit="Guardar">
+<EditForm Model="Venta" FormName="modificarVenta" OnSubmit="Modificar">
     <DataAnnotationsValidator />
     <div class="container">
-        <label class="titulo">Nueva venta</label>
+        <label class="titulo">Modificar venta</label>
         <hr />
 
         @* Agregar producto *@
@@ -202,10 +202,10 @@
 
         <div class="row justify-content-center pt-3">
             <div class="col-2">
-                <a class="boton boton-volver" href="/Ventas/Index">Volver</a>
+                <a class="boton boton-volver" href="/Ventas/Detalles/@VentaId">Volver</a>
             </div>
             <div class="col-2">
-                <button class="boton boton-finalizar" type="submit">Finalizar venta</button>
+                <button class="boton boton-finalizar" type="submit">Modificar venta</button>
             </div>
             <div class="col-2">
                 <button class="boton boton-limpiar" type="button" @onclick="Limpiar">Limpiar</button>
@@ -215,22 +215,20 @@
 </EditForm>
 
 @code {
+    [Parameter]
+    public int VentaId { get; set; }
+
     public Ventas Venta { get; set; } = new Ventas();
     public List<DetallesVentas> ListaDetallesVenta { get; set; } = new List<DetallesVentas>();
     public int? CodigoProducto { get; set; }
 
-    private ClaimsPrincipal? user;
-
     protected override async Task OnInitializedAsync()
     {
-        var authState = await authenticationStateProvider.GetAuthenticationStateAsync();
-        user = authState.User;
-
-        Venta.DetallesVentas = ListaDetallesVenta;
-        Venta.Vendedor = user?.FindFirst(ClaimTypes.Name)?.Value;
+        Venta = await ventasServices.Buscar(VentaId);
+        ListaDetallesVenta = Venta.DetallesVentas.ToList();
     }
 
-    public async Task Guardar()
+    public async Task Modificar()
     {
         if (Venta.DetallesVentas.Count == 0)
         {
@@ -242,15 +240,15 @@
             Console.WriteLine("\nEl monto recibido tiene que ser mayor o igual al Total de venta\n");
             return;
         }
-        bool guardado = await ventasServices.Guardar(Venta);
-        if (guardado)
+        bool modificado = await ventasServices.Guardar(Venta);
+        if (modificado)
         {
-            Console.WriteLine("\nLa venta se guardo exitosamente\n");
+            Console.WriteLine("\nLa venta se modifico exitosamente\n");
             navigationManager.NavigateTo("/Ventas/Index");
         }
         else
         {
-            Console.WriteLine("\nHa ocurrido un error al guardar la venta\n");
+            Console.WriteLine("\nHa ocurrido un error al modificar la venta\n");
         }
     }
 

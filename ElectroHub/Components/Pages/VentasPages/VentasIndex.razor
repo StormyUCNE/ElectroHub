@@ -1,5 +1,8 @@
 ﻿@page "/Ventas/Index";
 
+@rendermode InteractiveServer
+@inject VentasService ventasService;
+
 <PageTitle>VentasIndex</PageTitle>
 
 <div class="container">
@@ -16,7 +19,7 @@
                 <div class="img-container">
                     <img src="/VentasSVG/Calendar.svg" width="20" height="20" />
                 </div>
-                <input type="date" />
+                <input type="datetime-local" @bind-value="FechaDesde"/>
             </div>
         </div>
         <div class="col-2">
@@ -27,12 +30,12 @@
                 <div class="img-container">
                     <img src="/VentasSVG/Calendar.svg" width="20" height="20" />
                 </div>
-                <input type="date" />
+                <input type="datetime-local" @bind-value="FechaHasta"/>
             </div>
         </div>
     </div>
 
-    @* Hora *@
+    @* Hora 
     <div class="row align-items-center pb-3">
         <div class="col-2">
             <label class="subtitulo">Desde:</label>
@@ -56,7 +59,7 @@
                 <input type="time" />
             </div>
         </div>
-    </div>
+    </div> *@
 
     @* Vendedor y metodo de pago *@
     <div class="row align-items-center pb-3">
@@ -83,17 +86,18 @@
                 <div class="img-container">
                     <img src="/VentasSVG/PaymentMethod.svg" width="20" height="20" />
                 </div>
-                <select>
-                    <option>Efectivo</option>
-                    <option>Tarjeta de d&eacute;bito</option>
-                    <option>Tarjeta de cr&eacute;dito</option>
-                    <option>Cheque</option>
+                <select @bind="MetodoPagoSeleccionado">
+                    <option value="">Todos</option>
+                    @foreach (var metodo in Enum.GetValues(typeof(MetodosPago)))
+                    {
+                        <option value="@metodo">@metodo</option>
+                    }
                 </select>
             </div>
         </div>
     </div>
 
-    @* Monto *@
+    @* Monto 
     <div class="row align-items-center pb-2">
         <div class="col-2">
             <label class="subtitulo">Monto:</label>
@@ -106,18 +110,18 @@
                 <input type="number" value="0.00"/>
             </div>
         </div>
-    </div>
+    </div> *@
 
     @* Registros mostrados y botones *@
     <div class="row align-items-center">
-        <div class="col-8">
+        <div class="col-7">
             <label class="subtitulo">Mostrando 3 de 3 ventas</label>
         </div>
         <div class="col-2">
-            <button class="boton boton-aplicar">Aplicar</button>
+            <button class="boton boton-aplicar" type="button" @onclick="Filtrar">Aplicar</button>
         </div>
         <div class="col-2">
-            <button class="boton boton-restablecer">Restablecer</button>
+            <button class="boton boton-restablecer" type="button" @onclick="Restablecer">Restablecer</button>
         </div>
     </div>
 
@@ -135,44 +139,74 @@
                 </tr>
             </thead>
             <tbody>
-                <tr>
-                    <td>00001</td>
-                    <td>2026-01-30 08:00:00 AM</td>
-                    <td>$1,483.00</td>
-                    <td>Efectivo</td>
-                    <td>Luis Fonsi</td>
-                    <td>
-                        <a class="boton boton-detalles" href="/Ventas/Detalles">Detalles</a>
-                    </td>
-                </tr>
-                <tr>
-                    <td>00001</td>
-                    <td>2026-01-30 08:00:00 AM</td>
-                    <td>$1,483.00</td>
-                    <td>Efectivo</td>
-                    <td>Luis Fonsi</td>
-                    <td>
-                        <a class="boton boton-detalles" href="/Ventas/Detalles">Detalles</a>
-                    </td>
-                </tr>
-                <tr>
-                    <td>00001</td>
-                    <td>2026-01-30 08:00:00 AM</td>
-                    <td>$1,483.00</td>
-                    <td>Efectivo</td>
-                    <td>Luis Fonsi</td>
-                    <td>
-                        <a class="boton boton-detalles" href="/Ventas/Detalles">Detalles</a>
-                    </td>
-                </tr>
+                @foreach (var venta in ListaVentas)
+                {
+                    <tr>
+                        <td>@venta.VentaId</td>
+                        <td>@venta.Fecha</td>
+                        <td>$@venta.Total.ToString("N2")</td>
+                        <td>@venta.MetodoPago</td>
+                        <td>@venta.Vendedor</td>
+                        <td>
+                            <a class="boton boton-detalles" href="/Ventas/Detalles/@venta.VentaId">Detalles</a>
+                        </td>
+                    </tr>
+                }
             </tbody>
         </table>
     </div>
-    <div class="text-center pt-3">
-        <a class="boton boton-registrar" href="/Ventas/Create">Registrar venta</a>
+    <div class="row justify-content-center pt-3">
+        <div class="col-2 text-center">
+            <a class="boton boton-registrar" href="/Ventas/Create">Nueva venta</a>
+        </div>
     </div>
 </div>
 
 @code {
+    public List<Ventas> ListaVentas { get; set; } = new List<Ventas>();
+    public DateTime? FechaDesde { get; set; }
+    public DateTime? FechaHasta { get; set; }
+    private MetodosPago? MetodoPagoSeleccionado { get; set; }
 
+    protected override async Task OnInitializedAsync()
+    {
+        ListaVentas = await ventasService.Listar(v => v.VentaId > 0);
+    }
+
+    public async Task Filtrar()
+    {
+        Expression<Func<Ventas, bool>> criterio = v => v.VentaId > 0;
+        if (FechaDesde.HasValue && FechaHasta.HasValue)
+        {
+            DateTime fechaHasta = FechaHasta.Value.Date.AddDays(1).AddTicks(-1);
+            criterio = criterio.And(v => v.Fecha >= FechaDesde.Value && v.Fecha <= fechaHasta);
+        }
+        else if (FechaDesde.HasValue)
+        {
+            criterio = criterio.And(v => v.Fecha >= FechaDesde.Value);
+        }
+        else if (FechaHasta.HasValue)
+        {
+            var fechaHasta = FechaHasta.Value.Date.AddDays(1).AddTicks(-1);
+            criterio = criterio.And(e => e.Fecha <= fechaHasta);
+        }
+
+        // Filtro por método de pago (usando Enum)
+        if (MetodoPagoSeleccionado.HasValue)
+        {
+            criterio = criterio.And(v => v.MetodoPago == MetodoPagoSeleccionado.Value);
+        }
+
+        ListaVentas = await ventasService.Listar(criterio);
+    }
+
+    private async Task Restablecer()
+    {
+        // Limpiar filtros
+        FechaDesde = null;
+        FechaHasta = null;
+        MetodoPagoSeleccionado = null;
+
+        ListaVentas = await ventasService.Listar(v => v.VentaId > 0);
+    }
 }
