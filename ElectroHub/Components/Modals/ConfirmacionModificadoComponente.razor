@@ -5,9 +5,10 @@
     </div>
     <hr />
     <div class="modal-body" @onclick:stopPropagation="true">
-        <p>@Asunto <span>@Nombre</span> se Modificó correctamente.</p>
+        <p>@Asunto <span>@Nombre</span> se @Accion correctamente.</p>
     </div>
-    <div>
+    <div class="accept-container">
+        <img src="/ProductosSVG/Ready.svg" alt="Aceptar" />
         <button @onclick="Cerrar">Aceptar</button>
     </div>
 </div>
@@ -20,6 +21,7 @@
     [Parameter] public string Nombre { get; set; } = string.Empty;
 
     [Parameter] public string Asunto { get; set; } = string.Empty;
+    [Parameter] public string Accion { get; set; } = string.Empty;
 
     [Parameter] public bool Mostrar { get; set; }
 

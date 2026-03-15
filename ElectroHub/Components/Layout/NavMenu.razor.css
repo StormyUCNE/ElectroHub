@@ -54,20 +54,54 @@
     color: white;
     padding:5px 10px 5px 10px;
 }
-.user-container{
-    position:absolute;
-    bottom:10px;
-    display:flex;
-    justify-content:center;
-    align-items:center;
-    width:100%;
-    gap:10px;
-    color:white;
+.user-container {
+    position: absolute;
+    bottom: 10px;
+    display: flex;
+    justify-content: left;
+    align-items: center;
+    left: 10px;
+    right: 10px;
+    gap: 5px;
+    color: white;
+    border-radius: 10px;
+    transition: 0.5s all ease-in-out;
+    cursor: pointer;
+    padding: 3px;
 }
-.data-user > p{
-    margin-bottom:0;
+.user-container:hover{
+    background-color: rgb(215, 170, 86);
+    transition: 0.5s all ease-in-out;
 }
-.data-user button{
+.profile-container {
+    background-color: aqua;
+    border-radius: 100%;
+    background-size: 200% 200%, 200%;
+    background-image: radial-gradient(circle at center, rgb(143, 0, 255) 0%, #d7d7d7 50%);
+    animation: aiFlow 4s ease infinite alternate;
+}
+
+@keyframes aiFlow {
+    0% {
+        background-position: 0% 50%;
+    }
+
+    50% {
+        background-position: 50% 100%;
+    }
+
+    100% {
+        background-position: 100% 50%;
+    }
+}
+
+.data-user > p {
+    margin-bottom: 0;
+}
+.data-user > form > button {
+    color: white;
+    border:none;
+    background:none;
     padding:0;
 }
 
@@ -131,6 +165,7 @@
         height: calc(100vh - 3.5rem);
         z-index: 1000;
         background: linear-gradient(to right,#6956D7, #372D72);
+        box-sizing: border-box;
     }
 
 @media (min-width: 900px) {
@@ -146,7 +181,6 @@
     .nav-scrollable {
         /* Never collapse the sidebar for wide screens */
         display: block;
-        /* Allow sidebar to scroll for tall menus */
         overflow-y: auto;
         background: linear-gradient(to right,#6956D7, #372D72);
     }

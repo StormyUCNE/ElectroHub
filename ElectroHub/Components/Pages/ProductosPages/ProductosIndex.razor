@@ -1,24 +1,30 @@
 ﻿@page "/Productos/Index"
-@using ElectroHub.Components.Account.Pages
-@using Microsoft.AspNetCore.Components.Sections
+@inject NavigationManager navigationManager
 @rendermode InteractiveServer
 @inject CategoriasService categoriasService
 @inject ProveedoresService proveedoresService
 @inject ProductosService productosService
+@inject IJSRuntime JS
 
 <PageTitle>Productos</PageTitle>
-<div class="product-container" @onclick="()=> showAddModal = false">
+<div class="product-container" @onclick="() => showAddModal = false">
     <nav>
         <span>Productos</span>
-        <div class="modal-add-mobile" @onclick:stopPropagation="true">
-            <svg @onclick="alternateModal" xmlns="http://www.w3.org/2000/svg" height="48px" viewBox="0 -960 960 960" width="48px" fill="#FFFFFF"><path d="M450-120v-330H120v-60h330v-330h60v330h330v60H510v330h-60Z" /></svg>
-            <div class="modal-add-options @(showAddModal ? "show" : "")" @onclick:stopPropagation="true">
-                <ul>
-                    <li @onclick="() => { showRegisterModal = true; showAddModal = false; }">Registra Productos</li>
-                    <li @onclick="() => { showCategoryAdmModal = true; showAddModal = false; }">Administrar Categorías</li>
-                </ul>
-            </div>
-        </div>
+        <AuthorizeView Roles="Admin">
+            <Authorized>
+                <div class="modal-add-mobile" @onclick:stopPropagation="true">
+                    <svg @onclick="alternateModal" xmlns="http://www.w3.org/2000/svg" height="48px" viewBox="0 -960 960 960" width="48px" fill="#AA56D7"><path d="M450-120v-330H120v-60h330v-330h60v330h330v60H510v330h-60Z" /></svg>
+                    <div class="modal-add-options @(showAddModal ? "show" : "")" @onclick:stopPropagation="true">
+                        <ul>
+                            <li @onclick="() => { showRegisterModal = true; showAddModal = false; }">Registra Productos</li>
+                            <li @onclick="IrACategorias">Administrar Categorías</li>
+                            <li @onclick="IrAProveedores">Administrar Proveedores</li>
+                            <li @onclick="IrAEliminados">Productos Eliminados</li>
+                        </ul>
+                    </div>
+                </div>
+            </Authorized>
+        </AuthorizeView>
     </nav>
     <hr />
 
@@ -26,7 +32,7 @@
     <section class="filter-container">
         <section class="input-container">
             <div class="form-field">
-                <input type="text" placeholder="Buscar Producto..." @oninput="Buscar"/>
+                <input type="text" placeholder="Buscar Producto..." @oninput="Buscar" />
             </div>
 
             <div class="select-container">
@@ -43,7 +49,7 @@
             <!-- CONTENEDOR NUEVO -->
             <div class="date-group">
                 <div class="form-field">
-                    <input type="date" @bind="FechaInicial" @bind:after="AplicarFiltros"/>
+                    <input type="date" @bind="FechaInicial" @bind:after="AplicarFiltros" />
                 </div>
                 <div class="form-field">
                     <input type="date" @bind="FechaFinal" @bind:after="AplicarFiltros" />
@@ -51,146 +57,125 @@
             </div>
         </section>
 
-        @*Botón Agregar*@
-        <div class="modal-add" @onclick:stopPropagation="true">
-            <svg @onclick="alternateModal" xmlns="http://www.w3.org/2000/svg" height="48px" viewBox="0 -960 960 960" width="48px" fill="#AA56D7"><path d="M450-120v-330H120v-60h330v-330h60v330h330v60H510v330h-60Z" /></svg>
-            <div class="modal-add-options @(showAddModal ? "show" : "")">
-                <ul>
-                    <li @onclick="() => {showRegisterModal = true; showAddModal = false;}">Registra Productos</li>
-                    <li @onclick="() => { showCategoryAdmModal = true; showAddModal = false; }">Administrar Categorías</li>
-                </ul>
+        <AuthorizeView Roles="Admin">
+            <Authorized>
+                @*Botón Agregar*@
+                <div class="modal-add" @onclick:stopPropagation="true">
+                    <svg @onclick="alternateModal" xmlns="http://www.w3.org/2000/svg" height="48px" viewBox="0 -960 960 960" width="48px" fill="#AA56D7"><path d="M450-120v-330H120v-60h330v-330h60v330h330v60H510v330h-60Z" /></svg>
+                    <div class="modal-add-options @(showAddModal ? "show" : "")">
+                        <ul>
+                            <li @onclick="() => { showRegisterModal = true; showAddModal = false; }">Registra Productos</li>
+                            <li @onclick="IrACategorias">Administrar Categorías</li>
+                            <li @onclick="IrAProveedores">Administrar Proveedores</li>
+                            <li @onclick="IrAEliminados">Productos Eliminados</li>
+                        </ul>
+                    </div>
+                </div>
+            </Authorized>
+        </AuthorizeView>
+    </section>
+
+    @*Tabla*@
+    <section class="table-section">
+        <div class="table-responsive table-containaer">
+            <table class="gradient-border-transparent">
+                <thead>
+                    <tr>
+                        <th>Nombre</th>
+                        <th>Stock Mímino</th>
+                        <th>Proveedor</th>
+                        <th>Categoría</th>
+                        <th>Opción</th>
+                    </tr>
+                </thead>
+                <tbody>
+                    @foreach (var p in ProductosPaginados)
+                    {
+                        <tr>
+                            <td>@p.Nombre</td>
+                            <td>@p.StockMinimo</td>
+                            <td>@p.Proveedores?.NombreEmpresa</td>
+                            <td>@p.Categorias?.Nombre</td>
+                            <td>
+                                <div class="btn-container-details" @onclick="() => ObtenerProducto(p)">
+                                    <img src="/ProductosSVG/InfoIcon.svg" alt="Ver Detalle" />
+                                    <span>Ver Detalles</span>
+                                </div>
+                            </td>
+                        </tr>
+                    }
+                </tbody>
+            </table>
+        </div>
+        <div class="pagination-container">
+            <div class="pagination">
+                <img src="/ProductosSVG/NavigationFlechas.svg" alt="Prev" @onclick="PaginaAnterior" disabled="@(paginaActual == 1)" class="@(paginaActual == 1 ? "opacity-25" : "opacity-100")" />
+                <span>@paginaActual | @TotalPaginas</span>
+                <img src="/ProductosSVG/RigthNav.svg" alt="Next" @onclick="PaginaSiguiente" disabled="@(paginaActual == TotalPaginas)" class="@(paginaActual == TotalPaginas ? "opacity-25" : "opacity-100")" />
             </div>
         </div>
     </section>
 
-    @*Tabla*@
-    <div class="table-responsive table-containaer">
-        <table class="gradient-border-transparent">
-            <thead>
-                <tr>
-                    <th>Nombre</th>
-                    <th>Stock Mímino</th>
-                    <th>Proveedor</th>
-                    <th>Categoría</th>
-                    <th>Opción</th>
-                </tr>
-            </thead>
-            <tbody>
-                @foreach (var p in ProductosPaginados)
-                {
-                    <tr>
-                        <td>@p.Nombre</td>
-                        <td>@p.StockMinimo</td>
-                        <td>@p.Proveedores?.NombreEmpresa</td>
-                        <td>@p.Categorias?.Nombre</td>
-                        <td>
-                            <button @onclick="() => GetProducto(p)">Ver Detalles</button>
-                        </td>
-                    </tr>
-                }
-            </tbody>
-        </table>
-        <div class="pagination">
-            <img src="/ProductosSVG/NavigationFlechas.svg" alt="Prev" @onclick="PaginaAnterior" disabled="@(paginaActual == 1)" class="@(paginaActual == 1 ? "opacity-25" : "opacity-100")" />
-            <span>@paginaActual | @TotalPaginas</span>
-            <img src="/ProductosSVG/RigthNav.svg" alt="Next" @onclick="PaginaSiguiente" disabled="@(paginaActual == TotalPaginas)" class="@(paginaActual == TotalPaginas ? "opacity-25" : "opacity-100")" />
-        </div>
-    </div>
-
     @*Registro para Crear Producto*@
     <RegistroComponente @bind-Mostrar="showRegisterModal" Titulo="Registro Productos" OnCerrar="LimpiarCampos">
-        <EditForm Model="Productos" OnValidSubmit="Guardar">
+        <EditForm Model="NuevoProducto" OnValidSubmit="Guardar">
             <DataAnnotationsValidator />
-            @FormularioProducto
-            <button type="submit">Guardar</button>
+            <div class="register-container">
+                @FormularioProducto(NuevoProducto)
+                <div class="register-save-container">
+                    <img src="/ProductosSVG/Save.svg" alt="Ver Detalle" />
+                    <button type="submit">Guardar</button>
+                </div>
+            </div>
         </EditForm>
     </RegistroComponente>
 
     @*Detalle Producto*@
     <DetalleComponente @bind-Mostrar="showDetailsModal" Titulo="Detalle Productos">
-        <EditForm Model="Productos" OnValidSubmit="Modificar">
+        <EditForm Model="ProductoEditar" OnValidSubmit="Modificar">
             <DataAnnotationsValidator />
-            @FormularioProducto
-            <div class="button-container">
-                <button type="submit">Guardar</button>
-                <button type="button" @onclick="() => showDeleteConfirmationModal = true">Eliminar</button>
-            </div>
-        </EditForm>
-    </DetalleComponente>
-
-    @*Aministracion de Categorias*@
-    <DetalleComponente @bind-Mostrar="showCategoryAdmModal" Titulo="Administración Categoría">
-        <div>
-            <section>
-                <div class="form-field">
-                    <input type="text" placeholder="Buscar Categoría..." @oninput="BuscarCategoria"/>
-                </div>
-            </section>
-            <section class="scroll-inputs">
-                <div class="button-add-category" @onclick:stopPropagation="true">
-                    <svg @onclick="()=> {showAddCategoryModal = true; showCategoryAdmModal = false;}" xmlns="http://www.w3.org/2000/svg" height="35px" viewBox="0 -960 960 960" width="35px" fill="#AA56D7"><path d="M450-120v-330H120v-60h330v-330h60v330h330v60H510v330h-60Z" /></svg>
-                </div>
-                @foreach(var c in ListaCategorias)
-                {
-                    <div class="category-item">
-                        <span>Nombre:</span>
-                        <input @bind="@c.Nombre" disabled/>
-                        <div class="category-icon-container">
-                            <img @onclick="()=>GetCategoria(c)"  src="/ProductosSVG/InfoIcon.svg" alt="Ver Categoria" />
-                            <img @onclick="() => GetCategoriaEliminar(c)" src="/ProductosSVG/Basurero.svg" alt="Eliminar Categoria" />
+            @FormularioProducto(ProductoEditar)
+            <AuthorizeView Roles="Admin">
+                <Authorized Context="authContext">
+                    <div class="button-container">
+                        <div class="register-save-container">
+                            <img src="/ProductosSVG/Save.svg" alt="Guardar" />
+                            <button type="submit">Guardar</button>
+                        </div>
+                        <div class="register-delete-container">
+                            <img src="/ProductosSVG/Basurero.svg" alt="Eliminar" />
+                            <button type="button" @onclick="() => showDeleteConfirmationModal = true">Eliminar</button>
                         </div>
                     </div>
-                }
-                
-            </section>
+                </Authorized>
+            </AuthorizeView>
+        </EditForm>
+    </DetalleComponente>
+
+    <ConfirmacionAgregadoComponente @bind-Mostrar="showProductAddedModal" Asunto="El Producto" Nombre="@NuevoProducto.Nombre" LimpiarObjeto="LimpiarCampos" />
+    <ConfirmacionModificadoComponente @bind-Mostrar="showProductUpdatedConfirmationModal" Asunto="El Producto" Accion="modificó" Nombre="@ProductoEditar.Nombre" LimpiarObjeto="LimpiarCampos" />
+    <AvisoEliminarComponente @bind-Mostrar="showDeleteConfirmationModal" Titulo="Producto" Nombre="@ProductoEditar.Nombre" Asunto="El Producto">
+        <div class="register-delete-container">
+            <img src="/ProductosSVG/Basurero.svg" alt="Eliminar" />
+            <button @onclick="EliminarProducto">Eliminar</button>
         </div>
-    </DetalleComponente>
-
-    <RegistroComponente Titulo="Registro Categoría" @bind-Mostrar="showAddCategoryModal">
-        <EditForm Model="Categorias" OnValidSubmit="GuardarCategorias">
-            <DataAnnotationsValidator />
-            @FormularioCategoria
-        </EditForm>
-    </RegistroComponente>
-
-    <DetalleComponente Titulo="Detalle Categoría" @bind-Mostrar="showCategoryDetailsModal">
-        <EditForm Model="Categorias" OnValidSubmit="ModificarCategoria">
-            <DataAnnotationsValidator />
-            @FormularioCategoria
-        </EditForm>
-    </DetalleComponente>
-
-    <ConfirmacionAgregadoComponente @bind-Mostrar="showCategoryAddedModal" Asunto="La Categoría" Nombre="@Categorias.Nombre" LimpiarObjeto="LimpiarCampos" />
-    <ConfirmacionAgregadoComponente @bind-Mostrar="showProductAddedModal" Asunto="El Producto" Nombre="@Productos.Nombre" LimpiarObjeto="LimpiarCampos" />
-    <ConfirmacionModificadoComponente @bind-Mostrar="showProductUpdatedConfirmationModal" Asunto="El Producto"  Nombre="@Productos.Nombre" LimpiarObjeto="LimpiarCampos" />
-    <ConfirmacionModificadoComponente @bind-Mostrar="showCategoryUpdatedModal" Asunto="La Categoría" Nombre="@Categorias.Nombre" LimpiarObjeto="LimpiarCampos" />
-    <AvisoEliminarComponente @bind-Mostrar="showDeleteConfirmationModal" Titulo="Producto" Nombre="@Productos.Nombre" Asunto="El Producto" >
-        <button @onclick="EliminarProducto">Eliminar</button>
     </AvisoEliminarComponente>
-    <AvisoEliminarComponente @bind-Mostrar="showDeleteCategoryConfirmationModal" Titulo="Categoría" Nombre="@Categorias.Nombre" Asunto="La Categoría">
-        <button @onclick="EliminarCategoria">Eliminar</button>
-    </AvisoEliminarComponente>
-    <ErrorNotificacionComponente @bind-Mostrar="showErrorModal" Asunto="No puede Eliminar Categorías en Uso por Productos."/>
+    <ErrorNotificacionComponente @bind-Mostrar="showErrorModal" Asunto="@mensajeError" LimpiarObjeto="LimpiarCampos" />
 </div>
 
 @code {
     // Modal para Crear
     private bool showAddModal = false;
 
+    //Mensaje Error
+    private string mensajeError = string.Empty;
+
     // Modales para los Producto
-    private bool showRegisterModal = false, 
+    private bool showRegisterModal = false,
     showDetailsModal = false,
-    showProductAddedModal = false, 
+    showProductAddedModal = false,
     showProductUpdatedConfirmationModal = false,
     showDeleteConfirmationModal = false;
-  
-    //Modales para las Categorias
-    private bool showCategoryAddedModal = false,
-    showCategoryUpdatedModal = false,
-    showDeleteCategoryConfirmationModal = false,
-    showCategoryAdmModal = false,
-    showAddCategoryModal = false,
-    showCategoryDetailsModal = false;
 
     //Modal de Error
     private bool showErrorModal = false;
@@ -200,8 +185,9 @@
     private DateTime? FechaFinal { get; set; }
 
     //Objetos y Listas
-    public Productos Productos { get; set; } = new Productos { FechaRegistro = DateTime.Now };
-    public Categorias Categorias { get; set; } = new Categorias { FechaRegistro = DateTime.Now };
+    // PRODUCTOS
+    private Productos NuevoProducto { get; set; } = new Productos { FechaRegistro = DateTime.Now };
+    private Productos ProductoEditar { get; set; } = new Productos();
 
     public List<Categorias> ListaCategorias = new List<Categorias>();
     public List<Proveedores> ListaProveedore = new List<Proveedores>();
@@ -233,41 +219,74 @@
         ListaProductos = await productosService.Listar(p => p.Eliminado == false);
     }
 
-    private async Task LimpiarCampos(){ 
-        Productos = new Productos { FechaRegistro = DateTime.Now };
-        Categorias = new Categorias { FechaRegistro = DateTime.Now };
+    protected override async Task OnAfterRenderAsync(bool firstRender)
+    {
+        if (firstRender)
+        {
+            int width = await JS.InvokeAsync<int>("getWindowWidth");
+            int height = await JS.InvokeAsync<int>("getWindowHeight");
+
+            int espacioFijo = 220;
+            int altoDisponible = height - espacioFijo;
+
+            int altoPorFila = 72;
+            int filas = altoDisponible / altoPorFila;
+
+            if (width < 576)
+                registrosPorPagina = Math.Clamp(filas, 4, 7);
+            else if (width < 768)
+                registrosPorPagina = Math.Clamp(filas, 6, 9);
+            else if (width < 992)
+                registrosPorPagina = Math.Clamp(filas, 8, 12);
+            else if (width < 1200)
+                registrosPorPagina = Math.Clamp(filas, 4, 18);
+            else
+                registrosPorPagina = Math.Clamp(filas, 5, 25);
+            StateHasChanged();
+        }
     }
 
-    private async Task RefrescarLista(){ListaProductos = await productosService.Listar(p => p.Eliminado == false);}
+    private async Task LimpiarCampos()
+    {
+        NuevoProducto = new Productos { FechaRegistro = DateTime.Now };
+        ProductoEditar = new Productos { FechaRegistro = DateTime.Now };
+    }
+
+    private void IrACategorias(){navigationManager.NavigateTo("/Categorias");}
+    private void IrAProveedores() { navigationManager.NavigateTo("/ProveedoresReal/Index"); }
+    private void IrAEliminados() { navigationManager.NavigateTo("/Productos/Eliminados"); }
+
+    private async Task RefrescarLista() { ListaProductos = await productosService.Listar(p => p.Eliminado == false); }
 
     private async Task Guardar()
     {
-        var creado = await productosService.Guardar(Productos);
+        if (await productosService.ExisteDuplicado(NuevoProducto))
+        {
+            mensajeError = "No se Aceptan Productos duplicados con el mismo nombre o descripción.";
+            showErrorModal = true;
+            return;
+        }
+        var creado = await productosService.Guardar(NuevoProducto);
         if (creado)
         {
             showRegisterModal = false;
+            NuevoProducto = new Productos { FechaRegistro = DateTime.Now };
             ListaProductos = await productosService.Listar(p => p.Eliminado == false);
             showProductAddedModal = true;
         }
     }
 
-    private async Task GuardarCategorias()
-    {
-        var creado = await categoriasService.Guardar(Categorias);
-        if (creado)
-        {
-            showAddCategoryModal = false;
-            ListaCategorias = await categoriasService.Listar(c => c.Eliminado == false);
-            showCategoryAddedModal = true;
-        }
-    }
-
     private async Task Modificar()
     {
-        Productos.Categorias = null;
-        Productos.Proveedores = null;
-        var creado = await productosService.Guardar(Productos);
-        if (creado)
+        if (await productosService.ExisteDuplicado(ProductoEditar))
+        {
+            mensajeError = "No se Aceptan Productos duplicados con el mismo nombre o descripción.";
+            showErrorModal = true;
+            showDetailsModal = false;
+            return;
+        }
+        var actualizado = await productosService.Guardar(ProductoEditar);
+        if (actualizado)
         {
             showDetailsModal = false;
             showProductUpdatedConfirmationModal = true;
@@ -275,64 +294,37 @@
         }
     }
 
-    private async Task ModificarCategoria()
-    {
-        var creado = await categoriasService.Guardar(Categorias);
-        if (creado)
-        {
-            showCategoryDetailsModal = false;
-            ListaCategorias = await categoriasService.Listar(c => c.Eliminado == false);
-            ListaProductos = await productosService.Listar(p => p.Eliminado == false);
-            showCategoryUpdatedModal = true;
-        }
-    }
-
     private async Task EliminarProducto()
     {
-        var eliminado = await productosService.Eliminar(Productos.ProductoId);
-        if(eliminado)
+        var eliminado = await productosService.Eliminar(ProductoEditar.ProductoId);
+        if (eliminado)
         {
             ListaProductos = await productosService.Listar(p => p.Eliminado == false);
             showDeleteConfirmationModal = false;
             showDetailsModal = false;
-            Productos = new Productos();
+            ProductoEditar = new Productos();
         }
     }
 
-    private void GetCategoriaEliminar(Categorias c){
-        Categorias = c;
-        showDeleteCategoryConfirmationModal = true;
-    }
-
-    private async Task EliminarCategoria()
+    private void ObtenerProducto(Productos p)
     {
-        var eliminado = await categoriasService.Eliminar(Categorias.CategoriaId);
-        if (eliminado)
+        ProductoEditar = new Productos
         {
-            ListaCategorias = await categoriasService.Listar(c => c.Eliminado == false);
-            ListaProductos = await productosService.Listar(p => p.Eliminado == false);
-            showDeleteCategoryConfirmationModal = false;
-            Categorias = new Categorias();
-        }
-        else
-        {
-            showDeleteCategoryConfirmationModal = false;
-            showErrorModal = true;
-            Categorias = new Categorias();
-        }
-    }
+            ProductoId = p.ProductoId,
+            CodigoProducto = p.CodigoProducto,
+            Nombre = p.Nombre,
+            Descripcion = p.Descripcion,
+            CategoriaId = p.CategoriaId,
+            PrecioCompra = p.PrecioCompra,
+            PrecioVenta = p.PrecioVenta,
+            CantidadInventario = p.CantidadInventario,
+            StockMinimo = p.StockMinimo,
+            ProveedorId = p.ProveedorId,
+            EstadosProductos = p.EstadosProductos,
+            FechaRegistro = p.FechaRegistro
+        };
 
-    private void GetProducto(Productos p)
-    {
-        Productos = p;
         showDetailsModal = true;
-    }
-
-    private void GetCategoria(Categorias c)
-    {
-        Categorias = c;
-        showCategoryDetailsModal = true; 
-        showCategoryAdmModal = false;
     }
 
     public async Task Buscar(ChangeEventArgs e)
@@ -369,22 +361,13 @@
                 listadoFiltrado = listadoFiltrado.Where(p => p.Proveedores?.NombreEmpresa != null &&
                     p.Proveedores.NombreEmpresa.Contains(textoBusqueda, StringComparison.OrdinalIgnoreCase)).ToList();
             }
-            else if (Filtro == "Estado") 
+            else if (Filtro == "Estado")
             {
                 listadoFiltrado = listadoFiltrado.Where(p => p.EstadosProductos.ToString()
                     .Contains(textoBusqueda, StringComparison.OrdinalIgnoreCase)).ToList();
             }
         }
         ListaProductos = listadoFiltrado;
-    }
-
-    private async Task BuscarCategoria(ChangeEventArgs e)
-    {
-        var valor = e?.Value?.ToString();
-        if (!string.IsNullOrWhiteSpace(valor))
-            ListaCategorias = await categoriasService.Listar(c => c.Eliminado == false && c.Nombre.ToString().Contains(valor.ToString()));
-        else
-            ListaCategorias = await categoriasService.Listar(c => c.Eliminado == false);
     }
 
     private void PaginaAnterior()
@@ -399,131 +382,79 @@
             paginaActual++;
     }
 
-    private RenderFragment FormularioProducto => __builder =>
+    private RenderFragment FormularioProducto(Productos productos) => __builder =>
     {
         <section class="edit-form-container">
             <div class="scroll-inputs">
+
                 <div class="input-container-item">
                     <label>Código:</label>
-                    <input type="number" @bind="Productos.CodigoProducto" class="form-control" />
+                    <input type="number" @bind="productos.CodigoProducto" class="form-control" />
                 </div>
-                <ValidationMessage For="() => Productos.CodigoProducto" />
 
                 <div class="input-container-item">
                     <label>Nombre:</label>
-                    <input type="text" @bind="Productos.Nombre" class="form-control" />
+                    <input type="text" @bind="productos.Nombre" class="form-control" />
                 </div>
-                <ValidationMessage For="() => Productos.Nombre" />
-            
-                @* DESCRIPCION *@
+
                 <div class="input-container-item">
                     <label>Descripción:</label>
-                    <input type="text" @bind="Productos.Descripcion" class="form-control" />
+                    <input type="text" @bind="productos.Descripcion" class="form-control" />
                 </div>
-                <ValidationMessage For="() => Productos.Descripcion" />
 
-                @* CATEGORIA (Corregido: Sin ValueExpression) *@
                 <div class="input-container-item">
                     <label>Categoría:</label>
-                    <select @bind="Productos.CategoriaId" class="form-control">
-                        <option value="0">Seleccione una Categoría</option>
+                    <select @bind="productos.CategoriaId" class="form-control">
+                        <option value="0">Seleccione</option>
                         @foreach (var c in ListaCategorias)
                         {
                             <option value="@c.CategoriaId">@c.Nombre</option>
                         }
                     </select>
                 </div>
-                <ValidationMessage For="() => Productos.CategoriaId" />
 
-                @* PRECIO COMPRA *@
                 <div class="input-container-item">
                     <label>Precio Compra:</label>
-                    <input type="number" @bind="Productos.PrecioCompra" class="form-control" />
+                    <input type="number" @bind="productos.PrecioCompra" class="form-control" />
                 </div>
-                <ValidationMessage For="() => Productos.PrecioCompra" />
 
-                @* PRECIO VENTA *@
                 <div class="input-container-item">
                     <label>Precio Venta:</label>
-                    <input type="number" @bind="Productos.PrecioVenta" class="form-control" />
+                    <input type="number" @bind="productos.PrecioVenta" class="form-control" />
                 </div>
-                <ValidationMessage For="() => Productos.PrecioVenta" />
 
-                @* CANTIDAD *@
                 <div class="input-container-item">
                     <label>Cantidad:</label>
-                    <input type="number" @bind="Productos.CantidadInventario" class="form-control" />
+                    <input type="number" @bind="productos.CantidadInventario" class="form-control" />
                 </div>
-                <ValidationMessage For="() => Productos.CantidadInventario" />
 
-                @* STOCK MINIMO *@
                 <div class="input-container-item">
                     <label>Stock Mínimo:</label>
-                    <input type="number" @bind="Productos.StockMinimo" class="form-control" />
+                    <input type="number" @bind="productos.StockMinimo" class="form-control" />
                 </div>
-                <ValidationMessage For="() => Productos.StockMinimo" />
 
                 <div class="input-container-item">
                     <label>Proveedor:</label>
-                    <select @bind="Productos.ProveedorId" class="form-control">
-                        <option value="0">Seleccione un Proveedor</option>
+                    <select @bind="productos.ProveedorId" class="form-control">
+                        <option value="0">Seleccione</option>
                         @foreach (var p in ListaProveedore)
                         {
                             <option value="@p.ProveedorId">@p.NombreEmpresa</option>
                         }
                     </select>
                 </div>
-                <ValidationMessage For="() => Productos.ProveedorId" />
 
-                @* ESTADO (Corregido: Sin ValueExpression) *@
                 <div class="input-container-item">
                     <label>Estado:</label>
-                    <select @bind="Productos.EstadosProductos" class="form-control">
-                        <option value="0">Seleccione un Estado</option>
+                    <select @bind="productos.EstadosProductos" class="form-control">
+                        <option value="0">Seleccione</option>
                         @foreach (var e in Enum.GetValues<Estados>())
                         {
                             <option value="@e">@e</option>
                         }
                     </select>
                 </div>
-                <ValidationMessage For="() => Productos.EstadosProductos" />
-
-                @* FECHA *@
-                <div class="input-container-item">
-                    <label>Fecha:</label>
-                    <input type="date" @bind="Productos.FechaRegistro" class="form-control" />
-                </div>
-                <ValidationMessage For="() => Productos.FechaRegistro" />
             </div>
-        </section>
-    };
-
-    private RenderFragment FormularioCategoria => __builder =>
-    {
-        <section class="category-form-container">
-            <div class="form-inputs">
-                @* NOMBRE *@
-                <div class="input-container-item">
-                    <label>Nombre:</label>
-                    <input type="text" @bind="Categorias.Nombre" class="form-control" />
-                </div>
-                <ValidationMessage For="() => Categorias.Nombre" />
-
-                @* DESCRIPCION *@
-                <div class="input-container-item">
-                    <label>Descripción:</label>
-                    <input type="text" @bind="Categorias.Descripcion" class="form-control" />
-                </div>
-                <ValidationMessage For="() => Categorias.Descripcion" />
-
-                @* FECHA *@
-                <div class="input-container-item">
-                    <label>Fecha:</label>
-                    <input type="date" @bind="Categorias.FechaRegistro" class="form-control" />
-                </div>
-                <ValidationMessage For="() => Categorias.FechaRegistro" />
-            </div>
-            <button type="submit">Guardar</button>
         </section>
     };
 }

@@ -1,0 +1,267 @@
+﻿@page "/Categorias/Eliminadas"
+@rendermode InteractiveServer
+@inject CategoriasService categoriasService
+@inject NavigationManager navigationManager
+@inject IJSRuntime JS
+<PageTitle>Categorías Eliminadas</PageTitle>
+<div class="product-container">
+    <div class="back" @onclick="VolverACategorias">
+        <img src="/GlobalImages/Back.svg" alt="Back To Categories" />
+        <span>Volver a Categorías</span>
+    </div>
+    <nav>
+        <span>Categorías Eliminadas</span>
+    </nav>
+    <hr />
+
+    @*Filtros*@
+    <section class="filter-container">
+        <section class="input-container">
+            <div class="form-field">
+                <input type="text" placeholder="Buscar Categoría..." @oninput="Buscar" />
+            </div>
+            <div class="date-group">
+                <div class="form-field">
+                    <input type="date" @bind="FechaInicial" @bind:after="AplicarFiltros" />
+                </div>
+                <div class="form-field">
+                    <input type="date" @bind="FechaFinal" @bind:after="AplicarFiltros" />
+                </div>
+            </div>
+        </section>
+    </section>
+
+    @*Tabla*@
+    <section class="table-section">
+        <div class="table-responsive table-containaer">
+            <table class="gradient-border-transparent">
+                <thead>
+                    <tr>
+                        <th>Categor&iacute;a</th>
+                        <th>Nombre</th>
+                        <th>Descripci&oacute;n</th>
+                        <th>Fecha Registro</th>
+                        <th>Opción</th>
+                    </tr>
+                </thead>
+                <tbody>
+                    @foreach (var c in CategoriasPaginadas)
+                    {
+                        <tr>
+                            <td>@c.CategoriaId</td>
+                            <td>@c.Nombre</td>
+                            <td>@c.Descripcion</td>
+                            <td>@c.FechaRegistro.ToString("dd/MM/yyyy")</td>
+                            <td @onclick:stopPropagation="true">
+                                <div class="btn-container-details" @onclick="() => ObtenerCategoria(c)">
+                                    <img src="/GlobalImages/Recover.svg" alt="Ver Detalle" />
+                                    <span>Recuperar</span>
+                                </div>
+                            </td>
+                        </tr>
+                    }
+                </tbody>
+            </table>
+        </div>
+        <div class="pagination-container">
+            <div class="pagination">
+                <img src="/ProductosSVG/NavigationFlechas.svg" alt="Prev" @onclick="PaginaAnterior" disabled="@(paginaActual == 1)" class="@(paginaActual == 1 ? "opacity-25" : "opacity-100")" />
+                <span>@paginaActual | @TotalPaginas</span>
+                <img src="/ProductosSVG/RigthNav.svg" alt="Next" @onclick="PaginaSiguiente" disabled="@(paginaActual == TotalPaginas)" class="@(paginaActual == TotalPaginas ? "opacity-25" : "opacity-100")" />
+            </div>
+        </div>
+    </section>
+
+    @*Detalle Categoría*@
+    <div class="modal-overlay @(showDetailsCategoryModal ? "show" : "")" @onclick="() => showDetailsCategoryModal = false">
+        <div class="modal-details-container @(showDetailsCategoryModal ? "show" : "")" @onclick:stopPropagation="true">
+            <div class="modal-header">
+                <img src="/ProductosSVG/DetalleIcon.svg" alt="" />
+                <h4>Detalle Categor&iacute;a</h4>
+                <img class="cerrar-icon"
+                     @onclick="() => showDetailsCategoryModal = false"
+                     @onclick:stopPropagation="true"
+                     src="/ProductosSVG/Cerrar.svg"
+                     alt="" />
+            </div>
+            <section>
+                <EditForm Model="CategoriaRecuperar" OnValidSubmit="Recuperar">
+                    <DataAnnotationsValidator />
+                    <div class="form-inputs">
+                        <div>
+                            <div class="input-container-item">
+                                <label>Nombre:</label>
+                                <input type="text" @bind="CategoriaRecuperar.Nombre" class="form-control" disabled/>
+                            </div>
+                            <ValidationMessage For="() => CategoriaRecuperar.Nombre" />
+                        </div>
+                        <div>
+                            <div class="input-container-item">
+                                <label>Descripción:</label>
+                                <input type="text" @bind="CategoriaRecuperar.Descripcion" class="form-control" disabled />
+                            </div>
+                            <ValidationMessage For="() => CategoriaRecuperar.Descripcion" />
+                        </div>
+                        <div>
+                            <div class="input-container-item">
+                                <label>Fecha:</label>
+                                <input type="date" @bind="CategoriaRecuperar.FechaRegistro" class="form-control" disabled />
+                            </div>
+                        </div>
+                    </div>
+                    <AuthorizeView Roles="Admin">
+                        <Authorized Context="authContext">
+                            <div class="button-container">
+                                <div class="register-save-container">
+                                    <img src="/GlobalImages/Recover.svg" alt="Guardar" />
+                                    <button type="submit">Recuperar</button>
+                                </div>
+                            </div>
+                        </Authorized>
+                    </AuthorizeView>
+                </EditForm>
+            </section>
+        </div>
+    </div>
+    <ConfirmacionModificadoComponente @bind-Mostrar="showRecoverCategoryModal" Asunto="La Categoría" Accion="recuperó" Nombre="@CategoriaRecuperar.Nombre" LimpiarObjeto="LimpiarCampos" />
+    <ErrorNotificacionComponente @bind-Mostrar="showErrorModal" Asunto="No puede Eliminar Categorías en Uso por Productos." />
+</div>
+@code {
+
+    //Modales para las Categorias
+    private bool showDetailsCategoryModal = false, showRecoverCategoryModal = false;
+
+    //Modal de Error
+    private bool showErrorModal = false;
+
+    //Filtro para el rango de Fechas
+    private DateTime? FechaInicial { get; set; }
+    private DateTime? FechaFinal { get; set; }
+
+    //Objetos y Listas
+    // CATEGORIAS
+    private Categorias CategoriaRecuperar { get; set; } = new Categorias();
+
+    public List<Categorias> ListaCategorias = new List<Categorias>();
+
+    //Filtro
+    private string Filtro { get; set; } = string.Empty;
+    private string textoBusqueda = "";
+
+    //Pagination Valores
+    private int paginaActual = 1;
+    private int registrosPorPagina = 5;
+
+    private int TotalPaginas =>
+    (int)Math.Ceiling((double)ListaCategorias.Count / registrosPorPagina);
+
+    private IEnumerable<Categorias> CategoriasPaginadas =>
+        ListaCategorias
+            .Skip((paginaActual - 1) * registrosPorPagina)
+            .Take(registrosPorPagina);
+
+    protected override async Task OnInitializedAsync()
+    {
+        ListaCategorias = await categoriasService.Listar(c => c.Eliminado == true && c.CategoriaId > 0);
+    }
+
+    protected override async Task OnAfterRenderAsync(bool firstRender)
+    {
+        if (firstRender)
+        {
+            int width = await JS.InvokeAsync<int>("getWindowWidth");
+            int height = await JS.InvokeAsync<int>("getWindowHeight");
+
+            int espacioFijo = 220;
+            int altoDisponible = height - espacioFijo;
+
+            int altoPorFila = 72;
+            int filas = altoDisponible / altoPorFila;
+
+            if (width < 576)
+                registrosPorPagina = Math.Clamp(filas, 4, 7);
+            else if (width < 768)
+                registrosPorPagina = Math.Clamp(filas, 6, 9);
+            else if (width < 992)
+                registrosPorPagina = Math.Clamp(filas, 8, 12);
+            else if (width < 1200)
+                registrosPorPagina = Math.Clamp(filas, 4, 18);
+            else
+                registrosPorPagina = Math.Clamp(filas, 5, 25);
+            StateHasChanged();
+        }
+    }
+
+    private async Task LimpiarCampos(){CategoriaRecuperar = new Categorias { FechaRegistro = DateTime.Now };}
+    private void VolverACategorias() { navigationManager.NavigateTo("/Categorias"); }
+    private async Task RefrescarLista() { ListaCategorias = await categoriasService.Listar(c => c.Eliminado == true); }
+
+    private void ObtenerCategoria(Categorias c)
+    {
+        CategoriaRecuperar = new Categorias
+        {
+            CategoriaId = c.CategoriaId,
+            Nombre = c.Nombre,
+            Descripcion = c.Descripcion,
+            FechaRegistro = c.FechaRegistro
+        };
+        showDetailsCategoryModal = true;
+    }
+
+    public async Task Recuperar()
+    {
+        var recuperado = await categoriasService.Recuperar(CategoriaRecuperar.CategoriaId);
+        if (recuperado)
+        {
+            showRecoverCategoryModal = true;
+            showDetailsCategoryModal = false;
+            await RefrescarLista();
+        }
+        else
+        {
+            showErrorModal = true;
+        }
+    }
+
+    public async Task Buscar(ChangeEventArgs e)
+    {
+        textoBusqueda = e.Value?.ToString() ?? "";
+        await AplicarFiltros();
+    }
+
+    public async Task AplicarFiltros()
+    {
+        List<Categorias> listadoFiltrado = await categoriasService.Listar(c => c.Eliminado == true && c.CategoriaId > 0);
+        if (FechaInicial.HasValue && FechaFinal.HasValue)
+        {
+            listadoFiltrado = listadoFiltrado.Where(c => c.FechaRegistro >= FechaInicial && c.FechaRegistro <= FechaFinal).ToList();
+        }
+        if (!string.IsNullOrWhiteSpace(textoBusqueda))
+        {
+            listadoFiltrado = listadoFiltrado.Where(c => c.Nombre.Contains(textoBusqueda, StringComparison.OrdinalIgnoreCase)).ToList();
+        }
+        ListaCategorias = listadoFiltrado;
+        paginaActual = 1;
+    }
+
+    private async Task BuscarCategoria(ChangeEventArgs e)
+    {
+        var valor = e?.Value?.ToString();
+        if (!string.IsNullOrWhiteSpace(valor))
+            ListaCategorias = await categoriasService.Listar(c => c.Eliminado == false && c.Nombre.ToString().Contains(valor.ToString()));
+        else
+            ListaCategorias = await categoriasService.Listar(c => c.Eliminado == false);
+    }
+
+    private void PaginaAnterior()
+    {
+        if (paginaActual > 1)
+            paginaActual--;
+    }
+
+    private void PaginaSiguiente()
+    {
+        if (paginaActual < TotalPaginas)
+            paginaActual++;
+    }
+}

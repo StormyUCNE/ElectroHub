@@ -20,28 +20,39 @@
 <div class="register-container">
     <section class="register-card">
         <h1>Registrarse</h1>
-        <StatusMessage Message="@Message" />
         <EditForm Model="Input" method="post" OnValidSubmit="RegisterUser" FormName="register">
             <DataAnnotationsValidator />
-            <h2>Crea un nueva cuenta.</h2>
             <hr />
-            <ValidationSummary class="text-danger" role="alert" />
-            <div class="form-floating mb-3">
-                <InputText @bind-Value="Input.Email" id="Input.Email" class="form-control" autocomplete="username" aria-required="true" placeholder="name@example.com" />
-                <label for="Input.Email">Email</label>
+            <div class="mb-3">
+                <div class="form-input">
+                    <input name="Input.UserName" @bind="Input.UserName" id="Input.UserName" autocomplete="current-password" aria-required="true" placeholder="ej:Juan_Alfonso" />
+                </div>
+                <ValidationMessage For="() => Input.UserName" class="text-danger" />
+            </div>
+            <div class="mb-3">
+                <div class="form-input">
+                    <input name="Input.Email" @bind="Input.Email" id="Input.Email" autocomplete="username webauthn" aria-required="true" placeholder="nombre@example.com" />
+                </div>
                 <ValidationMessage For="() => Input.Email" class="text-danger" />
             </div>
-            <div class="form-floating mb-3">
-                <InputText type="password" @bind-Value="Input.Password" id="Input.Password" class="form-control" autocomplete="new-password" aria-required="true" placeholder="password" />
-                <label for="Input.Password">Password</label>
+            <div class="mb-3">
+                <div class="form-password">
+                    <input type="password" name="Input.Password" @bind="Input.Password" id="Input.Password" autocomplete="current-password" aria-required="true" placeholder="Contraseña" />
+                </div>
                 <ValidationMessage For="() => Input.Password" class="text-danger" />
+
+                <div class="text-danger">
+                    @Message
+                </div>
+                
             </div>
-            <div class="form-floating mb-3">
-                <InputText type="password" @bind-Value="Input.ConfirmPassword" id="Input.ConfirmPassword" class="form-control" autocomplete="new-password" aria-required="true" placeholder="password" />
-                <label for="Input.ConfirmPassword">Confirm Password</label>
+            <div class="mb-3">
+                <div class="form-password">
+                    <input type="password" name="Input.ConfirmPassword" @bind="Input.ConfirmPassword" id="Input.ConfirmPassword" autocomplete="new-password" aria-required="true" placeholder="Confirme Contraseña" />
+                </div>
                 <ValidationMessage For="() => Input.ConfirmPassword" class="text-danger" />
             </div>
-            <button type="submit" class="w-100 btn btn-lg btn-primary">Register</button>
+            <button type="submit" class="w-100 btn btn-lg btn-primary">Registrar</button>
             <hr />
             <a href="@(NavigationManager.GetUriWithQueryParameters("Account/Login", new Dictionary<string, object?> { ["ReturnUrl"] = ReturnUrl }))">Inicia Sesión</a>
         </EditForm>
@@ -68,9 +79,11 @@
     {
         var user = CreateUser();
 
-        await UserStore.SetUserNameAsync(user, Input.Email, CancellationToken.None);
+        await UserStore.SetUserNameAsync(user, Input.UserName, CancellationToken.None);
+    
         var emailStore = GetEmailStore();
         await emailStore.SetEmailAsync(user, Input.Email, CancellationToken.None);
+
         var result = await UserManager.CreateAsync(user, Input.Password);
 
         if (!result.Succeeded)
@@ -79,29 +92,11 @@
             return;
         }
 
-        Logger.LogInformation("User created a new account with password.");
+        Logger.LogInformation("Usuario creado con éxito.");
+   
         await UserManager.AddToRoleAsync(user, "User");
+
         NavigationManager.NavigateTo("/Account/Login");
-        var userId = await UserManager.GetUserIdAsync(user);
-        var code = await UserManager.GenerateEmailConfirmationTokenAsync(user);
-        code = WebEncoders.Base64UrlEncode(Encoding.UTF8.GetBytes(code));
-        var callbackUrl = NavigationManager.GetUriWithQueryParameters(
-            NavigationManager.ToAbsoluteUri("Account/Login").AbsoluteUri,
-            new Dictionary<string, object?> { ["userId"] = userId, ["code"] = code, ["returnUrl"] = ReturnUrl });
-
-        await EmailSender.SendConfirmationLinkAsync(user, Input.Email, HtmlEncoder.Default.Encode(callbackUrl));
-
-        @*if (UserManager.Options.SignIn.RequireConfirmedAccount)
-        {
-            RedirectManager.RedirectTo(
-                "Account/RegisterConfirmation",
-                new() { ["email"] = Input.Email, ["returnUrl"] = ReturnUrl });
-        }
-        else
-        {
-            await SignInManager.SignInAsync(user, isPersistent: false);
-            RedirectManager.RedirectTo(ReturnUrl);
-        }*@
     }
 
     private ApplicationUser CreateUser()
@@ -128,20 +123,25 @@
 
     private sealed class InputModel
     {
+        [Required(ErrorMessage = "El nombre de usuario es obligatorio")]
+        [Display(Name = "Nombre Usuario")]
+        [StringLength(15, ErrorMessage = "El {0} debe tener entre {2} y {1} caracteres.", MinimumLength = 6)]
+        public string UserName { get; set; } = "";
+
         [Required]
         [EmailAddress]
         [Display(Name = "Email")]
         public string Email { get; set; } = "";
 
         [Required]
-        [StringLength(100, ErrorMessage = "The {0} must be at least {2} and at max {1} characters long.", MinimumLength = 6)]
+        [StringLength(100, ErrorMessage = "La {0} debe tener al menos {2} caracteres.", MinimumLength = 6)]
         [DataType(DataType.Password)]
-        [Display(Name = "Password")]
+        [Display(Name = "Contraseña")]
         public string Password { get; set; } = "";
 
         [DataType(DataType.Password)]
-        [Display(Name = "Confirm password")]
-        [Compare("Password", ErrorMessage = "The password and confirmation password do not match.")]
+        [Display(Name = "Confirmar Contraseña")]
+        [Compare("Password", ErrorMessage = "La contraseña de confirmación no coincide.")]
         public string ConfirmPassword { get; set; } = "";
     }
 }

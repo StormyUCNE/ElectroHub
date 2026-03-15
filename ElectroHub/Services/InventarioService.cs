@@ -22,7 +22,7 @@ public class InventarioService(IDbContextFactory<ApplicationDbContext> DbFactory
         .Include(m => m.Producto)
             .ThenInclude(p => p!.Categorias) // Carga la categoría del producto
         .Include(m => m.Producto)
-            .ThenInclude(p => p!.Proveedores) // <--- ESTA ES LA LÍNEA QUE FALTABA
+            .ThenInclude(p => p!.Proveedores) 
         .Where(criterio)
         .OrderByDescending(m => m.FechaMovimiento)
         .AsNoTracking()

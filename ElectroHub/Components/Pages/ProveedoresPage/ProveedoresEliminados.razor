@@ -1,0 +1,219 @@
+﻿@page "/Proveedores/Eliminados"
+@rendermode InteractiveServer
+@inject ProveedoresService proveedoresService
+@inject NavigationManager navigationManager
+<PageTitle>Proveedores Eliminados</PageTitle>
+
+<div class="container">
+    <div class="back" @onclick="VolverAProveedor">
+        <img src="/GlobalImages/Back.svg" alt="Back To Supplier" />
+        <span>Volver a Proveedores</span>
+    </div>
+    <nav>
+        <span>Proveedores Eliminados</span>
+    </nav>
+    <hr />
+
+    <section class="inputs-container">
+        <div class="input-container">
+            <input type="text" placeholder="Buscar Proveedor..." @oninput="Buscar" />
+        </div>
+
+        <div class="select-container">
+            <select class="form-select" @bind="Filtro">
+                <option value="">Seleccione Filtrar Por</option>
+                <option value="NombreEmpresa">Nombre Empresa</option>
+                <option value="Contacto">Contacto</option>
+                <option value="Telefono">Teléfono</option>
+                <option value="CorreoElectronico">Correo</option>
+                <option value="TipoProveedor">Tipo</option>
+                <option value="EstadoProveedor">Estado</option>
+            </select>
+        </div>
+    </section>
+
+    <div class="table-responsive gradient-border-transparent">
+        <table>
+            <thead>
+                <tr>
+                    <th>Empresa</th>
+                    <th>Contacto</th>
+                    <th>Tipo</th>
+                    <th>Estado</th>
+                    <th>Opción</th>
+                </tr>
+            </thead>
+            <tbody>
+                @foreach (var p in ProveedoresPaginados)
+                {
+                    <tr>
+                        <td>@p.NombreEmpresa</td>
+                        <td>@p.Contacto</td>
+                        <td>@p.TipoProveedor</td>
+                        <td>@p.EstadoProveedor</td>
+                        <td>
+                            <button @onclick="() => GetProveedor(p)">Recuperar</button>
+                        </td>
+                    </tr>
+                }
+            </tbody>
+        </table>
+    </div>
+
+    <div class="pagination">
+        <img src="/ProductosSVG/NavigationFlechas.svg" @onclick="PaginaAnterior"
+             class="@(paginaActual == 1 ? "opacity-25" : "opacity-100")" />
+        <span>@paginaActual | @TotalPaginas</span>
+        <img src="/ProductosSVG/RigthNav.svg" @onclick="PaginaSiguiente"
+             class="@(paginaActual == TotalPaginas ? "opacity-25" : "opacity-100")" />
+    </div>
+
+    <!-- MODAL DETALLE -->
+    <DetalleComponente @bind-Mostrar="showModalDetails" Titulo="Detalle Proveedor">
+        <EditForm Model="proveedorSeleccionado" OnValidSubmit="Recuperar">
+            <DataAnnotationsValidator />
+            <section class="edit-form-container">
+                <div class="scroll-inputs">
+
+                    <div class="input-container-item">
+                        <label>Nombre Empresa:</label>
+                        <input type="text" @bind="proveedorSeleccionado.NombreEmpresa" class="form-control" disabled />
+                    </div>
+
+                    <div class="input-container-item">
+                        <label>Contacto:</label>
+                        <input type="text" @bind="proveedorSeleccionado.Contacto" class="form-control" disabled />
+                    </div>
+
+                    <div class="input-container-item">
+                        <label>Correo:</label>
+                        <input type="email" @bind="proveedorSeleccionado.CorreoElectronico" class="form-control" disabled />
+                    </div>
+
+                    <div class="input-container-item">
+                        <label>Dirección:</label>
+                        <input type="text" @bind="proveedorSeleccionado.Direccion" class="form-control" disabled />
+                    </div>
+
+                    <div class="input-container-item">
+                        <label>Tipo:</label>
+                        <input @bind="proveedorSeleccionado.TipoProveedor" class="form-control" disabled />
+                    </div>
+
+                    <div class="input-container-item">
+                        <label>Estado:</label>
+                        <input @bind="proveedorSeleccionado.EstadoProveedor" class="form-control" disabled />
+                    </div>
+                </div>
+                <div class="button-container">
+                    <button type="submit">Recuperar</button>
+                </div>
+            </section>
+        </EditForm>
+    </DetalleComponente>
+    <ConfirmacionModificadoComponente @bind-Mostrar="showRecoverProductModal" Asunto="El Proveedor" Nombre="@proveedorSeleccionado.NombreEmpresa" Accion="recuperó" LimpiarObjeto="LimpiarCampos" />
+    <ErrorNotificacionComponente @bind-Mostrar="showErrorModal" Asunto="No se pudo recuperar el Proveedor, intente nuevamente." />
+</div>
+
+@code {
+
+    private bool showModal = false, showModalRegister = false, showModalDetails = false, showRecoverProductModal = false, showErrorModal = false;
+
+    private string Filtro { get; set; } = string.Empty;
+
+    private int paginaActual = 1;
+    private int registrosPorPagina = 5;
+
+    private int TotalPaginas =>
+        (int)Math.Ceiling((double)ListaProveedores.Count / registrosPorPagina);
+
+    private IEnumerable<Proveedores> ProveedoresPaginados =>
+        ListaProveedores
+            .Skip((paginaActual - 1) * registrosPorPagina)
+            .Take(registrosPorPagina);
+
+    public Proveedores Proveedor { get; set; } = new();
+
+    public Proveedores proveedorSeleccionado { get; set; } = new();
+
+    public List<Proveedores> ListaProveedores = new();
+
+    protected override async Task OnInitializedAsync()
+    {
+        ListaProveedores = await proveedoresService.Listar(p => p.Eliminado == true);
+    }
+
+    private void IrAEliminados() { navigationManager.NavigateTo("/Proveedores/Eliminados"); }
+    private async Task RefrescarLista() { ListaProveedores = await proveedoresService.Listar(p => p.Eliminado == true); }
+    private async Task LimpiarCampos() { proveedorSeleccionado = new(); }
+    private void VolverAProveedor() { navigationManager.NavigateTo("/ProveedoresReal/Index"); }
+
+    public async Task Recuperar()
+    {
+        var recuperado = await proveedoresService.Recuperar(proveedorSeleccionado.ProveedorId);
+        if (recuperado)
+        {
+            showRecoverProductModal = true;
+            showModalDetails = false;
+            await RefrescarLista();
+        }
+        else
+        {
+            showErrorModal = true;
+        }
+    }
+
+    private void GetProveedor(Proveedores p)
+    {
+        proveedorSeleccionado = p;
+        showModalDetails = true;
+    }
+
+    private void PaginaAnterior()
+    {
+        if (paginaActual > 1)
+            paginaActual--;
+    }
+
+    private void PaginaSiguiente()
+    {
+        if (paginaActual < TotalPaginas)
+            paginaActual++;
+    }
+
+    public async Task Buscar(ChangeEventArgs e)
+    {
+        var valor = e.Value?.ToString();
+
+        if (!string.IsNullOrWhiteSpace(valor))
+        {
+            if (Filtro == "NombreEmpresa")
+                ListaProveedores = await proveedoresService.Listar(p =>
+                    p.NombreEmpresa.ToLower().Contains(valor.ToLower()) && p.Eliminado);
+
+            else if (Filtro == "Contacto")
+                ListaProveedores = await proveedoresService.Listar(p =>
+                    p.Contacto.ToLower().Contains(valor.ToLower()) && p.Eliminado);
+
+            else if (Filtro == "CorreoElectronico")
+                ListaProveedores = await proveedoresService.Listar(p =>
+                    p.CorreoElectronico.ToLower().Contains(valor.ToLower()) && p.Eliminado);
+
+            else if (Filtro == "TipoProveedor")
+                ListaProveedores = await proveedoresService.Listar(p =>
+                    p.TipoProveedor.ToString().ToLower().Contains(valor.ToLower()) && p.Eliminado);
+
+            else if (Filtro == "EstadoProveedor")
+                ListaProveedores = await proveedoresService.Listar(p =>
+                    p.EstadoProveedor.ToString().ToLower().Contains(valor.ToLower()) && p.Eliminado);
+        }
+        else
+        {
+            ListaProveedores = await proveedoresService.Listar(p => p.Eliminado);
+        }
+
+        paginaActual = 1;
+    }
+}
+
+

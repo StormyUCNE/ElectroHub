@@ -1,7 +1,7 @@
 ﻿@page "/ProveedoresReal/Index"
 @rendermode InteractiveServer
 @inject ProveedoresService proveedoresService
-@using ElectroHub.Models.Enums
+@inject NavigationManager navigationManager
 
 <PageTitle>Proveedores</PageTitle>
 
@@ -41,6 +41,7 @@
             <div class="modal-add-options @(showModal ? "show" : "")">
                 <ul>
                     <li @onclick="() => showModalRegister = true">Registrar Proveedor</li>
+                    <li @onclick="IrAEliminados">Proveedores Eliminados</li>
                 </ul>
             </div>
         </div>
@@ -75,9 +76,10 @@
     </div>
 
     <div class="pagination">
-        <img src="/NavigationFlechas.svg" @onclick="PaginaAnterior"
+        <img src="/ProductosSVG/NavigationFlechas.svg" @onclick="PaginaAnterior"
              class="@(paginaActual == 1 ? "opacity-25" : "opacity-100")" />
-        <img src="/RigthNav.svg" @onclick="PaginaSiguiente"
+        <span>@paginaActual | @TotalPaginas</span>
+        <img src="/ProductosSVG/RigthNav.svg" @onclick="PaginaSiguiente"
              class="@(paginaActual == TotalPaginas ? "opacity-25" : "opacity-100")" />
     </div>
 
@@ -210,7 +212,7 @@
     private string Filtro { get; set; } = string.Empty;
 
     private int paginaActual = 1;
-    private int registrosPorPagina = 6;
+    private int registrosPorPagina = 5;
 
 
     private int TotalPaginas =>
@@ -231,6 +233,8 @@
     {
         ListaProveedores = await proveedoresService.Listar(p => p.Eliminado == false);
     }
+
+    private void IrAEliminados() { navigationManager.NavigateTo("/Proveedores/Eliminados"); }
 
     private async Task Guardar()
     {
@@ -253,9 +257,15 @@
         }
     }
 
-    private void Eliminar()
+    private async Task Eliminar()
     {
-        showModalDetails = false;
+        var eliminado = await proveedoresService.Eliminar(proveedorSeleccionado.ProveedorId);
+        if (eliminado)
+        {
+            ListaProveedores = await proveedoresService.Listar(p => p.Eliminado == false);
+            showModalDetails = false;
+            proveedorSeleccionado = new Proveedores();
+        }
     }
 
     private void GetProveedor(Proveedores p)
@@ -315,3 +325,5 @@
         paginaActual = 1;
     }
 }
+
+

@@ -8,8 +8,9 @@
     <div class="modal-body" @onclick:stopPropagation="true">
         <p>Error, @Asunto</p>
     </div>
-    <div>
-        <button @onclick="Cerrar">Aceptar</button>
+    <div class="accept-container" @onclick="Cerrar">
+        <img src="/ProductosSVG/Ready.svg" alt="Aceptar" />
+        <button>Aceptar</button>
     </div>
 </div>
 
@@ -23,10 +24,11 @@
 
     [Parameter] public EventCallback<bool> MostrarChanged { get; set; }
 
-
+    [Parameter] public EventCallback LimpiarObjeto { get; set; }
     public async Task Cerrar()
     {
         Mostrar = false;
         await MostrarChanged.InvokeAsync(false);
+        await LimpiarObjeto.InvokeAsync();
     }
 }

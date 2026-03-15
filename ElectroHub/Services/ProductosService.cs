@@ -21,29 +21,32 @@ public class ProductosService(IDbContextFactory<ApplicationDbContext> DbFactory)
         return await contexto.Productos.AnyAsync(p => p.ProductoId == productoId);
     }
 
+    public async Task<bool> ExisteDuplicado(Productos productos)
+    {
+        await using var contexto = await DbFactory.CreateDbContextAsync();
+        return await contexto.Productos.AnyAsync(p => (p.Nombre.ToLower() == productos.Nombre.ToLower() || p.Descripcion.ToLower() == productos.Descripcion.ToLower()) && p.ProductoId != productos.ProductoId);
+    }
     private async Task<bool> Insertar(Productos producto)
     {
         await using var contexto = await DbFactory.CreateDbContextAsync();
 
-        // 1. Agregamos el producto al contexto
+        // 1. Agregamos y guardamos el producto primero
         contexto.Productos.Add(producto);
-        // Guardamos para que se genere el ID del producto si es Identity
-        return await contexto.SaveChangesAsync() > 0;
+        await contexto.SaveChangesAsync(); 
 
-        /*
+        
         var movimiento = new InventarioMovimientos
         {
-            ProductoId = producto.ProductoId,
+            ProductoId = producto.ProductoId, 
             FechaMovimiento = DateTime.Now,
             TipoMovimiento = "Entrada",
             Cantidad = producto.CantidadInventario ?? 0,
             StockResultante = producto.CantidadInventario ?? 0,
-            Usuario = "Sistema", // Puedes personalizar esto
+            Usuario = "Sistema"
         };
 
         contexto.InventarioMovimientos.Add(movimiento);
         return await contexto.SaveChangesAsync() > 0;
-        */
     }
 
     private async Task<bool> Modificar(Productos producto)
@@ -98,13 +101,23 @@ public class ProductosService(IDbContextFactory<ApplicationDbContext> DbFactory)
         return filasAfectadas > 0;
     }
 
+    public async Task<bool> Recuperar(int productoId)
+    {
+        await using var contexto = await DbFactory.CreateDbContextAsync();
+        var filasAfectadas = await contexto.Productos!
+            .Where(p => p.ProductoId == productoId)
+            .ExecuteUpdateAsync(p =>
+                p.SetProperty(x => x.Eliminado, false));
+        return filasAfectadas > 0;
+    }
+
     public async Task<List<Productos>> Listar(Expression<Func<Productos, bool>> criterio)
     {
         await using var contexto = await DbFactory.CreateDbContextAsync();
         return await contexto.Productos
             .Include(c => c.Categorias)
             .Include(p => p.Proveedores)
-            .Where(criterio)
+            .Where(criterio).AsNoTracking()
             .ToListAsync();
     }
 }

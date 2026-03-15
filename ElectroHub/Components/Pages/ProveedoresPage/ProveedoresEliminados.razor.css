@@ -1,4 +1,4 @@
-.gradient-border-transparent {
+﻿.gradient-border-transparent {
     --border-width: 3px;
     --radius: 20px;
     position: relative;
@@ -31,7 +31,18 @@
     }
 
 /*  COPIA de aqui pa arriba  */
-.back-products {
+
+.container {
+    height: 100vh;
+    backdrop-filter: blur(10px);
+    padding: 2rem 1rem 2rem 1rem;
+}
+
+nav > span {
+    font-size: 4vw;
+    color: #5683D7;
+}
+.back {
     color: white;
     position: relative;
     border-radius: 30px;
@@ -44,108 +55,40 @@
     cursor: pointer;
     transition: all 0.2s ease-in-out;
 }
-
-    .back-products:hover {
-        background: rgba(170,86,215,0.8);
-        backdrop-filter: blur(10px);
-        -webkit-backdrop-filter: blur(10px);
-        transition: all 0.2s ease-in-out;
-        cursor: pointer;
-    }
-
-    .back-products::before {
-        content: "";
-        position: absolute;
-        inset: 0;
-        border-radius: 30px;
-        padding: 2px; /* Grosor del borde gradiente */
-        /* Tu gradiente lineal */
-        background: linear-gradient(to right, #AA56D7, #D7AA56);
-        /* El recorte mágico para que el centro sea transparente */
-        -webkit-mask: linear-gradient(#fff 0 0) content-box, linear-gradient(#fff 0 0);
-        -webkit-mask-composite: xor;
-        mask-composite: exclude;
-        pointer-events: none; /* Permite hacer clic a través del borde hacia el input */
-    }
-.container {
-    height: 100vh;
+.back:hover {
+    background: rgba(170,86,215,0.8);
     backdrop-filter: blur(10px);
-    padding: 2rem 1rem 2rem 1rem;
+    -webkit-backdrop-filter: blur(10px);
+    transition: all 0.2s ease-in-out;
+    cursor: pointer;
 }
-nav > span {
-    font-size: 4vw;
-    color: #5683D7;
+.back::before {
+    content: "";
+    position: absolute;
+    inset: 0;
+    border-radius: 30px;
+    padding: 2px; /* Grosor del borde gradiente */
+    /* Tu gradiente lineal */
+    background: linear-gradient(to right, #AA56D7, #D7AA56);
+    /* El recorte mágico para que el centro sea transparente */
+    -webkit-mask: linear-gradient(#fff 0 0) content-box, linear-gradient(#fff 0 0);
+    -webkit-mask-composite: xor;
+    mask-composite: exclude;
+    pointer-events: none; /* Permite hacer clic a través del borde hacia el input */
 }
-hr{
-    margin:0;
+
+hr {
+    margin: 0;
     margin-bottom: 20px;
     border: 2px white solid;
 }
-.inputs-container{
+
+.inputs-container {
     display: flex;
     justify-content: start;
     gap: 50px;
-    cursor:pointer;
+    cursor: pointer;
 }
-.modal-add > svg {
-    border: 2px white solid;
-    border-radius: 100%;
-    transition: all 0.2s ease-in-out;
-}
-.modal-add > svg:hover {
-    border: 2px pink solid;
-    border-radius: 100%;
-    transition: all 0.2s ease-in-out;
-}
-.modal-add{
-    position:relative;
-}
-.modal-add-options {
-    position: absolute;
-    border: 2px #AA56D7 solid;
-    border-radius: 10px;
-    right: 0;
-    width: 300px;
-    transform: translateY(-10px);
-    opacity: 0%;
-    transition: all 0.2s ease-in-out;
-    z-index: -1;
-}
-.modal-add-options.show {
-    position: absolute;
-    border: 2px pink solid;
-    border-radius: 10px;
-    right: 0;
-    width: 300px;
-    background-color: rgb(0, 0, 0, 0.8);
-    backdrop-filter: blur(5px);
-    transform: translateY(0px);
-    opacity: 100%;
-    transition: all 0.2s ease-in-out;
-    z-index:1;
-}
-ul, li {
-    display: flex;
-    list-style: none;
-    flex-direction: column;
-    gap: 10px;
-    padding: 10px;
-    margin: 0;
-    border-bottom: 2px white solid;
-    border-radius: 10px;
-    color: white;
-    transition: all 0.2s ease-in-out;
-}
-li:hover{
-    background-color: rgb(180, 100, 242);
-    transition: all 0.2s ease-in-out;
-    border-radius:10px;
-}
-
-
-
-
-
 
 .select-container, .input-container {
     width: 40%;
@@ -191,53 +134,47 @@ li:hover{
     }
 
 
-
-
-
-
-
-
-
-
-
-
-
-
-
 input, select {
-    border:none;
-    width:100%;
+    border: none;
+    width: 100%;
     height: 100%;
     background-color: transparent;
     color: white;
 }
-input:focus, select:focus{
-    outline:none;
-}
-option{
+
+    input:focus, select:focus {
+        outline: none;
+    }
+
+option {
     color: black;
 }
+
 .table-responsive {
     margin-top: 20px;
     overflow-x: auto;
     border: 0px solid #AA56D7;
     border-radius: 20px;
 }
+
 table {
     width: 100%;
     color: white;
 }
+
 thead, th {
     border: 1px black solid;
     padding: 10px;
     text-align: center;
     background-color: rgba(255, 255, 255, 0.1);
 }
+
 tbody, tr, td {
     border: 1px black solid;
     padding: 10px;
     text-align: center;
 }
+
 button {
     border-radius: 10px;
     background-color: #AA56D7;
@@ -245,6 +182,7 @@ button {
     border: none;
     color: white;
 }
+
 .input-container-item {
     display: flex;
     justify-content: space-between;
@@ -256,14 +194,16 @@ button {
     padding: 3px 6px 3px 6px;
     ;
 }
-.input-container-item > input, select {
-    height: 90%;
-    border-radius: 0;
-    border:none;
-    border-bottom: 2px white solid;
-    background-color:transparent;
-    color:white;
-}
+
+    .input-container-item > input, select {
+        height: 90%;
+        border-radius: 0;
+        border: none;
+        border-bottom: 2px white solid;
+        background-color: transparent;
+        color: white;
+    }
+
 .scroll-inputs {
     height: 350px;
     display: flex;
@@ -274,45 +214,46 @@ button {
     overflow-y: auto;
 }
 
-.scroll-inputs::-webkit-scrollbar {
+    .scroll-inputs::-webkit-scrollbar {
         width: 20px;
     }
-.scroll-inputs::-webkit-scrollbar-thumb {
-    background: linear-gradient(#AA56D7, #D7AA56);
-    border-radius: 10px;
-    border: 5px solid transparent;
-    background-clip: content-box;
-}
+
+    .scroll-inputs::-webkit-scrollbar-thumb {
+        background: linear-gradient(#AA56D7, #D7AA56);
+        border-radius: 10px;
+        border: 5px solid transparent;
+        background-clip: content-box;
+    }
 
 
 
 
-.button-container{
-    display:flex;
-    justify-content:center;
-    gap:20px;
+.button-container {
+    display: flex;
+    justify-content: center;
+    gap: 20px;
     padding: 10px;
 }
-.button-container button:first-child {
-    background-color: #5683D7;
-}
-.button-container button:last-child {
-    background-color: #7B2E2E;
-}
-.pagination{
+
+    .button-container button:first-child {
+        background-color: #5683D7;
+    }
+
+.pagination {
     position: absolute;
     bottom: 5%;
     left: 0;
-    right:0;
-    margin:auto;
+    right: 0;
+    margin: auto;
     display: flex;
-    justify-content:center;
-    gap:100px;
+    justify-content: center;
+    gap: 100px;
 }
-.pagination > img{
-    width:20px;
-    cursor:pointer;
-}
+
+    .pagination > img {
+        width: 20px;
+        cursor: pointer;
+    }
 
 .edit-form-container {
     display: flex;
@@ -386,4 +327,3 @@ button {
         ;
     }
 }
-

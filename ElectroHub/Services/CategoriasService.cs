@@ -18,6 +18,11 @@ public class CategoriasService(IDbContextFactory<ApplicationDbContext> DbFactory
         await using var contexto = await DbFactory.CreateDbContextAsync();
         return await contexto.Categorias.AnyAsync(c => c.CategoriaId == categoriaId);
     }
+    public async Task<bool> ExisteDuplicado(Categorias categorias)
+    {
+        await using var contexto = await DbFactory.CreateDbContextAsync();
+        return await contexto.Categorias.AnyAsync(c => (c.Nombre.ToLower() == categorias.Nombre.ToLower() || c.Descripcion.ToLower() == categorias.Descripcion.ToLower()) && c.CategoriaId != categorias.CategoriaId);
+    }
     private async Task<bool> Insertar(Categorias categoria)
     {
         await using var contexto = await DbFactory.CreateDbContextAsync();
@@ -44,6 +49,15 @@ public class CategoriasService(IDbContextFactory<ApplicationDbContext> DbFactory
         var filasAfectadas = await contexto.Categorias
         .Where(c => c.CategoriaId == categoriaId)
         .ExecuteUpdateAsync(c => c.SetProperty(p => p.Eliminado, true));
+        return filasAfectadas > 0;
+    }
+    public async Task<bool> Recuperar(int categoriaId)
+    {
+        await using var contexto = await DbFactory.CreateDbContextAsync();
+        var filasAfectadas = await contexto.Categorias!
+            .Where(c => c.CategoriaId == categoriaId)
+            .ExecuteUpdateAsync(p =>
+                p.SetProperty(x => x.Eliminado, false));
         return filasAfectadas > 0;
     }
     public async Task<List<Categorias>> Listar(Expression<Func<Categorias, bool>> criterio)

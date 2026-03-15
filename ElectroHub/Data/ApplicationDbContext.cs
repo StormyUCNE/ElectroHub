@@ -17,5 +17,11 @@ namespace ElectroHub.Data
         public DbSet<Ventas> Ventas { get; set; }
         public DbSet<DetallesVentas> DetallesVentas { get; set; }
         public DbSet<InventarioMovimientos> InventarioMovimientos { get; set; }
+
+        protected override void OnModelCreating(ModelBuilder modelBuilder)
+        {
+            base.OnModelCreating(modelBuilder);
+            modelBuilder.Entity<InventarioMovimientos>().ToTable("InventarioMovimientos");
+        }
     }
 }

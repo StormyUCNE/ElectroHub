@@ -1,11 +1,12 @@
-﻿.container {
+﻿/* --- CONTENEDOR PRINCIPAL --- */
+.product-container {
+    padding: 30px 30px 5px 30px;
     min-height: 100vh;
     backdrop-filter: blur(10px);
-    padding: 2rem 1rem 2rem 1rem;
 }
 
 nav > span {
-    font-size: 3vw;
+    font-size: 4vw;
     color: #5683D7;
     font-weight: bold;
 }
@@ -16,24 +17,34 @@ hr {
     border: 2px white solid;
 }
 
-.inputs-container {
+/* --- FILTROS --- */
+.filter-container {
     display: flex;
-    justify-content: space-around;
-    gap: 30px;
-    margin-bottom: 30px;
+    justify-content: left;
+    align-items: flex-start;
+    max-width: 100%;
+    gap: 10px;
+    margin-bottom: 20px;
 }
 
-/* Reutilizando tus estilos de contenedores con gradiente */
-.select-container, .input-container {
-    width: 100%;
+.input-container {
+    display: grid;
+    grid-template-columns: repeat(2, 1fr);
+    gap: 20px;
+    flex: 0.9;
+}
+
+.date-group {
+    display: contents;
+}
+
+.select-container, .form-field {
     position: relative;
     border-radius: 30px;
-    padding: 2px;
-    background: transparent;
-    display: inline-block;
+    width: 100%;
 }
 
-    .select-container::before, .input-container::before {
+    .select-container::before, .form-field::before {
         content: "";
         position: absolute;
         inset: 0;
@@ -46,7 +57,7 @@ hr {
         pointer-events: none;
     }
 
-    .select-container select, .input-container input {
+    .select-container select, .form-field input {
         width: 100%;
         background: rgba(255, 255, 255, 0.05);
         border: none;
@@ -54,18 +65,77 @@ hr {
         border-radius: 30px;
         padding: 8px 15px;
         color: white;
+        height: 40px;
+        box-sizing: border-box;
     }
 
-/* Estilo de la tabla con gradiente */
+        /* --- ICONOS --- */
+        .form-field input[type="text"] {
+            background-image: url("/ProductosSVG/Search.svg");
+            background-repeat: no-repeat;
+            background-position: right 12px center;
+            background-size: 18px;
+        }
+
+        .form-field input[type="date"] {
+            background-image: url("/ProductosSVG/Calendar.svg");
+            background-repeat: no-repeat;
+            background-position: right 12px center;
+            background-size: 18px;
+        }
+
+            .form-field input[type="date"]::before {
+                content: attr(data-label) ": ";
+                color: rgba(255, 255, 255, 0.5);
+            }
+
+    .select-container select {
+        appearance: none;
+        background-image: url("/ProductosSVG/Arrow-Botton.svg");
+        background-repeat: no-repeat;
+        background-position: right 12px center;
+        background-size: 30px;
+    }
+
+input[type="date"]::-webkit-calendar-picker-indicator {
+    opacity: 0;
+    cursor: pointer;
+    width: 100%;
+    position: absolute;
+}
+
+/* --- TABLA --- */
+.table-section {
+    margin-top: 20px;
+    overflow-x: auto;
+}
+
+table {
+    width: 100%;
+    color: white !important;
+    overflow: hidden;
+    border-collapse: collapse;
+}
+
+thead, th {
+    border: 1px black solid;
+    padding: 10px;
+    text-align: center;
+    background-color: rgba(255, 255, 255, 0.1);
+}
+
+tbody, tr, td {
+    border: 1px black solid;
+    padding: 10px;
+    text-align: center;
+}
+
 .gradient-border-transparent {
     --border-width: 3px;
     --radius: 20px;
     position: relative;
-    color: white;
     border-radius: var(--radius);
-    background: transparent;
     padding: var(--border-width);
-    margin-top: 20px;
 }
 
     .gradient-border-transparent::before {
@@ -81,25 +151,32 @@ hr {
         pointer-events: none;
     }
 
-table {
-    width: 100%;
-    border-collapse: collapse;
+/* --- BOTÓN DETALLES --- */
+.btn-container-details {
+    display: flex;
+    gap: 5px;
+    justify-content: center;
+    align-items: center;
+    border-radius: 10px;
+    background-color: #AA56D7;
+    padding: 5px 10px;
+    border: none;
+    color: white;
+    transition: 0.3s ease-in-out;
+    cursor: pointer;
+    margin: 0 auto;
+    width: max-content;
 }
 
-thead, th {
-    padding: 15px;
-    text-align: center;
-    background-color: rgba(255, 255, 255, 0.1);
-    border-bottom: 1px solid rgba(255, 255, 255, 0.2);
-}
+    .btn-container-details:hover {
+        background-color: #5683D7;
+    }
 
-tbody td {
-    padding: 12px;
-    text-align: center;
-    border-bottom: 1px solid rgba(255, 255, 255, 0.05);
-}
+    .btn-container-details img {
+        width: 18px;
+    }
 
-/* Badges de la imagen */
+/* --- BADGES --- */
 .badge-entrada {
     background-color: #7ED957;
     color: black;
@@ -127,46 +204,38 @@ tbody td {
     font-size: 12px;
 }
 
+/* --- PAGINACIÓN --- */
+.pagination-container {
+    position: relative;
+    display: flex;
+    justify-content: center;
+    margin-top: 10px;
+    height: 60px;
+}
+
 .pagination {
-    margin-top: 30px;
+    position: fixed;
+    bottom: 20px;
+    left: 50%;
+    transform: translateX(-50%);
     display: flex;
     justify-content: center;
     align-items: center;
-    gap: 40px;
+    gap: 50px;
+    color: white;
+    z-index: 10;
 }
 
     .pagination img {
-        width: 25px;
+        width: 20px;
         cursor: pointer;
-        transition: 0.2s;
     }
 
-.btn-detalles {
-    border-radius: 15px;
-    background-color: transparent;
-    border: 1px solid #AA56D7;
-    color: #AA56D7;
-    padding: 5px 15px;
-    cursor: pointer;
+.opacity-25 {
+    opacity: 0.25;
+    pointer-events: none;
 }
 
-    .btn-detalles:hover {
-        background-color: #AA56D7;
-        color: white;
-    }
-
-@media (max-width: 700px) {
-    .inputs-container {
-        flex-direction: column;
-        gap: 10px;
-    }
-
-    nav > span {
-        font-size: 8vw;
-    }
-
-    thead, th, tbody td {
-        font-size: 12px;
-        padding: 8px;
-    }
+.opacity-100 {
+    opacity: 1;
 }
