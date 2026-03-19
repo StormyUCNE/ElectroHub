@@ -81,6 +81,7 @@
             <table class="gradient-border-transparent">
                 <thead>
                     <tr>
+                        <th>C&oacute;digo</th>
                         <th>Nombre</th>
                         <th>Stock Mímino</th>
                         <th>Proveedor</th>
@@ -92,6 +93,7 @@
                     @foreach (var p in ProductosPaginados)
                     {
                         <tr>
+                            <td>@p.CodigoProducto</td>
                             <td>@p.Nombre</td>
                             <td>@p.StockMinimo</td>
                             <td>@p.Proveedores?.NombreEmpresa</td>
