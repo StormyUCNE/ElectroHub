@@ -1,7 +1,9 @@
 ﻿using ElectroHub.Data;
 using ElectroHub.Models;
+using Microsoft.AspNetCore.Components.Authorization;
 using Microsoft.EntityFrameworkCore;
 using System.Linq.Expressions;
+using System.Security.Claims;
 
 namespace ElectroHub.Services;
 
@@ -57,6 +59,8 @@ public class VentasService(IDbContextFactory<ApplicationDbContext> DbFactory)
             });
         }
 
+        await AfectarProductos(contexto, venta.DetallesVentas.ToArray(), TipoOperacion.Resta, venta.Vendedor);
+
         contexto.Ventas.Add(ventaNueva);
 
         return await contexto.SaveChangesAsync() > 0;
@@ -72,6 +76,8 @@ public class VentasService(IDbContextFactory<ApplicationDbContext> DbFactory)
 
         if (ventaExistente == null)
             return false;
+
+        await AfectarProductos(contexto, ventaExistente.DetallesVentas.ToArray(), TipoOperacion.Suma, venta.Vendedor);
 
         // Eliminar detalles existentes
         contexto.DetallesVentas.RemoveRange(ventaExistente.DetallesVentas);
@@ -91,6 +97,8 @@ public class VentasService(IDbContextFactory<ApplicationDbContext> DbFactory)
             });
         }
 
+        await AfectarProductos(contexto, ventaExistente.DetallesVentas.ToArray(), TipoOperacion.Resta, venta.Vendedor);
+
         // Actualizar solo campos permitidos
         ventaExistente.MetodoPago = venta.MetodoPago;
         ventaExistente.MontoRecibido = venta.MontoRecibido;
@@ -102,6 +110,51 @@ public class VentasService(IDbContextFactory<ApplicationDbContext> DbFactory)
 
         contexto.Ventas.Update(ventaExistente);
         return await contexto.SaveChangesAsync() > 0;
+    }
+
+    private async Task AfectarProductos(ApplicationDbContext contexto, DetallesVentas[] detalles, TipoOperacion tipoOperacion, string nombreUsuario)
+    {
+        foreach (var detalle in detalles)
+        {
+            Productos producto = await contexto.Productos.FirstOrDefaultAsync(p => p.ProductoId == detalle.ProductoId);
+            if (producto == null) return;
+
+            int stockActual = producto.CantidadInventario ?? detalle.Cantidad;
+            if (tipoOperacion == TipoOperacion.Suma)
+            {
+                int stockNuevo = stockActual + detalle.Cantidad;
+                producto.CantidadInventario = stockNuevo;
+
+                // Agregar movimiento en Inventario
+                var movimiento = new InventarioMovimientos
+                {
+                    ProductoId = detalle.ProductoId,
+                    FechaMovimiento = DateTime.Now,
+                    TipoMovimiento = "Ajuste",
+                    Cantidad = detalle.Cantidad,
+                    StockResultante = stockNuevo,
+                    Usuario = nombreUsuario
+                };
+                contexto.InventarioMovimientos.Add(movimiento);
+            }
+            if (tipoOperacion == TipoOperacion.Resta)
+            {
+                int stockNuevo = stockActual - detalle.Cantidad;
+                producto.CantidadInventario = stockNuevo;
+
+                // Agregar movimiento en Inventario
+                var movimiento = new InventarioMovimientos
+                {
+                    ProductoId = detalle.ProductoId,
+                    FechaMovimiento = DateTime.Now,
+                    TipoMovimiento = "Salida",
+                    Cantidad = detalle.Cantidad * (-1),
+                    StockResultante = stockNuevo,
+                    Usuario = nombreUsuario
+                };
+                contexto.InventarioMovimientos.Add(movimiento);
+            }
+        }
     }
 
     public async Task<Ventas?> Buscar(int ventaId)
@@ -122,9 +175,11 @@ public class VentasService(IDbContextFactory<ApplicationDbContext> DbFactory)
     public async Task<bool> Eliminar(int ventaId)
     {
         await using var contexto = await DbFactory.CreateDbContextAsync();
+        Ventas venta = await Buscar(ventaId);
+        await AfectarProductos(contexto, venta.DetallesVentas.ToArray(), TipoOperacion.Suma, venta.Vendedor);
         // Soft delete
-        var filasAfectadas = await contexto.Ventas!.Where(v => v.VentaId == ventaId).ExecuteUpdateAsync(v => v.SetProperty(x => x.Eliminado, true));
-        return filasAfectadas > 0;
+        await contexto.Ventas!.Where(v => v.VentaId == ventaId).ExecuteUpdateAsync(v => v.SetProperty(x => x.Eliminado, true));
+        return await contexto.SaveChangesAsync() > 0;
     }
 
     public async Task<List<Ventas>> Listar(Expression<Func<Ventas, bool>> criterio)
@@ -179,8 +234,7 @@ public class VentasService(IDbContextFactory<ApplicationDbContext> DbFactory)
         {
             ProductoId = producto.ProductoId,
             CategoriaId = producto.CategoriaId,
-
-            Descripcion = producto.Descripcion,
+            Descripcion = producto.Nombre,
             Cantidad = cantidad,
             Precio = producto.PrecioVenta.Value,
             Itbis = itbis,
@@ -193,4 +247,10 @@ public class VentasService(IDbContextFactory<ApplicationDbContext> DbFactory)
 
         return detalle;
     }
+}
+
+public enum TipoOperacion
+{
+    Suma = 1,
+    Resta = 2
 }

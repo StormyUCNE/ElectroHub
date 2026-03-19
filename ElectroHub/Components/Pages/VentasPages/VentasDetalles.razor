@@ -17,7 +17,7 @@
             <thead>
                 <tr>
                     <th>C&oacute;digo</th>
-                    <th>Descripci&oacute;n</th>
+                    <th>Nombre</th>
                     <th>Categor&iacute;a</th>
                     <th>Cantidad</th>
                     <th>Precio</th>
@@ -29,7 +29,7 @@
                 @foreach (var detalle in Venta.DetallesVentas)
                 {
                     <tr>
-                        <td>@detalle.ProductoId</td>
+                        <td class="p-4">@detalle.Productos.CodigoProducto</td>
                         <td>@detalle.Descripcion</td>
                         <td>@detalle.Categoria.Nombre</td>
                         <td>@detalle.Cantidad</td>

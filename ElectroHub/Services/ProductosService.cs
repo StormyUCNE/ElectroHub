@@ -24,7 +24,7 @@ public class ProductosService(IDbContextFactory<ApplicationDbContext> DbFactory)
     public async Task<bool> ExisteDuplicado(Productos productos)
     {
         await using var contexto = await DbFactory.CreateDbContextAsync();
-        return await contexto.Productos.AnyAsync(p => (p.Nombre.ToLower() == productos.Nombre.ToLower() || p.Descripcion.ToLower() == productos.Descripcion.ToLower()) && p.ProductoId != productos.ProductoId);
+        return await contexto.Productos.AnyAsync(p => (p.Nombre.ToLower() == productos.Nombre.ToLower() || p.Descripcion.ToLower() == productos.Descripcion.ToLower()) && (p.ProductoId != productos.ProductoId && p.Eliminado != true));
     }
     private async Task<bool> Insertar(Productos producto)
     {
@@ -80,7 +80,6 @@ public class ProductosService(IDbContextFactory<ApplicationDbContext> DbFactory)
             };
             contexto.InventarioMovimientos.Add(movimiento);
         }
-
         return await contexto.SaveChangesAsync() > 0;
     }
 
@@ -88,6 +87,11 @@ public class ProductosService(IDbContextFactory<ApplicationDbContext> DbFactory)
     {
         await using var contexto = await DbFactory.CreateDbContextAsync();
         return await contexto.Productos.FirstOrDefaultAsync(p => p.ProductoId == productoId);
+    }
+    public async Task<Productos?> BuscarCodigo(int productoCodigo)
+    {
+        await using var contexto = await DbFactory.CreateDbContextAsync();
+        return await contexto.Productos.FirstOrDefaultAsync(p => p.CodigoProducto == productoCodigo);
     }
 
     public async Task<bool> Eliminar(int productoId)

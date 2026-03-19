@@ -1,7 +1,7 @@
 ﻿@page "/Ventas/Index";
 
 @rendermode InteractiveServer
-@inject VentasService ventasService;
+@inject VentasService ventasService
 
 <PageTitle>VentasIndex</PageTitle>
 
@@ -35,35 +35,9 @@
         </div>
     </div>
 
-    @* Hora 
-    <div class="row align-items-center pb-3">
-        <div class="col-2">
-            <label class="subtitulo">Desde:</label>
-        </div>
-        <div class="col-4">
-            <div class="input-container" onclick="this.querySelector('input').showPicker()">
-                <div class="img-container">
-                    <img src="/VentasSVG/Watch.svg" width="20" height="20" />
-                </div>
-                <input type="time" />
-            </div>
-        </div>
-        <div class="col-2">
-            <label class="subtitulo">Hasta:</label>
-        </div>
-        <div class="col-4">
-            <div class="input-container" onclick="this.querySelector('input').showPicker()">
-                <div class="img-container">
-                    <img src="/VentasSVG/Watch.svg" width="20" height="20" />
-                </div>
-                <input type="time" />
-            </div>
-        </div>
-    </div> *@
-
     @* Vendedor y metodo de pago *@
     <div class="row align-items-center pb-3">
-        <div class="col-2">
+        @* <div class="col-2">
             <label class="subtitulo">Vendedor:</label>
         </div>
         <div class="col-4">
@@ -71,13 +45,17 @@
                 <div class="img-container">
                     <img src="/VentasSVG/Person.svg" width="20" height="20" />
                 </div>
-                <select>
-                    <option>Juan Luis Guerra</option>
-                    <option>Luis Fonsi</option>
-                    <option>Laufei</option>
+                <select @bind="VendedorSeleccionado">
+                    @if (listaUsuarios != null)
+                    {
+                        @foreach (var usuario in listaUsuarios)
+                        {
+                            <option value="@usuario.UserName">@usuario.UserName</option>
+                        }
+                    }
                 </select>
             </div>
-        </div>
+        </div> *@
         <div class="col-2">
             <label class="subtitulo">M&eacute;todo de pago:</label>
         </div>
@@ -97,25 +75,10 @@
         </div>
     </div>
 
-    @* Monto 
-    <div class="row align-items-center pb-2">
-        <div class="col-2">
-            <label class="subtitulo">Monto:</label>
-        </div>
-        <div class="col-4">
-            <div class="input-container">
-                <div class="img-container">
-                    <img src="/VentasSVG/MoneyBag.svg" width="20" height="20" />
-                </div>
-                <input type="number" value="0.00"/>
-            </div>
-        </div>
-    </div> *@
-
     @* Registros mostrados y botones *@
     <div class="row align-items-center">
         <div class="col-7">
-            <label class="subtitulo">Mostrando 3 de 3 ventas</label>
+            <label class="subtitulo">Mostrando @ListaVentas.Count de @TotalRegistros ventas</label>
         </div>
         <div class="col-2">
             <button class="boton boton-aplicar" type="button" @onclick="Filtrar">Aplicar</button>
@@ -154,6 +117,12 @@
                 }
             </tbody>
         </table>
+        @if (!ListaVentas.Any())
+        {
+            <div class="text-center pt-3">
+                <p class="text-white">No hay Ventas agregadas.</p>
+            </div>
+        }
     </div>
     <div class="row justify-content-center pt-3">
         <div class="col-2 text-center">
@@ -167,10 +136,13 @@
     public DateTime? FechaDesde { get; set; }
     public DateTime? FechaHasta { get; set; }
     private MetodosPago? MetodoPagoSeleccionado { get; set; }
+    public int TotalRegistros { get; set; } = 0;
 
     protected override async Task OnInitializedAsync()
     {
         ListaVentas = await ventasService.Listar(v => v.VentaId > 0);
+        ListaVentas = ListaVentas.OrderByDescending(v => v.Fecha).ToList();
+        TotalRegistros = ListaVentas.Count;
     }
 
     public async Task Filtrar()
@@ -198,6 +170,7 @@
         }
 
         ListaVentas = await ventasService.Listar(criterio);
+        ListaVentas = ListaVentas.OrderByDescending(v => v.Fecha).ToList();
     }
 
     private async Task Restablecer()
@@ -208,5 +181,6 @@
         MetodoPagoSeleccionado = null;
 
         ListaVentas = await ventasService.Listar(v => v.VentaId > 0);
+        ListaVentas = ListaVentas.OrderByDescending(v => v.Fecha).ToList();
     }
 }

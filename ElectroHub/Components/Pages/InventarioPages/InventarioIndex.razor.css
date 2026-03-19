@@ -97,6 +97,11 @@ hr {
         background-size: 30px;
     }
 
+select option {
+    color: white;
+    background: #AA56D7;
+}
+
 input[type="date"]::-webkit-calendar-picker-indicator {
     opacity: 0;
     cursor: pointer;
@@ -188,7 +193,7 @@ tbody, tr, td {
 
 .badge-salida {
     background-color: #FF3131;
-    color: white;
+    color: black;
     padding: 5px 12px;
     border-radius: 20px;
     font-weight: bold;

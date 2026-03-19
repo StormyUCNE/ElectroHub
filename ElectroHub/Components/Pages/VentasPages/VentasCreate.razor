@@ -35,7 +35,7 @@
                 <thead>
                     <tr>
                         <th>C&oacute;digo</th>
-                        <th>Descripci&oacute;n</th>
+                        <th>Nombre</th>
                         <th>Categor&iacute;a</th>
                         <th>Cantidad</th>
                         <th>Precio</th>
@@ -48,7 +48,7 @@
                     @foreach (var detalle in ListaDetallesVenta)
                     {
                         <tr>
-                            <td>@detalle.ProductoId</td>
+                            <td>@detalle.Productos.CodigoProducto</td>
                             <td>@detalle.Descripcion</td>
                             <td>@detalle.Categoria.Nombre</td>
                             <td>
@@ -70,7 +70,7 @@
             </table>
             @if (!ListaDetallesVenta.Any())
             {
-                <div class="text-center p-3">
+                <div class="text-center pt-3">
                     <p class="text-white">No hay productos agregados a la venta</p>
                 </div>
             }
@@ -259,7 +259,7 @@
         if (CodigoProducto.HasValue && CodigoProducto.Value > 0)
         {
             Console.WriteLine("\n" + CodigoProducto + "\n");
-            var producto = await productosService.Buscar(CodigoProducto.Value);
+            var producto = await productosService.BuscarCodigo(CodigoProducto.Value);
 
             if (producto == null || producto.Eliminado)
             {
@@ -267,7 +267,7 @@
                 return;
             }
 
-            var detalleExistente = ListaDetallesVenta.FirstOrDefault(d => d.ProductoId == CodigoProducto);
+            var detalleExistente = ListaDetallesVenta.FirstOrDefault(d => d.ProductoId == producto.ProductoId);
 
             if (detalleExistente != null)
             {
@@ -280,7 +280,7 @@
             else
             {
                 // Crear nuevo detalle usando el método del service
-                var nuevoDetalle = await ventasServices.CrearDetalleVenta(CodigoProducto.Value, 1);
+                var nuevoDetalle = await ventasServices.CrearDetalleVenta(producto.ProductoId, 1);
 
                 // Asignar la categoría correctamente
                 if (producto.Categorias != null)
