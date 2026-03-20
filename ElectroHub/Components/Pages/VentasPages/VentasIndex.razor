@@ -6,7 +6,10 @@
 <PageTitle>VentasIndex</PageTitle>
 
 <div class="container">
-    <span class="titulo">Ventas</span>
+    <div class="d-flex justify-content-between">
+        <span class="titulo">Ventas</span>
+        <a class="boton boton-recuperar" href="/Ventas/Recuperar"> Recuperar</a>
+    </div>
     <hr />
 
     @* Fecha *@
@@ -140,14 +143,14 @@
 
     protected override async Task OnInitializedAsync()
     {
-        ListaVentas = await ventasService.Listar(v => v.VentaId > 0);
+        ListaVentas = await ventasService.Listar(v => v.VentaId > 0 && v.Eliminado == false);
         ListaVentas = ListaVentas.OrderByDescending(v => v.Fecha).ToList();
         TotalRegistros = ListaVentas.Count;
     }
 
     public async Task Filtrar()
     {
-        Expression<Func<Ventas, bool>> criterio = v => v.VentaId > 0;
+        Expression<Func<Ventas, bool>> criterio = v => v.VentaId > 0 && v.Eliminado == false;
         if (FechaDesde.HasValue && FechaHasta.HasValue)
         {
             DateTime fechaHasta = FechaHasta.Value.Date.AddDays(1).AddTicks(-1);
@@ -180,7 +183,7 @@
         FechaHasta = null;
         MetodoPagoSeleccionado = null;
 
-        ListaVentas = await ventasService.Listar(v => v.VentaId > 0);
+        ListaVentas = await ventasService.Listar(v => v.VentaId > 0 && v.Eliminado == false);
         ListaVentas = ListaVentas.OrderByDescending(v => v.Fecha).ToList();
     }
 }

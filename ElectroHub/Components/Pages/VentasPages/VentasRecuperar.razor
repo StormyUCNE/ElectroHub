@@ -1,0 +1,80 @@
+﻿@page "/Ventas/Recuperar"
+
+@rendermode InteractiveServer
+@inject VentasService ventasService
+@inject NavigationManager navigationManager;
+
+<PageTitle>VentasRecuperar</PageTitle>
+
+<div class="container">
+    <div class="d-flex justify-content-between">
+        <span class="titulo">Recuperar Ventas</span>
+    </div>
+    <hr />
+
+    @* Tabla de ventas *@
+    <div class="table-responsive gradient-border-transparent">
+        <table>
+            <thead>
+                <tr>
+                    <th>C&oacute;digo</th>
+                    <th>Fecha</th>
+                    <th>Total venta</th>
+                    <th>M&eacute;todo de pago</th>
+                    <th>Vendedor</th>
+                    <th>Acciones</th>
+                </tr>
+            </thead>
+            <tbody>
+                @foreach (var venta in ListaVentas)
+                {
+                    <tr>
+                        <td>@venta.VentaId</td>
+                        <td>@venta.Fecha</td>
+                        <td>$@venta.Total.ToString("N2")</td>
+                        <td>@venta.MetodoPago</td>
+                        <td>@venta.Vendedor</td>
+                        <td>
+                            <a class="boton boton-detalles" @onclick="(() => Recuperar(venta.VentaId))" >Recuperar</a>
+                        </td>
+                    </tr>
+                }
+            </tbody>
+        </table>
+        @if (!ListaVentas.Any())
+        {
+            <div class="text-center pt-3">
+                <p class="text-white">No hay Ventas para recuperar.</p>
+            </div>
+        }
+    </div>
+    <div class="row justify-content-center pt-3">
+        <div class="col-2 text-center">
+            <a class="boton boton-volver" href="/Ventas/Index">Volver</a>
+        </div>
+    </div>
+</div>
+
+@code {
+    public List<Ventas> ListaVentas { get; set; } = new List<Ventas>();
+
+    protected override async Task OnInitializedAsync()
+    {
+        ListaVentas = await ventasService.Listar(v => v.Eliminado == true);
+        ListaVentas = ListaVentas.OrderByDescending(v => v.Fecha).ToList();
+    }
+
+    public async Task Recuperar(int id)
+    {
+        bool recuperado = await ventasService.Recuperar(id);
+        if (recuperado)
+        {
+            Console.WriteLine("Venta recuperada!!!");
+            navigationManager.NavigateTo("/Ventas/Index");
+        }
+        else
+        {
+            Console.WriteLine("Error al recuperar la venta.");
+        }
+    }
+}

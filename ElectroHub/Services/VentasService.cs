@@ -181,6 +181,17 @@ public class VentasService(IDbContextFactory<ApplicationDbContext> DbFactory)
         await contexto.Ventas!.Where(v => v.VentaId == ventaId).ExecuteUpdateAsync(v => v.SetProperty(x => x.Eliminado, true));
         return await contexto.SaveChangesAsync() > 0;
     }
+    public async Task<bool> Recuperar(int ventaId)
+    {
+        await using var contexto = await DbFactory.CreateDbContextAsync();
+        Ventas venta = await Buscar(ventaId);
+        if (venta.Eliminado == false) return false;
+
+        await AfectarProductos(contexto, venta.DetallesVentas.ToArray(), TipoOperacion.Resta, venta.Vendedor);
+        // Anula Soft delete
+        await contexto.Ventas!.Where(v => v.VentaId == ventaId).ExecuteUpdateAsync(v => v.SetProperty(x => x.Eliminado, false));
+        return await contexto.SaveChangesAsync() > 0;
+    }
 
     public async Task<List<Ventas>> Listar(Expression<Func<Ventas, bool>> criterio)
     {
@@ -189,7 +200,6 @@ public class VentasService(IDbContextFactory<ApplicationDbContext> DbFactory)
             .Include(v => v.DetallesVentas)
                 .ThenInclude(d => d.Productos)
             .Where(criterio)
-            .Where(v => !v.Eliminado)
             .ToListAsync();
     }
 
