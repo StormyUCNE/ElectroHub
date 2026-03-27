@@ -257,6 +257,28 @@ public class VentasService(IDbContextFactory<ApplicationDbContext> DbFactory)
 
         return detalle;
     }
+    public async Task<List<VentaReporteDTO>> ObtenerVentasParaReporteAsync()
+    {
+        await using var contexto = await DbFactory.CreateDbContextAsync();
+
+        return await contexto.Ventas
+            .Where(v => v.Eliminado == false) // Excluir ventas canceladas/eliminadas
+            .SelectMany(v => v.DetallesVentas.Select(d => new VentaReporteDTO
+            {
+                // Usamos la descripción que ya guardas directo en el detalle
+                Producto = d.Descripcion,
+
+                // Usamos la navegación a Categoria que vi en tu método Buscar()
+                // Nota: Asumo que en tu modelo 'Categorias' la propiedad de texto se llama 'Nombre'.
+                // Si se llama 'Descripcion' o de otra forma, cámbialo aquí abajo:
+                Categoria = d.Categoria.Nombre ?? "Sin categoría",
+
+                Fecha = v.Fecha,
+                Ingreso = d.Subtotal // Tomamos el subtotal del detalle
+            }))
+            .OrderByDescending(r => r.Fecha)
+            .ToListAsync();
+    }
 }
 
 public enum TipoOperacion
