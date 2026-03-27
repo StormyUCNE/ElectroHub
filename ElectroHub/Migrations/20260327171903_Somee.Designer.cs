@@ -12,8 +12,8 @@ using Microsoft.EntityFrameworkCore.Storage.ValueConversion;
 namespace ElectroHub.Migrations
 {
     [DbContext(typeof(ApplicationDbContext))]
-    [Migration("20260315035839_Ventas")]
-    partial class Ventas
+    [Migration("20260327171903_Somee")]
+    partial class Somee
     {
         /// <inheritdoc />
         protected override void BuildTargetModel(ModelBuilder modelBuilder)
