@@ -1,113 +1,107 @@
 ﻿using System.Text;
 using ClosedXML.Excel;
-using ElectroHub.Models; 
-using iText.Kernel.Pdf;
-using iText.Layout;
-using iText.Layout.Element;
-using iText.Layout.Properties;
-using iText.Kernel.Font;
-using iText.IO.Font.Constants;
+using ElectroHub.Models;
 
-namespace ElectroHub.Services
+using QuestPDF.Infrastructure;
+using QuestPDF.Fluent;
+using QuestPDF.Helpers;
+
+namespace ElectroHub.Services;
+
+public class ExportarReportesService
 {
-    public class ExportarReportesService
+
+    public byte[] ExportarCSV(List<VentaReporteDTO> ventas)
     {
+        var builder = new StringBuilder();
 
-        public byte[] ExportarCSV(List<VentaReporteDTO> ventas)
+        builder.AppendLine("Producto,Categoria,Fecha,Ingreso");
+
+        foreach (var venta in ventas)
         {
-            var builder = new StringBuilder();
-
-            builder.AppendLine("Producto,Categoria,Fecha,Ingreso");
-
-            foreach (var venta in ventas)
-            {
-                var producto = venta.Producto.Contains(",") ? $"\"{venta.Producto}\"" : venta.Producto;
-                builder.AppendLine($"{producto},{venta.Categoria},{venta.Fecha:yyyy-MM-dd},{venta.Ingreso}");
-            }
-
-            return Encoding.UTF8.GetBytes(builder.ToString());
+            var producto = venta.Producto.Contains(",") ? $"\"{venta.Producto}\"" : venta.Producto;
+            builder.AppendLine($"{producto},{venta.Categoria},{venta.Fecha:yyyy-MM-dd},{venta.Ingreso}");
         }
 
-        public byte[] ExportarExcel(List<VentaReporteDTO> ventas)
+        return Encoding.UTF8.GetBytes(builder.ToString());
+    }
+    public byte[] ExportarExcel(List<VentaReporteDTO> ventas)
+    {
+        using (var workbook = new XLWorkbook())
         {
-            using var workbook = new XLWorkbook();
-            var worksheet = workbook.Worksheets.Add("Reporte de Ventas");
-
+            var worksheet = workbook.Worksheets.Add("Ventas");
             worksheet.Cell(1, 1).Value = "Producto";
             worksheet.Cell(1, 2).Value = "Categoría";
             worksheet.Cell(1, 3).Value = "Fecha";
             worksheet.Cell(1, 4).Value = "Ingreso";
 
-            var headerRange = worksheet.Range("A1:D1");
-            headerRange.Style.Font.Bold = true;
-            headerRange.Style.Fill.BackgroundColor = XLColor.FromHtml("#1f66d8"); 
-            headerRange.Style.Font.FontColor = XLColor.White;
-
-            int row = 2;
-            foreach (var venta in ventas)
+            for (int i = 0; i < ventas.Count; i++)
             {
-                worksheet.Cell(row, 1).Value = venta.Producto;
-                worksheet.Cell(row, 2).Value = venta.Categoria;
-                worksheet.Cell(row, 3).Value = venta.Fecha.ToString("dd/MM/yyyy");
-                worksheet.Cell(row, 4).Value = venta.Ingreso;
-                worksheet.Cell(row, 4).Style.NumberFormat.Format = "$#,##0.00"; 
-                row++;
+                worksheet.Cell(i + 2, 1).Value = ventas[i].Producto;
+                worksheet.Cell(i + 2, 2).Value = ventas[i].Categoria;
+                worksheet.Cell(i + 2, 3).Value = ventas[i].Fecha.ToShortDateString();
+                worksheet.Cell(i + 2, 4).Value = ventas[i].Ingreso;
             }
 
-            worksheet.Columns().AdjustToContents(); 
-
-            using var stream = new MemoryStream();
-            workbook.SaveAs(stream);
-            return stream.ToArray();
+            using (var stream = new MemoryStream())
+            {
+                workbook.SaveAs(stream);
+                var content = stream.ToArray();
+                return content;
+            }
         }
+    }
 
-        public byte[] ExportarPDF(List<VentaReporteDTO> ventas)
+    public byte[] ExportarPDF(List<VentaReporteDTO> ventas)
+    {
+        QuestPDF.Settings.License = LicenseType.Community;
+
+        return Document.Create(container =>
         {
-            using var stream = new MemoryStream();
-            using var writer = new PdfWriter(stream);
-            using var pdf = new PdfDocument(writer);
-            using var document = new Document(pdf);
-
-            PdfFont fontNegrita = PdfFontFactory.CreateFont(StandardFonts.HELVETICA_BOLD);
-
-            document.Add(new Paragraph("Reporte de Ventas - ElectroHub")
-                .SetTextAlignment(TextAlignment.CENTER)
-                .SetFontSize(20)
-                .SetFont(fontNegrita));
-
-            document.Add(new Paragraph($"Generado el: {DateTime.Now:dd/MM/yyyy HH:mm}")
-                .SetTextAlignment(TextAlignment.CENTER)
-                .SetMarginBottom(20));
-
-            Table table = new Table(4).UseAllAvailableWidth();
-
-            table.AddHeaderCell(new Cell().Add(new Paragraph("Producto").SetFont(fontNegrita)));
-            table.AddHeaderCell(new Cell().Add(new Paragraph("Categoría").SetFont(fontNegrita)));
-            table.AddHeaderCell(new Cell().Add(new Paragraph("Fecha").SetFont(fontNegrita)));
-            table.AddHeaderCell(new Cell().Add(new Paragraph("Ingreso").SetFont(fontNegrita)));
-
-            decimal totalIngresos = 0;
-
-            foreach (var venta in ventas)
+            container.Page(page =>
             {
-                table.AddCell(new Cell().Add(new Paragraph(venta.Producto ?? "")));
-                table.AddCell(new Cell().Add(new Paragraph(venta.Categoria ?? "")));
-                table.AddCell(new Cell().Add(new Paragraph(venta.Fecha.ToString("dd MMM yyyy"))));
-                table.AddCell(new Cell().Add(new Paragraph(venta.Ingreso.ToString("C"))));
+                page.Header().Row(row =>
+                {
+                    row.RelativeItem().Column(col =>
+                    {
+                        col.Item().AlignCenter().Text("ElectroHub").FontSize(30).Medium().FontColor(Colors.Black);
+                        col.Item().Text("Reporte de Ventas").FontSize(15).SemiBold();      
+                    });
 
-                totalIngresos += venta.Ingreso;
-            }
+                    row.RelativeItem().AlignRight().Column(col =>
+                    {
+                        col.Item().Text("Generado el:").FontSize(10).FontColor(Colors.Grey.Medium);
+                        col.Item().Text(DateTime.Now.ToString("dd/MM/yyyy HH:mm")).FontSize(10);
+                    });
+                });
 
-            document.Add(table);
+                page.Content().Table(table =>
+                {
+                    table.ColumnsDefinition(columns =>
+                    {
+                        columns.RelativeColumn(3);
+                        columns.RelativeColumn(2);
+                        columns.RelativeColumn(2);
+                        columns.RelativeColumn(2);
+                    });
 
-            document.Add(new Paragraph($"Total Ingresos: {totalIngresos:C}")
-                .SetTextAlignment(TextAlignment.RIGHT)
-                .SetMarginTop(20)
-                .SetFont(fontNegrita)
-                .SetFontSize(14));
+                    table.Header(header =>
+                    {
+                        header.Cell().Text("Producto");
+                        header.Cell().Text("Categoría");
+                        header.Cell().Text("Fecha");
+                        header.Cell().Text("Ingreso");
+                    });
 
-            document.Close();
-            return stream.ToArray();
-        }
+                    foreach (var venta in ventas)
+                    {
+                        table.Cell().Text(venta.Producto);
+                        table.Cell().Text(venta.Categoria);
+                        table.Cell().Text(venta.Fecha.ToShortDateString());
+                        table.Cell().Text(venta.Ingreso.ToString("C"));
+                    }
+                });
+            });
+        }).GeneratePdf();
     }
 }

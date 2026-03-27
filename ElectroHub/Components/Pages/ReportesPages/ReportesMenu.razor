@@ -250,49 +250,39 @@
 
 	private async Task ExportarDatos()
 	{
-		if (!VentasFiltradas.Any())
-		{
-			CerrarModalExportar();
-			return;
-		}
+		Console.WriteLine($"BOTON PRESIONADO. Datos en lista: {VentasFiltradas.Count}");
+
+		var datosSeguros = VentasFiltradas.ToList();
+		if (!datosSeguros.Any()) return;
 
 		byte[] archivoBytes = null;
-		string nombreArchivo = $"Reporte_Ventas_{FechaInicio:yyyyMMdd}_al_{FechaFin:yyyyMMdd}";
+		string nombreArchivo = $"Reporte_{DateTime.Now:yyyyMMdd}";
 		string tipoContenido = "";
 
-		try
+		if (formatoSeleccionado == "CSV")
 		{
-			if (formatoSeleccionado == "CSV")
-			{
-				archivoBytes = ExportService.ExportarCSV(VentasFiltradas);
-				nombreArchivo += ".csv";
-				tipoContenido = "text/csv";
-			}
-			else if (formatoSeleccionado == "PDF")
-			{
-				archivoBytes = ExportService.ExportarPDF(VentasFiltradas);
-				nombreArchivo += ".pdf";
-				tipoContenido = "application/pdf";
-			}
-			else if (formatoSeleccionado == "Excel")
-			{
-				archivoBytes = ExportService.ExportarExcel(VentasFiltradas);
-				nombreArchivo += ".xlsx";
-				tipoContenido = "application/vnd.openxmlformats-officedocument.spreadsheetml.sheet";
-			}
+			archivoBytes = ExportService.ExportarCSV(datosSeguros);
+			nombreArchivo += ".csv";
+			tipoContenido = "text/csv";
+		}
+		else if (formatoSeleccionado == "PDF")
+		{
+			archivoBytes = ExportService.ExportarPDF(datosSeguros);
+			nombreArchivo += ".pdf";
+			tipoContenido = "application/pdf";
+		}
+		else if (formatoSeleccionado == "Excel")
+		{
+			archivoBytes = ExportService.ExportarExcel(datosSeguros);
+			nombreArchivo += ".xlsx";
+			tipoContenido = "application/vnd.openxmlformats-officedocument.spreadsheetml.sheet";
+		}
 
-			if (archivoBytes != null)
-			{
-				await JSRuntime.InvokeVoidAsync("descargarArchivo", nombreArchivo, tipoContenido, Convert.ToBase64String(archivoBytes));
-			}
-		}
-		catch (Exception ex)
+		if (archivoBytes != null && archivoBytes.Length > 0)
 		{
-			Console.WriteLine($"Error durante la exportación: {ex.Message}");
+			await JSRuntime.InvokeVoidAsync("descargarArchivo", nombreArchivo, tipoContenido, Convert.ToBase64String(archivoBytes));
 		}
-		finally
-		{
-			CerrarModalExportar();
-		}
+    
+		CerrarModalExportar();
 	}
 }
