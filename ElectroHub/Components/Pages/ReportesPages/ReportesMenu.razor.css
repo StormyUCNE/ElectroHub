@@ -8,10 +8,10 @@
 }
 
 .dashboard-wrapper {
-    background: var(--bg-gradient);
+    background: rgba(255, 255, 255, 0.05);
     min-height: 100vh;
     padding: 2rem;
-    color: #ffffff; /* Blanco puro */
+    color: #ffffff; 
     font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif;
 }
 
