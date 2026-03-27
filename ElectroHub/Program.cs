@@ -5,6 +5,7 @@ using ElectroHub.Services;
 using Microsoft.AspNetCore.Components.Authorization;
 using Microsoft.AspNetCore.Identity;
 using Microsoft.EntityFrameworkCore;
+using QuestPDF.Infrastructure;
 
 var builder = WebApplication.CreateBuilder(args);
 
@@ -45,6 +46,8 @@ builder.Services.AddScoped<ProductosService>();
 builder.Services.AddScoped<InventarioService>();
 builder.Services.AddScoped<VentasService>();
 builder.Services.AddScoped<AdministradorCuentasService>();
+builder.Services.AddScoped<ExportarReportesService>();
+QuestPDF.Settings.License = LicenseType.Community;
 
 
 var app = builder.Build();

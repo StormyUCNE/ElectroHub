@@ -1,3 +1,8 @@
+:root {
+    --bg-deep: #130f40;
+    --bg-gradient: linear-gradient(135deg, #0f0c29, #302b63, #24243e);
+    --neon-color: #d946ef;
+}
 html, body {
     font-family: 'Helvetica Neue', Helvetica, Arial, sans-serif;
 }
