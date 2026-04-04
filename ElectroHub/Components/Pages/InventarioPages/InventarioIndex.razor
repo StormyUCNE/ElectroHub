@@ -1,6 +1,7 @@
 ﻿@page "/Inventario/Index"
 @rendermode InteractiveServer
 @inject InventarioService inventarioService
+@inject IJSRuntime JS
 
 <PageTitle>Inventario & Auditoría</PageTitle>
 
@@ -157,6 +158,33 @@
     {
         ListaMovimientos = await inventarioService.Listar(m => true);
         ListaFiltrada = ListaMovimientos;
+    }
+
+    protected override async Task OnAfterRenderAsync(bool firstRender)
+    {
+        if (firstRender)
+        {
+            int width = await JS.InvokeAsync<int>("getWindowWidth");
+            int height = await JS.InvokeAsync<int>("getWindowHeight");
+
+            int espacioFijo = 800;
+            int altoDisponible = height - espacioFijo;
+
+            int altoPorFila = 72;
+            int filas = altoDisponible / altoPorFila;
+
+            if (width < 576)
+                registrosPorPagina = Math.Clamp(filas, 4, 7);
+            else if (width < 768)
+                registrosPorPagina = Math.Clamp(filas, 6, 9);
+            else if (width < 992)
+                registrosPorPagina = Math.Clamp(filas, 8, 12);
+            else if (width < 1200)
+                registrosPorPagina = Math.Clamp(filas, 4, 18);
+            else
+                registrosPorPagina = Math.Clamp(filas, 4, 25);
+            StateHasChanged();
+        }
     }
 
     private void VerDetalles(InventarioMovimientos mov)
