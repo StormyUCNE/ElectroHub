@@ -174,13 +174,13 @@
             int filas = altoDisponible / altoPorFila;
 
             if (width < 576)
-                registrosPorPagina = Math.Clamp(filas, 4, 7);
+                registrosPorPagina = Math.Clamp(filas, 3, 7);
             else if (width < 768)
-                registrosPorPagina = Math.Clamp(filas, 6, 9);
+                registrosPorPagina = Math.Clamp(filas, 3, 9);
             else if (width < 992)
-                registrosPorPagina = Math.Clamp(filas, 8, 12);
+                registrosPorPagina = Math.Clamp(filas, 3, 12);
             else if (width < 1200)
-                registrosPorPagina = Math.Clamp(filas, 4, 18);
+                registrosPorPagina = Math.Clamp(filas, 3, 18);
             else
                 registrosPorPagina = Math.Clamp(filas, 4, 25);
             StateHasChanged();
